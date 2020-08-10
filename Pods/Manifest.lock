@@ -18,7 +18,7 @@ PODS:
   - BMKLocationKit (1.8.5)
   - IQKeyboardManager (6.5.5)
   - Masonry (1.1.0)
-  - MJRefresh (3.3.1)
+  - MJRefresh (3.4.3)
   - SDCycleScrollView (1.80):
     - SDWebImage (>= 5.0.0)
   - SDWebImage (5.7.1):
@@ -57,7 +57,7 @@ SPEC CHECKSUMS:
   BMKLocationKit: fd3d6b4a9a3a1a2763819f56b780bda5fc5b8726
   IQKeyboardManager: 3a8b9e603f8b0eeaf5f096a1f2b2cfcf121992ef
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  MJRefresh: eeda70fbf0ad277f3178cef1cd0c3532591d6237
+  MJRefresh: 53e3e3219f204425ee6d3e62e8733d3295944cd6
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
   SDWebImage: 5d4cf6afccd9ac1d2ee701ed0c4917cbb1b80536
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6

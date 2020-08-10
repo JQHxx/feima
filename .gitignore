@@ -67,3 +67,8 @@ fastlane/test_output
 
 iOSInjectionProject/
 
+#CocoaPods
+
+Pods/
+
+
