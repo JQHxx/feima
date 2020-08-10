@@ -7,10 +7,13 @@
 //
 
 #import "BaseTableViewCell.h"
+#import "FMGoodsSalesModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FMProductTableViewCell : BaseTableViewCell
+
++ (CGFloat)getCellHeightWithModel:(FMEmployeeGoodsModel *)model;
 
 @end
 

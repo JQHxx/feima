@@ -26,8 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger status;
 @property (nonatomic,  copy ) NSString  *telephone;
 
-
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -7,13 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FMTimeDataModel.h"
 #import "FMSalesDataModel.h"
+#import "FMGoodsSalesModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FMReportHeadView : UIView
 
-- (void)displayViewWithData:(FMSalesDataModel *)model;
+- (void)displayViewWithTimeData:(FMTimeDataModel *)timeData salesData:(FMSalesDataModel *)salesData;
+
+- (void)displayViewWithGoodsData:(NSArray *)goodsData salesData:(FMSalesDataModel *)salesData;
+
+- (void)displayViewWithCustomerData;
 
 @end
 

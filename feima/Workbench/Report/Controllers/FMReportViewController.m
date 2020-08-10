@@ -8,6 +8,8 @@
 
 #import "FMReportViewController.h"
 #import "FMSaleReportViewController.h"
+#import "FMProductReportViewController.h"
+#import "FMCustomerSalesViewController.h"
 
 @interface FMReportViewController ()<UITableViewDataSource,UITableViewDelegate>{
     NSArray  *titlesArr;
@@ -50,6 +52,13 @@
         FMSaleReportViewController *saleVC = [[FMSaleReportViewController alloc] init];
         saleVC.type = indexPath.row;
         [self.navigationController pushViewController:saleVC animated:YES];
+    } else if (indexPath.row == 2 || indexPath.row == 5) {
+        FMCustomerSalesViewController *salesVC = [[FMCustomerSalesViewController alloc] init];
+        [self.navigationController pushViewController:salesVC animated:YES];
+    } else if (indexPath.row == 3 || indexPath.row == 4) {
+        FMProductReportViewController *productVC = [[FMProductReportViewController alloc] init];
+        productVC.type = indexPath.row - 3;
+        [self.navigationController pushViewController:productVC animated:YES];
     }
 }
 

@@ -1,18 +1,18 @@
 //
-//  FMSaleReportViewController.m
+//  FMProductReportViewController.m
 //  feima
 //
-//  Created by fei on 2020/8/7.
+//  Created by fei on 2020/8/10.
 //  Copyright © 2020 hegui. All rights reserved.
 //
 
-#import "FMSaleReportViewController.h"
+#import "FMProductReportViewController.h"
 #import "FMReportHeadView.h"
-#import "FMSalesModel.h"
-#import "FMTimeDataModel.h"
-#import "FMSalesDataModel.h"
+#import "FMProductTableViewCell.h"
+#import "FMGoodsSalesModel.h"
 
-@interface FMSaleReportViewController ()<UITableViewDelegate,UITableViewDataSource>
+
+@interface FMProductReportViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic, strong) FMReportHeadView *headView;
 @property (nonatomic, strong) UITableView      *salesTableView;
@@ -21,16 +21,16 @@
 
 @end
 
-@implementation FMSaleReportViewController
+@implementation FMProductReportViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.baseTitle = @"销售报表";
+    self.baseTitle = @"员工产品销售报表";
     
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#F6F7F8"];
+     self.view.backgroundColor = [UIColor colorWithHexString:@"#F6F7F8"];
     
     [self setupUI];
-    [self loadSalesData];
+    [self loadData];
 }
 
 #pragma mark UITableViewDelegate and UITableViewDataSource
@@ -49,7 +49,11 @@
     titleLab.textAlignment = NSTextAlignmentCenter;
     [aView addSubview:titleLab];
     
-    NSArray *arr = @[@"上月销量",@"本月销量",@"完成进度"];
+    UIView *aLine = [[UIView alloc] initWithFrame:CGRectMake(titleLab.right-1, 0, 1, 50)];
+    aLine.backgroundColor = [UIColor lineColor];
+    [aView addSubview:aLine];
+    
+    NSArray *arr = @[@"品名",@"上月销量(占比)",@"本月销量(占比)"];
     for (NSInteger i=0; i<arr.count; i++) {
         UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(titleLab.right+kReportWidth*i, 10, kReportWidth, 30)];
         [btn setTitle:arr[i] forState:UIControlStateNormal];
@@ -68,23 +72,16 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UITableViewCell-identifer" forIndexPath:indexPath];
+    FMProductTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMProductTableViewCell identifier] forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    FMSalesModel *model = self.reportArray[indexPath.row];
-    NSArray *values = @[model.employeeName,[NSString stringWithFormat:@"%.3f", model.lastSales/10000.0],[NSString stringWithFormat:@"%.3f", model.thisSales/10000.0],[NSString stringWithFormat:@"%ld%%",model.progress]];
-    for (NSInteger i=0; i<values.count; i++) {
-        UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(kReportWidth*i, 10, kReportWidth, 24)];
-        lab.font = [UIFont mediumFontWithSize:14];
-        lab.textColor = [UIColor colorWithHexString:@"#666666"];
-        lab.textAlignment = NSTextAlignmentCenter;
-        lab.text = values[i];
-        [cell.contentView addSubview:lab];
-    }
+    FMEmployeeGoodsModel * model = self.reportArray[indexPath.row];
+    [cell fillContentWithData:model];
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 44;
+    FMEmployeeGoodsModel * model = self.reportArray[indexPath.row];
+    return [FMProductTableViewCell getCellHeightWithModel:model];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -93,32 +90,46 @@
 
 #pragma mark -- Private methods
 #pragma mark load data
-- (void)loadSalesData {
-    NSArray *arr = @[@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟",@"张利兴",@"张利兴",@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟",@"张利兴",@"张利兴",@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟",@"张利兴",@"张利兴",@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟",@"张利兴",@"张利兴"];
+- (void)loadData {
+    NSArray *arr = @[@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟"];
     NSMutableArray *tempArr = [[NSMutableArray alloc] init];
     for (NSInteger i=0; i<arr.count; i++) {
-        FMSalesModel *model = [[FMSalesModel alloc] init];
-        model.employeeName = arr[i];
-        model.lastSales = (i+1)*10445.0;
-        model.thisSales = (i+1)*24445.0;
-        model.progress = (i+1)*12;
-        [tempArr addObject:model];
+        FMEmployeeGoodsModel *employee = [[FMEmployeeGoodsModel alloc] init];
+        employee.employeeName = arr[i];
+        
+        NSMutableArray *goodsArr = [[NSMutableArray alloc] init];
+        NSArray *goodsNames = @[@"和成天下蓝",@"和成天下红",@"青果"];
+        for (NSInteger j=0; j<goodsNames.count; j++) {
+            FMGoodsSalesModel *model = [[FMGoodsSalesModel alloc] init];
+            model.goodsName = goodsNames[j];
+            model.lastSales = (i+1)*10445.0;
+            model.thisSales = (i+1)*24445.0;
+            model.progress = (i+1)*12;
+            [goodsArr addObject:model];
+        }
+        employee.goods = goodsArr;
+        [tempArr addObject:employee];
     }
     self.reportArray = tempArr;
     [self.salesTableView reloadData];
     
-    FMTimeDataModel *timeData = [[FMTimeDataModel alloc] init];
-    timeData.day = 10;
-    timeData.daySum = 31;
-    timeData.progress = 10.0/31.0;
+    NSMutableArray *tempGoodsArr = [[NSMutableArray alloc] init];
+    NSArray *names = @[@"和成天下",@"青果"];
+    for (NSInteger i=0; i<names.count; i++) {
+        FMGoodsSalesModel *model = [[FMGoodsSalesModel alloc] init];
+        model.goodsName = names[i];
+        model.sales = 0.3;
+        model.progress = 0.2;
+        model.salesSum = 1.5;
+        [tempGoodsArr addObject:model];
+    }
     
     FMSalesDataModel *salesData = [[FMSalesDataModel alloc] init];
     salesData.lastSalesSum = 0.34;
     salesData.thisSalesSum = 0.22;
     salesData.progress = 0.22/0.34;
     
-    [self.headView displayViewWithTimeData:timeData salesData:salesData];
-    
+    [self.headView displayViewWithGoodsData:tempGoodsArr salesData:salesData];
 }
 
 #pragma mark UI
@@ -130,7 +141,6 @@
         make.size.mas_equalTo(CGSizeMake(kScreen_Width-16, kScreen_Height-kNavBar_Height));
     }];
 }
-
 
 #pragma mark -- Getters
 #pragma mark 头部视图
@@ -153,7 +163,7 @@
         _salesTableView.layer.cornerRadius = 4;
         _salesTableView.clipsToBounds = YES;
         _salesTableView.separatorInset = UIEdgeInsetsZero;
-        [_salesTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell-identifer"];
+        [_salesTableView registerClass:[FMProductTableViewCell class] forCellReuseIdentifier:[FMProductTableViewCell identifier]];
         _salesTableView.tableHeaderView = self.headView;
     }
     return _salesTableView;

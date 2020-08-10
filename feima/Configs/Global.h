@@ -13,6 +13,8 @@ static NSString * const kLoginStateKey = @"com.hegui.feima.login.key";
 static NSString * const kUserTypeKey = @"com.hegui.feima.user.key.type";
 
 
+
+
 #endif /* Global_h */
 
 

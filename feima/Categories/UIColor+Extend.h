@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, IHGradientChangeDirection) {
  *  @param color 颜色的十六进制数值
  *
  */
-+ (UIColor *) colorWithHexString: (NSString *)color;
++ (UIColor *)colorWithHexString: (NSString *)color;
 
 /**
  *  十六进制转颜色

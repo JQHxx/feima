@@ -64,10 +64,8 @@
 		A542BB2324DBDFCA00E68100 /* FMDistributionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A542BB2224DBDFCA00E68100 /* FMDistributionViewController.m */; };
 		A542BB2624DBDFFD00E68100 /* FMDistributionTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A542BB2524DBDFFD00E68100 /* FMDistributionTableViewCell.m */; };
 		A542BB2924DBE3EB00E68100 /* FMOrderGoodsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A542BB2824DBE3EB00E68100 /* FMOrderGoodsModel.m */; };
-		A5531C9824DCFE8B005EFDF2 /* FMSaleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531C9724DCFE8B005EFDF2 /* FMSaleTableViewCell.m */; };
 		A5531C9E24DD03F6005EFDF2 /* FMSalesModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531C9D24DD03F6005EFDF2 /* FMSalesModel.m */; };
 		A5531CA124DD0497005EFDF2 /* FMSalesDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CA024DD0497005EFDF2 /* FMSalesDataModel.m */; };
-		A5531CAA24DD4A2B005EFDF2 /* FMPieChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CA924DD4A2B005EFDF2 /* FMPieChartView.m */; };
 		A5531CAD24DD4B9C005EFDF2 /* FMProductTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CAC24DD4B9C005EFDF2 /* FMProductTableViewCell.m */; };
 		A5531CB024DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CAF24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.m */; };
 		A5531CB324DD4C49005EFDF2 /* FMDailyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CB224DD4C49005EFDF2 /* FMDailyTableViewCell.m */; };
@@ -90,6 +88,15 @@
 		A5CBBD0D24DAA37600E27D74 /* FMMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CBBD0C24DAA37600E27D74 /* FMMessageViewController.m */; };
 		A5CBBD1624DAA7E000E27D74 /* FMMineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CBBD1524DAA7E000E27D74 /* FMMineTableViewCell.m */; };
 		A5CBBD1924DAAE7200E27D74 /* FMChangeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CBBD1824DAAE7200E27D74 /* FMChangeViewController.m */; };
+		A5E04E8824E11A0C00D4282B /* FMProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E8724E11A0C00D4282B /* FMProgressView.m */; };
+		A5E04E8B24E11F8B00D4282B /* FMTimeDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E8A24E11F8B00D4282B /* FMTimeDataModel.m */; };
+		A5E04E8E24E1299300D4282B /* FMProductReportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E8D24E1299300D4282B /* FMProductReportViewController.m */; };
+		A5E04E9124E12B8E00D4282B /* FMGoodsSalesModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E9024E12B8E00D4282B /* FMGoodsSalesModel.m */; };
+		A5E04E9424E1300600D4282B /* FMProductTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E9324E1300500D4282B /* FMProductTableView.m */; };
+		A5E04E9724E13BF700D4282B /* FMStatisticsView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E9624E13BF700D4282B /* FMStatisticsView.m */; };
+		A5E04E9A24E140ED00D4282B /* FMCustomerSalesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E9924E140ED00D4282B /* FMCustomerSalesViewController.m */; };
+		A5E04E9D24E1440000D4282B /* FMCustomerSalesModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E9C24E1440000D4282B /* FMCustomerSalesModel.m */; };
+		A5E04EA024E14C2B00D4282B /* FMCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5E04E9F24E14C2B00D4282B /* FMCircleView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -212,14 +219,10 @@
 		A542BB2524DBDFFD00E68100 /* FMDistributionTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMDistributionTableViewCell.m; sourceTree = "<group>"; };
 		A542BB2724DBE3EB00E68100 /* FMOrderGoodsModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMOrderGoodsModel.h; sourceTree = "<group>"; };
 		A542BB2824DBE3EB00E68100 /* FMOrderGoodsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMOrderGoodsModel.m; sourceTree = "<group>"; };
-		A5531C9624DCFE8B005EFDF2 /* FMSaleTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMSaleTableViewCell.h; sourceTree = "<group>"; };
-		A5531C9724DCFE8B005EFDF2 /* FMSaleTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMSaleTableViewCell.m; sourceTree = "<group>"; };
 		A5531C9C24DD03F6005EFDF2 /* FMSalesModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMSalesModel.h; sourceTree = "<group>"; };
 		A5531C9D24DD03F6005EFDF2 /* FMSalesModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMSalesModel.m; sourceTree = "<group>"; };
 		A5531C9F24DD0497005EFDF2 /* FMSalesDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMSalesDataModel.h; sourceTree = "<group>"; };
 		A5531CA024DD0497005EFDF2 /* FMSalesDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMSalesDataModel.m; sourceTree = "<group>"; };
-		A5531CA824DD4A2B005EFDF2 /* FMPieChartView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMPieChartView.h; sourceTree = "<group>"; };
-		A5531CA924DD4A2B005EFDF2 /* FMPieChartView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMPieChartView.m; sourceTree = "<group>"; };
 		A5531CAB24DD4B9C005EFDF2 /* FMProductTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMProductTableViewCell.h; sourceTree = "<group>"; };
 		A5531CAC24DD4B9C005EFDF2 /* FMProductTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMProductTableViewCell.m; sourceTree = "<group>"; };
 		A5531CAE24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMCustomerSalesTableViewCell.h; sourceTree = "<group>"; };
@@ -263,6 +266,24 @@
 		A5CBBD1524DAA7E000E27D74 /* FMMineTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMMineTableViewCell.m; sourceTree = "<group>"; };
 		A5CBBD1724DAAE7200E27D74 /* FMChangeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMChangeViewController.h; sourceTree = "<group>"; };
 		A5CBBD1824DAAE7200E27D74 /* FMChangeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMChangeViewController.m; sourceTree = "<group>"; };
+		A5E04E8624E11A0C00D4282B /* FMProgressView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMProgressView.h; sourceTree = "<group>"; };
+		A5E04E8724E11A0C00D4282B /* FMProgressView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMProgressView.m; sourceTree = "<group>"; };
+		A5E04E8924E11F8B00D4282B /* FMTimeDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMTimeDataModel.h; sourceTree = "<group>"; };
+		A5E04E8A24E11F8B00D4282B /* FMTimeDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMTimeDataModel.m; sourceTree = "<group>"; };
+		A5E04E8C24E1299300D4282B /* FMProductReportViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMProductReportViewController.h; sourceTree = "<group>"; };
+		A5E04E8D24E1299300D4282B /* FMProductReportViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMProductReportViewController.m; sourceTree = "<group>"; };
+		A5E04E8F24E12B8E00D4282B /* FMGoodsSalesModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMGoodsSalesModel.h; sourceTree = "<group>"; };
+		A5E04E9024E12B8E00D4282B /* FMGoodsSalesModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMGoodsSalesModel.m; sourceTree = "<group>"; };
+		A5E04E9224E1300500D4282B /* FMProductTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMProductTableView.h; sourceTree = "<group>"; };
+		A5E04E9324E1300500D4282B /* FMProductTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMProductTableView.m; sourceTree = "<group>"; };
+		A5E04E9524E13BF700D4282B /* FMStatisticsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMStatisticsView.h; sourceTree = "<group>"; };
+		A5E04E9624E13BF700D4282B /* FMStatisticsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMStatisticsView.m; sourceTree = "<group>"; };
+		A5E04E9824E140ED00D4282B /* FMCustomerSalesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMCustomerSalesViewController.h; sourceTree = "<group>"; };
+		A5E04E9924E140ED00D4282B /* FMCustomerSalesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMCustomerSalesViewController.m; sourceTree = "<group>"; };
+		A5E04E9B24E1440000D4282B /* FMCustomerSalesModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMCustomerSalesModel.h; sourceTree = "<group>"; };
+		A5E04E9C24E1440000D4282B /* FMCustomerSalesModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMCustomerSalesModel.m; sourceTree = "<group>"; };
+		A5E04E9E24E14C2B00D4282B /* FMCircleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMCircleView.h; sourceTree = "<group>"; };
+		A5E04E9F24E14C2B00D4282B /* FMCircleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMCircleView.m; sourceTree = "<group>"; };
 		A85995044031AAF5C2DC3B47 /* Pods_feima.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_feima.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -553,6 +574,8 @@
 				A505606424DB9B9400963C8D /* FeimaManager.h */,
 				A505606524DB9B9400963C8D /* FeimaManager.m */,
 				A505606724DB9BA900963C8D /* Singleton.h */,
+				A5E04E9E24E14C2B00D4282B /* FMCircleView.h */,
+				A5E04E9F24E14C2B00D4282B /* FMCircleView.m */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -603,6 +626,12 @@
 				A5531C9D24DD03F6005EFDF2 /* FMSalesModel.m */,
 				A5531C9F24DD0497005EFDF2 /* FMSalesDataModel.h */,
 				A5531CA024DD0497005EFDF2 /* FMSalesDataModel.m */,
+				A5E04E8924E11F8B00D4282B /* FMTimeDataModel.h */,
+				A5E04E8A24E11F8B00D4282B /* FMTimeDataModel.m */,
+				A5E04E8F24E12B8E00D4282B /* FMGoodsSalesModel.h */,
+				A5E04E9024E12B8E00D4282B /* FMGoodsSalesModel.m */,
+				A5E04E9B24E1440000D4282B /* FMCustomerSalesModel.h */,
+				A5E04E9C24E1440000D4282B /* FMCustomerSalesModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -639,6 +668,10 @@
 				A522E73024D93FFE00DBF5F4 /* FMReportViewController.m */,
 				A530B0E324DCFCEF006CBE64 /* FMSaleReportViewController.h */,
 				A530B0E424DCFCEF006CBE64 /* FMSaleReportViewController.m */,
+				A5E04E8C24E1299300D4282B /* FMProductReportViewController.h */,
+				A5E04E8D24E1299300D4282B /* FMProductReportViewController.m */,
+				A5E04E9824E140ED00D4282B /* FMCustomerSalesViewController.h */,
+				A5E04E9924E140ED00D4282B /* FMCustomerSalesViewController.m */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -648,18 +681,20 @@
 			children = (
 				A530B0E924DCFD95006CBE64 /* FMReportHeadView.h */,
 				A530B0EA24DCFD95006CBE64 /* FMReportHeadView.m */,
-				A5531C9624DCFE8B005EFDF2 /* FMSaleTableViewCell.h */,
-				A5531C9724DCFE8B005EFDF2 /* FMSaleTableViewCell.m */,
 				A5531CAB24DD4B9C005EFDF2 /* FMProductTableViewCell.h */,
 				A5531CAC24DD4B9C005EFDF2 /* FMProductTableViewCell.m */,
+				A5E04E9224E1300500D4282B /* FMProductTableView.h */,
+				A5E04E9324E1300500D4282B /* FMProductTableView.m */,
 				A5531CAE24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.h */,
 				A5531CAF24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.m */,
 				A5531CB124DD4C49005EFDF2 /* FMDailyTableViewCell.h */,
 				A5531CB224DD4C49005EFDF2 /* FMDailyTableViewCell.m */,
 				A5531CB424DD4C72005EFDF2 /* FMMonthTableViewCell.h */,
 				A5531CB524DD4C72005EFDF2 /* FMMonthTableViewCell.m */,
-				A5531CA824DD4A2B005EFDF2 /* FMPieChartView.h */,
-				A5531CA924DD4A2B005EFDF2 /* FMPieChartView.m */,
+				A5E04E8624E11A0C00D4282B /* FMProgressView.h */,
+				A5E04E8724E11A0C00D4282B /* FMProgressView.m */,
+				A5E04E9524E13BF700D4282B /* FMStatisticsView.h */,
+				A5E04E9624E13BF700D4282B /* FMStatisticsView.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -947,6 +982,7 @@
 			files = (
 				A522E72224D93F9500DBF5F4 /* FMInvoicingViewController.m in Sources */,
 				A522E73124D93FFE00DBF5F4 /* FMReportViewController.m in Sources */,
+				A5E04E8E24E1299300D4282B /* FMProductReportViewController.m in Sources */,
 				A522E72E24D93FEA00DBF5F4 /* FMCompanyViewController.m in Sources */,
 				A5CBBCF224DA703F00E27D74 /* FMInContactsViewController.m in Sources */,
 				A51C5E7A24DC05CC000D1FC9 /* UIButton+Extend.m in Sources */,
@@ -981,6 +1017,7 @@
 				A542BB1424DBD46300E68100 /* FMOrderModel.m in Sources */,
 				A51C5E6B24DBE6E4000D1FC9 /* FMGoodsTableViewCell.m in Sources */,
 				A530B0E524DCFCEF006CBE64 /* FMSaleReportViewController.m in Sources */,
+				A5E04EA024E14C2B00D4282B /* FMCircleView.m in Sources */,
 				A5CBBD0D24DAA37600E27D74 /* FMMessageViewController.m in Sources */,
 				A522E72524D93FAE00DBF5F4 /* FMCompetitorViewController.m in Sources */,
 				A522E6EF24D7FE1C00DBF5F4 /* NSUserDefaultsInfos.m in Sources */,
@@ -989,6 +1026,8 @@
 				A5531CB624DD4C72005EFDF2 /* FMMonthTableViewCell.m in Sources */,
 				A522E6FB24D8077D00DBF5F4 /* BaseViewModel.m in Sources */,
 				A522E6F724D8021100DBF5F4 /* FMUserModel.m in Sources */,
+				A5E04E8B24E11F8B00D4282B /* FMTimeDataModel.m in Sources */,
+				A5E04E8824E11A0C00D4282B /* FMProgressView.m in Sources */,
 				A505608B24DBB8D700963C8D /* FMInstrucationTableViewCell.m in Sources */,
 				A5CBBCF524DA706800E27D74 /* FMOutContactsViewController.m in Sources */,
 				A505606324DB981E00963C8D /* FMEmployeeModel.m in Sources */,
@@ -997,6 +1036,7 @@
 				A522E70824D9117D00DBF5F4 /* FMWorkbenchModel.m in Sources */,
 				A522E64224D161A100DBF5F4 /* BaseViewController.m in Sources */,
 				A542BB2924DBE3EB00E68100 /* FMOrderGoodsModel.m in Sources */,
+				A5E04E9124E12B8E00D4282B /* FMGoodsSalesModel.m in Sources */,
 				A57999A924D107C9002491C4 /* main.m in Sources */,
 				A57999B124D108E6002491C4 /* MyTabBarController.m in Sources */,
 				A5CBBD0424DA9A1400E27D74 /* FMHeadView.m in Sources */,
@@ -1005,11 +1045,12 @@
 				A530B0EB24DCFD95006CBE64 /* FMReportHeadView.m in Sources */,
 				A505606A24DB9CDB00963C8D /* BaseTableViewCell.m in Sources */,
 				A5CBBD0A24DAA36700E27D74 /* FMInstallViewController.m in Sources */,
+				A5E04E9D24E1440000D4282B /* FMCustomerSalesModel.m in Sources */,
 				A5531CAD24DD4B9C005EFDF2 /* FMProductTableViewCell.m in Sources */,
+				A5E04E9A24E140ED00D4282B /* FMCustomerSalesViewController.m in Sources */,
+				A5E04E9424E1300600D4282B /* FMProductTableView.m in Sources */,
 				A542BB0D24DBC54B00E68100 /* FMInstrucationModel.m in Sources */,
-				A5531CAA24DD4A2B005EFDF2 /* FMPieChartView.m in Sources */,
 				A5CBBCEF24DA5A4800E27D74 /* NSDate+Extend.m in Sources */,
-				A5531C9824DCFE8B005EFDF2 /* FMSaleTableViewCell.m in Sources */,
 				A542BB1124DBD39100E68100 /* FMInvoicingTableViewCell.m in Sources */,
 				A5531C9E24DD03F6005EFDF2 /* FMSalesModel.m in Sources */,
 				A5CBBD1924DAAE7200E27D74 /* FMChangeViewController.m in Sources */,
@@ -1023,6 +1064,7 @@
 				A542BB2624DBDFFD00E68100 /* FMDistributionTableViewCell.m in Sources */,
 				A542BB1D24DBDCA200E68100 /* SlideMenuView.m in Sources */,
 				A522E71324D93EF500DBF5F4 /* FMVisitViewController.m in Sources */,
+				A5E04E9724E13BF700D4282B /* FMStatisticsView.m in Sources */,
 				A542BB1A24DBDBC700E68100 /* NSString+Extend.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
