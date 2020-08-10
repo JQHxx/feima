@@ -57,9 +57,6 @@
         make.height.mas_equalTo(22);
         make.width.mas_equalTo(labW+20);
     }];
-    
-    
-   
 }
 
 #pragma mark -- Getters
