@@ -7,11 +7,9 @@
 //
 
 #import "FMPieChartView.h"
-#import <XYPieChart/XYPieChart.h>
 
 @interface FMPieChartView ()
 
-@property (nonatomic, strong) XYPieChart *timePieChart;
 
 @end
 

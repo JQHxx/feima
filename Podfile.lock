@@ -25,7 +25,6 @@ PODS:
     - SDWebImage/Core (= 5.7.1)
   - SDWebImage/Core (5.7.1)
   - SVProgressHUD (2.2.5)
-  - XYPieChart (0.2)
   - YYModel (1.0.4)
 
 DEPENDENCIES:
@@ -37,7 +36,6 @@ DEPENDENCIES:
   - MJRefresh
   - SDCycleScrollView
   - SVProgressHUD
-  - XYPieChart
   - YYModel
 
 SPEC REPOS:
@@ -51,7 +49,6 @@ SPEC REPOS:
     - SDCycleScrollView
     - SDWebImage
     - SVProgressHUD
-    - XYPieChart
     - YYModel
 
 SPEC CHECKSUMS:
@@ -64,9 +61,8 @@ SPEC CHECKSUMS:
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
   SDWebImage: 5d4cf6afccd9ac1d2ee701ed0c4917cbb1b80536
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  XYPieChart: 0efd8069d26c25d20ab74c01b5ad455f1fc48153
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 316456685b37e9a866bba6383058dab875ece4fa
+PODFILE CHECKSUM: d0e59c1b5160895de864b101e9814e1070269fc9
 
 COCOAPODS: 1.9.1
