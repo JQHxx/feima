@@ -10,6 +10,7 @@
 #import "FMTimeDataModel.h"
 #import "FMSalesDataModel.h"
 #import "FMGoodsSalesModel.h"
+#import "FMCustomerSalesModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)displayViewWithGoodsData:(NSArray *)goodsData salesData:(FMSalesDataModel *)salesData;
 
-- (void)displayViewWithCustomerData;
+- (void)displayViewWithCustomerData:(FMCustomerDataModel *)customerData;
+
+- (void)displayViewWithCompetitorData;
 
 @end
 

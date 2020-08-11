@@ -7,13 +7,15 @@
 //
 
 #import "FMCustomerViewController.h"
+#import "FMAddCustomerViewController.h"
 #import "FMCustomerTableViewCell.h"
 #import "FMCustomerModel.h"
 
 @interface FMCustomerViewController ()<UITableViewDelegate,UITableViewDataSource>
 
-@property (nonatomic, strong) UIButton    *filterBtn;
-@property (nonatomic, strong) UITableView *customerTableView;
+@property (nonatomic, strong) UIButton        *filterBtn;
+@property (nonatomic, strong) UITableView     *customerTableView;
+@property (nonatomic, strong) UIButton        *addBtn;
 @property (nonatomic, strong) NSMutableArray  *customerArray;
 
 @end
@@ -43,6 +45,13 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 120;
+}
+
+#pragma mark -- Events response
+#pragma mark 新增客户
+- (void)addCustomerAction:(UIButton *)sender {
+    FMAddCustomerViewController *addCustomerVC = [[FMAddCustomerViewController alloc] init];
+    [self.navigationController pushViewController:addCustomerVC animated:YES];
 }
 
 #pragma mark -- Private methods
@@ -78,6 +87,13 @@
         make.left.right.mas_equalTo(0);
         make.height.mas_equalTo(kScreen_Height-kNavBar_Height);
     }];
+    
+    [self.view addSubview:self.addBtn];
+    [self.addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-20);
+        make.bottom.mas_equalTo(-(kTabBar_Height-30));
+        make.size.mas_equalTo(CGSizeMake(60, 60));
+    }];
 }
 
 #pragma mark -- Getters
@@ -105,6 +121,14 @@
         _customerTableView.backgroundColor = [UIColor colorWithHexString:@"#F8F8F8"];
     }
     return _customerTableView;
+}
+
+#pragma mark 添加商品
+- (UIButton *)addBtn {
+    if (!_addBtn) {
+        _addBtn = [UIButton addButtonWithTarget:self selector:@selector(addCustomerAction:)];
+    }
+    return _addBtn;
 }
 
 - (NSMutableArray *)customerArray {

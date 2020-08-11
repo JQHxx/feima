@@ -17,6 +17,8 @@ typedef enum : NSUInteger {
 
 @interface FMStatisticsView : UIView
 
+@property (nonatomic, copy ) NSString *valueStr;
+
 - (instancetype)initWithFrame:(CGRect)frame type:(FMStatisticsViewType)type;
 
 @end

@@ -22,4 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface FMCustomerDataModel : BaseModel
+
+@property (nonatomic, assign) NSInteger  addCustomer;
+@property (nonatomic, assign) NSInteger  customerSum;
+
+@end
+
 NS_ASSUME_NONNULL_END

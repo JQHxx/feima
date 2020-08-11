@@ -67,9 +67,19 @@
 		A5531C9E24DD03F6005EFDF2 /* FMSalesModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531C9D24DD03F6005EFDF2 /* FMSalesModel.m */; };
 		A5531CA124DD0497005EFDF2 /* FMSalesDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CA024DD0497005EFDF2 /* FMSalesDataModel.m */; };
 		A5531CAD24DD4B9C005EFDF2 /* FMProductTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CAC24DD4B9C005EFDF2 /* FMProductTableViewCell.m */; };
-		A5531CB024DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CAF24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.m */; };
 		A5531CB324DD4C49005EFDF2 /* FMDailyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CB224DD4C49005EFDF2 /* FMDailyTableViewCell.m */; };
-		A5531CB624DD4C72005EFDF2 /* FMMonthTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5531CB524DD4C72005EFDF2 /* FMMonthTableViewCell.m */; };
+		A570FC6724E23551007A15FD /* FMCompetitorDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC6624E23551007A15FD /* FMCompetitorDataView.m */; };
+		A570FC6A24E23B6E007A15FD /* FMAttendanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC6924E23B6E007A15FD /* FMAttendanceViewController.m */; };
+		A570FC7024E23E8E007A15FD /* FMDailyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC6F24E23E8E007A15FD /* FMDailyViewController.m */; };
+		A570FC7324E23EAD007A15FD /* FMMonthyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC7224E23EAD007A15FD /* FMMonthyViewController.m */; };
+		A570FC7624E23FE9007A15FD /* FMDailyHeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC7524E23FE9007A15FD /* FMDailyHeadView.m */; };
+		A570FC7924E2402E007A15FD /* FMMonthHeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC7824E2402E007A15FD /* FMMonthHeadView.m */; };
+		A570FC7C24E2419E007A15FD /* FMDateToolView.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC7B24E2419E007A15FD /* FMDateToolView.m */; };
+		A570FC7F24E2494B007A15FD /* UIImage+Extend.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC7E24E2494B007A15FD /* UIImage+Extend.m */; };
+		A570FC8224E24B30007A15FD /* FMMonthyReportModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC8124E24B30007A15FD /* FMMonthyReportModel.m */; };
+		A570FC8524E26FF5007A15FD /* FMDailyReportModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC8424E26FF5007A15FD /* FMDailyReportModel.m */; };
+		A570FC8824E27BB0007A15FD /* FMDailyDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC8724E27BB0007A15FD /* FMDailyDetailsViewController.m */; };
+		A570FC8B24E28265007A15FD /* FMAddCustomerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A570FC8A24E28265007A15FD /* FMAddCustomerViewController.m */; };
 		A579999824D107C3002491C4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A579999724D107C3002491C4 /* AppDelegate.m */; };
 		A57999A324D107C9002491C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A57999A224D107C9002491C4 /* Assets.xcassets */; };
 		A57999A624D107C9002491C4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A57999A424D107C9002491C4 /* LaunchScreen.storyboard */; };
@@ -225,12 +235,32 @@
 		A5531CA024DD0497005EFDF2 /* FMSalesDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMSalesDataModel.m; sourceTree = "<group>"; };
 		A5531CAB24DD4B9C005EFDF2 /* FMProductTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMProductTableViewCell.h; sourceTree = "<group>"; };
 		A5531CAC24DD4B9C005EFDF2 /* FMProductTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMProductTableViewCell.m; sourceTree = "<group>"; };
-		A5531CAE24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMCustomerSalesTableViewCell.h; sourceTree = "<group>"; };
-		A5531CAF24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMCustomerSalesTableViewCell.m; sourceTree = "<group>"; };
 		A5531CB124DD4C49005EFDF2 /* FMDailyTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMDailyTableViewCell.h; sourceTree = "<group>"; };
 		A5531CB224DD4C49005EFDF2 /* FMDailyTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMDailyTableViewCell.m; sourceTree = "<group>"; };
-		A5531CB424DD4C72005EFDF2 /* FMMonthTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMMonthTableViewCell.h; sourceTree = "<group>"; };
-		A5531CB524DD4C72005EFDF2 /* FMMonthTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMMonthTableViewCell.m; sourceTree = "<group>"; };
+		A570FC6524E23551007A15FD /* FMCompetitorDataView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMCompetitorDataView.h; sourceTree = "<group>"; };
+		A570FC6624E23551007A15FD /* FMCompetitorDataView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMCompetitorDataView.m; sourceTree = "<group>"; };
+		A570FC6824E23B6E007A15FD /* FMAttendanceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMAttendanceViewController.h; sourceTree = "<group>"; };
+		A570FC6924E23B6E007A15FD /* FMAttendanceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMAttendanceViewController.m; sourceTree = "<group>"; };
+		A570FC6E24E23E8E007A15FD /* FMDailyViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMDailyViewController.h; sourceTree = "<group>"; };
+		A570FC6F24E23E8E007A15FD /* FMDailyViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMDailyViewController.m; sourceTree = "<group>"; };
+		A570FC7124E23EAD007A15FD /* FMMonthyViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMMonthyViewController.h; sourceTree = "<group>"; };
+		A570FC7224E23EAD007A15FD /* FMMonthyViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMMonthyViewController.m; sourceTree = "<group>"; };
+		A570FC7424E23FE9007A15FD /* FMDailyHeadView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMDailyHeadView.h; sourceTree = "<group>"; };
+		A570FC7524E23FE9007A15FD /* FMDailyHeadView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMDailyHeadView.m; sourceTree = "<group>"; };
+		A570FC7724E2402E007A15FD /* FMMonthHeadView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMMonthHeadView.h; sourceTree = "<group>"; };
+		A570FC7824E2402E007A15FD /* FMMonthHeadView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMMonthHeadView.m; sourceTree = "<group>"; };
+		A570FC7A24E2419E007A15FD /* FMDateToolView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMDateToolView.h; sourceTree = "<group>"; };
+		A570FC7B24E2419E007A15FD /* FMDateToolView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMDateToolView.m; sourceTree = "<group>"; };
+		A570FC7D24E2494B007A15FD /* UIImage+Extend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Extend.h"; sourceTree = "<group>"; };
+		A570FC7E24E2494B007A15FD /* UIImage+Extend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Extend.m"; sourceTree = "<group>"; };
+		A570FC8024E24B30007A15FD /* FMMonthyReportModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMMonthyReportModel.h; sourceTree = "<group>"; };
+		A570FC8124E24B30007A15FD /* FMMonthyReportModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMMonthyReportModel.m; sourceTree = "<group>"; };
+		A570FC8324E26FF5007A15FD /* FMDailyReportModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMDailyReportModel.h; sourceTree = "<group>"; };
+		A570FC8424E26FF5007A15FD /* FMDailyReportModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMDailyReportModel.m; sourceTree = "<group>"; };
+		A570FC8624E27BB0007A15FD /* FMDailyDetailsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMDailyDetailsViewController.h; sourceTree = "<group>"; };
+		A570FC8724E27BB0007A15FD /* FMDailyDetailsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMDailyDetailsViewController.m; sourceTree = "<group>"; };
+		A570FC8924E28265007A15FD /* FMAddCustomerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMAddCustomerViewController.h; sourceTree = "<group>"; };
+		A570FC8A24E28265007A15FD /* FMAddCustomerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMAddCustomerViewController.m; sourceTree = "<group>"; };
 		A579999324D107C3002491C4 /* 飞马外勤.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "飞马外勤.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A579999624D107C3002491C4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A579999724D107C3002491C4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -396,6 +426,8 @@
 			children = (
 				A522E70E24D93EE800DBF5F4 /* FMCustomerViewController.h */,
 				A522E70F24D93EE800DBF5F4 /* FMCustomerViewController.m */,
+				A570FC8924E28265007A15FD /* FMAddCustomerViewController.h */,
+				A570FC8A24E28265007A15FD /* FMAddCustomerViewController.m */,
 				A522E71124D93EF500DBF5F4 /* FMVisitViewController.h */,
 				A522E71224D93EF500DBF5F4 /* FMVisitViewController.m */,
 			);
@@ -542,6 +574,8 @@
 		A522E65224D166B300DBF5F4 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				A570FC7D24E2494B007A15FD /* UIImage+Extend.h */,
+				A570FC7E24E2494B007A15FD /* UIImage+Extend.m */,
 				A542BB1824DBDBC600E68100 /* NSString+Extend.h */,
 				A542BB1924DBDBC600E68100 /* NSString+Extend.m */,
 				A505606F24DBABF700963C8D /* UISegmentedControl+Extend.h */,
@@ -576,6 +610,8 @@
 				A505606724DB9BA900963C8D /* Singleton.h */,
 				A5E04E9E24E14C2B00D4282B /* FMCircleView.h */,
 				A5E04E9F24E14C2B00D4282B /* FMCircleView.m */,
+				A570FC7A24E2419E007A15FD /* FMDateToolView.h */,
+				A570FC7B24E2419E007A15FD /* FMDateToolView.m */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -632,6 +668,10 @@
 				A5E04E9024E12B8E00D4282B /* FMGoodsSalesModel.m */,
 				A5E04E9B24E1440000D4282B /* FMCustomerSalesModel.h */,
 				A5E04E9C24E1440000D4282B /* FMCustomerSalesModel.m */,
+				A570FC8024E24B30007A15FD /* FMMonthyReportModel.h */,
+				A570FC8124E24B30007A15FD /* FMMonthyReportModel.m */,
+				A570FC8324E26FF5007A15FD /* FMDailyReportModel.h */,
+				A570FC8424E26FF5007A15FD /* FMDailyReportModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -672,6 +712,14 @@
 				A5E04E8D24E1299300D4282B /* FMProductReportViewController.m */,
 				A5E04E9824E140ED00D4282B /* FMCustomerSalesViewController.h */,
 				A5E04E9924E140ED00D4282B /* FMCustomerSalesViewController.m */,
+				A570FC6824E23B6E007A15FD /* FMAttendanceViewController.h */,
+				A570FC6924E23B6E007A15FD /* FMAttendanceViewController.m */,
+				A570FC6E24E23E8E007A15FD /* FMDailyViewController.h */,
+				A570FC6F24E23E8E007A15FD /* FMDailyViewController.m */,
+				A570FC8624E27BB0007A15FD /* FMDailyDetailsViewController.h */,
+				A570FC8724E27BB0007A15FD /* FMDailyDetailsViewController.m */,
+				A570FC7124E23EAD007A15FD /* FMMonthyViewController.h */,
+				A570FC7224E23EAD007A15FD /* FMMonthyViewController.m */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -685,16 +733,18 @@
 				A5531CAC24DD4B9C005EFDF2 /* FMProductTableViewCell.m */,
 				A5E04E9224E1300500D4282B /* FMProductTableView.h */,
 				A5E04E9324E1300500D4282B /* FMProductTableView.m */,
-				A5531CAE24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.h */,
-				A5531CAF24DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.m */,
+				A570FC7424E23FE9007A15FD /* FMDailyHeadView.h */,
+				A570FC7524E23FE9007A15FD /* FMDailyHeadView.m */,
+				A570FC7724E2402E007A15FD /* FMMonthHeadView.h */,
+				A570FC7824E2402E007A15FD /* FMMonthHeadView.m */,
 				A5531CB124DD4C49005EFDF2 /* FMDailyTableViewCell.h */,
 				A5531CB224DD4C49005EFDF2 /* FMDailyTableViewCell.m */,
-				A5531CB424DD4C72005EFDF2 /* FMMonthTableViewCell.h */,
-				A5531CB524DD4C72005EFDF2 /* FMMonthTableViewCell.m */,
 				A5E04E8624E11A0C00D4282B /* FMProgressView.h */,
 				A5E04E8724E11A0C00D4282B /* FMProgressView.m */,
 				A5E04E9524E13BF700D4282B /* FMStatisticsView.h */,
 				A5E04E9624E13BF700D4282B /* FMStatisticsView.m */,
+				A570FC6524E23551007A15FD /* FMCompetitorDataView.h */,
+				A570FC6624E23551007A15FD /* FMCompetitorDataView.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -988,6 +1038,7 @@
 				A51C5E7A24DC05CC000D1FC9 /* UIButton+Extend.m in Sources */,
 				A522E64824D165A700DBF5F4 /* FMAddressViewController.m in Sources */,
 				A5CBBCEC24D9535B00E27D74 /* FMLocationView.m in Sources */,
+				A570FC6A24E23B6E007A15FD /* FMAttendanceViewController.m in Sources */,
 				A522E6E224D7B2AB00DBF5F4 /* HttpRequest.m in Sources */,
 				A522E72824D93FC700DBF5F4 /* FMEmployeeViewController.m in Sources */,
 				A522E6F424D8014600DBF5F4 /* BaseModel.m in Sources */,
@@ -997,6 +1048,7 @@
 				A522E6E724D7B38300DBF5F4 /* FMLoginViewController.m in Sources */,
 				A51C5E6E24DBEE15000D1FC9 /* FMAddGoodsViewController.m in Sources */,
 				A505606024DB96F900963C8D /* FMMessageModel.m in Sources */,
+				A570FC8524E26FF5007A15FD /* FMDailyReportModel.m in Sources */,
 				A579999824D107C3002491C4 /* AppDelegate.m in Sources */,
 				A522E71624D93F0E00DBF5F4 /* FMWorkRouteViewController.m in Sources */,
 				A522E71024D93EE800DBF5F4 /* FMCustomerViewController.m in Sources */,
@@ -1012,18 +1064,21 @@
 				A5CBBCFE24DA86A000E27D74 /* FMCustomerTableViewCell.m in Sources */,
 				A5531CA124DD0497005EFDF2 /* FMSalesDataModel.m in Sources */,
 				A522E72B24D93FD300DBF5F4 /* FMGoodsViewController.m in Sources */,
+				A570FC8224E24B30007A15FD /* FMMonthyReportModel.m in Sources */,
+				A570FC7324E23EAD007A15FD /* FMMonthyViewController.m in Sources */,
 				A505607124DBABF700963C8D /* UISegmentedControl+Extend.m in Sources */,
+				A570FC8B24E28265007A15FD /* FMAddCustomerViewController.m in Sources */,
+				A570FC7F24E2494B007A15FD /* UIImage+Extend.m in Sources */,
 				A5CBBCF824DA854C00E27D74 /* FMContactsTableViewCell.m in Sources */,
 				A542BB1424DBD46300E68100 /* FMOrderModel.m in Sources */,
 				A51C5E6B24DBE6E4000D1FC9 /* FMGoodsTableViewCell.m in Sources */,
 				A530B0E524DCFCEF006CBE64 /* FMSaleReportViewController.m in Sources */,
 				A5E04EA024E14C2B00D4282B /* FMCircleView.m in Sources */,
 				A5CBBD0D24DAA37600E27D74 /* FMMessageViewController.m in Sources */,
+				A570FC7C24E2419E007A15FD /* FMDateToolView.m in Sources */,
 				A522E72524D93FAE00DBF5F4 /* FMCompetitorViewController.m in Sources */,
 				A522E6EF24D7FE1C00DBF5F4 /* NSUserDefaultsInfos.m in Sources */,
 				A522E6EB24D7B5B900DBF5F4 /* UIView+Extend.m in Sources */,
-				A5531CB024DD4BDE005EFDF2 /* FMCustomerSalesTableViewCell.m in Sources */,
-				A5531CB624DD4C72005EFDF2 /* FMMonthTableViewCell.m in Sources */,
 				A522E6FB24D8077D00DBF5F4 /* BaseViewModel.m in Sources */,
 				A522E6F724D8021100DBF5F4 /* FMUserModel.m in Sources */,
 				A5E04E8B24E11F8B00D4282B /* FMTimeDataModel.m in Sources */,
@@ -1032,16 +1087,21 @@
 				A5CBBCF524DA706800E27D74 /* FMOutContactsViewController.m in Sources */,
 				A505606324DB981E00963C8D /* FMEmployeeModel.m in Sources */,
 				A5CBBD0724DAA35B00E27D74 /* FMUserInfoViewController.m in Sources */,
+				A570FC7624E23FE9007A15FD /* FMDailyHeadView.m in Sources */,
 				A505606E24DB9FDA00963C8D /* FMCustomerModel.m in Sources */,
 				A522E70824D9117D00DBF5F4 /* FMWorkbenchModel.m in Sources */,
 				A522E64224D161A100DBF5F4 /* BaseViewController.m in Sources */,
 				A542BB2924DBE3EB00E68100 /* FMOrderGoodsModel.m in Sources */,
+				A570FC8824E27BB0007A15FD /* FMDailyDetailsViewController.m in Sources */,
 				A5E04E9124E12B8E00D4282B /* FMGoodsSalesModel.m in Sources */,
 				A57999A924D107C9002491C4 /* main.m in Sources */,
+				A570FC7924E2402E007A15FD /* FMMonthHeadView.m in Sources */,
 				A57999B124D108E6002491C4 /* MyTabBarController.m in Sources */,
+				A570FC6724E23551007A15FD /* FMCompetitorDataView.m in Sources */,
 				A5CBBD0424DA9A1400E27D74 /* FMHeadView.m in Sources */,
 				A505608724DBB38600963C8D /* FMEmployeeTableViewCell.m in Sources */,
 				A522E71924D93F3000DBF5F4 /* FMDistributedViewController.m in Sources */,
+				A570FC7024E23E8E007A15FD /* FMDailyViewController.m in Sources */,
 				A530B0EB24DCFD95006CBE64 /* FMReportHeadView.m in Sources */,
 				A505606A24DB9CDB00963C8D /* BaseTableViewCell.m in Sources */,
 				A5CBBD0A24DAA36700E27D74 /* FMInstallViewController.m in Sources */,

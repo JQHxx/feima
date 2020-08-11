@@ -9,6 +9,7 @@
 #import "FMReportHeadView.h"
 #import "FMProgressView.h"
 #import "FMStatisticsView.h"
+#import "FMCompetitorDataView.h"
 
 @interface FMReportHeadView ()
 
@@ -59,10 +60,20 @@
     [saleProgressView startRendering];
 }
 
-- (void)displayViewWithCustomerData {
-    FMStatisticsView *view = [[FMStatisticsView alloc] initWithFrame:CGRectMake(0, 0, 140, 140) type:FMStatisticsViewTypeCustomer];
-    view.center = self.center;
+#pragma mark 客户销售报表
+- (void)displayViewWithCustomerData:(FMCustomerDataModel *)customerData {
+    FMStatisticsView *view = [[FMStatisticsView alloc] initWithFrame:CGRectMake((kScreen_Width-165)/2.0, 35, 140, 140) type:FMStatisticsViewTypeCustomer];
+    view.valueStr = [NSString stringWithFormat:@"%ld/%ld",customerData.addCustomer,customerData.customerSum];
     [self.rootView addSubview:view];
+}
+
+#pragma mark 竞品销售报表
+- (void)displayViewWithCompetitorData {
+    FMCompetitorDataView *dataView = [[FMCompetitorDataView alloc] initWithFrame:CGRectMake(30, 40, kScreen_Width-150, 140)];
+    [self.rootView addSubview:dataView];
+    
+    [dataView setDatas:@[@(75),@(15),@(10)] colors:@[[UIColor colorWithHexString:@"#3AA1FF"],[UIColor colorWithHexString:@"#FE304B"],[UIColor colorWithHexString:@"#FFCF4E"]]];
+    [dataView stroke];
 }
 
 #pragma mark -- Private methods

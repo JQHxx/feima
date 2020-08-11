@@ -10,6 +10,7 @@
 #import "FMSaleReportViewController.h"
 #import "FMProductReportViewController.h"
 #import "FMCustomerSalesViewController.h"
+#import "FMAttendanceViewController.h"
 
 @interface FMReportViewController ()<UITableViewDataSource,UITableViewDelegate>{
     NSArray  *titlesArr;
@@ -54,11 +55,15 @@
         [self.navigationController pushViewController:saleVC animated:YES];
     } else if (indexPath.row == 2 || indexPath.row == 5) {
         FMCustomerSalesViewController *salesVC = [[FMCustomerSalesViewController alloc] init];
+        salesVC.isCustomerSales = indexPath.row == 2;
         [self.navigationController pushViewController:salesVC animated:YES];
     } else if (indexPath.row == 3 || indexPath.row == 4) {
         FMProductReportViewController *productVC = [[FMProductReportViewController alloc] init];
         productVC.type = indexPath.row - 3;
         [self.navigationController pushViewController:productVC animated:YES];
+    } else {
+        FMAttendanceViewController *attendanceVC = [[FMAttendanceViewController alloc] init];
+        [self.navigationController pushViewController:attendanceVC animated:YES];
     }
 }
 

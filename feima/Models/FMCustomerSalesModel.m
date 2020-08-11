@@ -11,3 +11,9 @@
 @implementation FMCustomerSalesModel
 
 @end
+
+@implementation FMCustomerDataModel
+
+
+
+@end

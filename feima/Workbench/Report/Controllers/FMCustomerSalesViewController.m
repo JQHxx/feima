@@ -24,7 +24,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.baseTitle = @"客户销售报表";
+    self.baseTitle = self.isCustomerSales ? @"客户销售报表" : @"竞品分析报表";
     
     self.view.backgroundColor = [UIColor colorWithHexString:@"#F6F7F8"];
     
@@ -61,7 +61,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FMCustomerSalesTableViewCell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FMCustomerSalesTableViewCell" forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     FMCustomerSalesModel *goods = self.reportArray[indexPath.row];
@@ -104,7 +104,15 @@
     self.reportArray = tempArr;
     [self.reportTableView reloadData];
     
-    [self.headView displayViewWithCustomerData];
+    if (self.isCustomerSales) {
+        FMCustomerDataModel *model = [[FMCustomerDataModel alloc] init];
+        model.addCustomer = 80;
+        model.customerSum = 120;
+        
+        [self.headView displayViewWithCustomerData:model];
+    } else {
+        [self.headView displayViewWithCompetitorData];
+    }
 }
 
 #pragma mark -- Getters
@@ -119,7 +127,7 @@
 #pragma mark 销售报表
 - (UITableView *)reportTableView {
     if (!_reportTableView) {
-        _reportTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, kNavBar_Height, kScreen_Width, kScreen_Height-kNavBar_Height) style:UITableViewStylePlain];
+        _reportTableView = [[UITableView alloc] initWithFrame:CGRectMake(8, kNavBar_Height, kScreen_Width-16, kScreen_Height-kNavBar_Height) style:UITableViewStylePlain];
         _reportTableView.delegate = self;
         _reportTableView.dataSource = self;
         _reportTableView.showsVerticalScrollIndicator = NO;

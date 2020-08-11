@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FMCustomerSalesViewController : BaseViewController
 
+@property (nonatomic,assign) BOOL isCustomerSales;
+
 @end
 
 NS_ASSUME_NONNULL_END
