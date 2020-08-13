@@ -7,13 +7,15 @@
 //
 
 #import "FMEmployeeViewController.h"
-#import "UISegmentedControl+Extend.h"
+#import "FMEditEmployeeViewController.h"
+#import "FMEmployeeInfoViewController.h"
 #import "FMEmployeeTableViewCell.h"
 #import "FMEmployeeModel.h"
 
 @interface FMEmployeeViewController ()<UISearchBarDelegate,UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic, strong) UISegmentedControl *segmentedControl;
+@property (nonatomic, strong) UIButton           *addBtn;
 @property (nonatomic, strong) UISearchBar        *searchBar;
 @property (nonatomic, strong) UITableView        *employeeTableView;
 @property (nonatomic, strong) NSMutableArray     *employeeArray;
@@ -46,6 +48,20 @@
     return 54;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    FMEmployeeModel * model = self.employeeArray[indexPath.row];
+    FMEmployeeInfoViewController *infoVC = [[FMEmployeeInfoViewController alloc] init];
+    infoVC.employeeModel = model;
+    [self.navigationController pushViewController:infoVC animated:YES];
+}
+
+#pragma mark -- Events
+#pragma mark 添加员工
+- (void)addEmployeeAction:(UIButton *)sender {
+    FMEditEmployeeViewController *addEmployeeVC = [[FMEditEmployeeViewController alloc] init];
+    [self.navigationController pushViewController:addEmployeeVC animated:YES];
+}
+
 #pragma mark -- Private methods
 #pragma mark Load Data
 - (void)loadEmployeeData {
@@ -54,7 +70,10 @@
     for (NSInteger i=0; i<arr.count; i++) {
         FMEmployeeModel * model = [[FMEmployeeModel alloc] init];
         model.name = arr[i];
-        model.organizationName = @"业务员";
+        model.organizationName = @"飞马测试";
+        model.telephone = @"13548761594";
+        model.companyName = @"飞马总部";
+        model.postName = @"业务员";
         [tempArr addObject:model];
     }
     self.employeeArray = tempArr;
@@ -68,6 +87,13 @@
         make.top.mas_equalTo(kStatusBar_Height+2);
         make.centerX.mas_equalTo(self.view.mas_centerX);
         make.size.mas_equalTo(CGSizeMake(150, 40));
+    }];
+    
+    [self.view addSubview:self.addBtn];
+    [self.addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(self.view.mas_right).offset(-10);
+        make.top.mas_equalTo(kStatusBar_Height+6);
+        make.size.mas_equalTo(CGSizeMake(30, 30));
     }];
     
     [self.view addSubview:self.searchBar];
@@ -89,12 +115,22 @@
 #pragma mark 菜单
 - (UISegmentedControl *)segmentedControl {
     if (!_segmentedControl) {
-        _segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"正常",@"禁用"]];
+        _segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"启用",@"禁用"]];
         [_segmentedControl setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]} forState:UIControlStateNormal];
         [_segmentedControl setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor systemColor]} forState:UIControlStateSelected];
         _segmentedControl.selectedSegmentIndex = 0;
     }
     return _segmentedControl;
+}
+
+#pragma mark 添加
+- (UIButton *)addBtn {
+    if (!_addBtn) {
+        _addBtn = [[UIButton alloc] init];
+        [_addBtn setImage:ImageNamed(@"add_white") forState:UIControlStateNormal];
+        [_addBtn addTarget:self action:@selector(addEmployeeAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _addBtn;;
 }
 
 #pragma mark 搜索

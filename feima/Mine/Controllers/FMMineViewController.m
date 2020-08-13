@@ -71,10 +71,7 @@
 - (FMHeadView *)headView {
     if (!_headView) {
         _headView = [[FMHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width,kNavBar_Height+120)];
-        _headView.userInteractionEnabled = YES;
-        
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(userInfoAction:)];
-        [_headView addGestureRecognizer:tap];
+        [_headView addTapPressed:@selector(userInfoAction:) target:self];
     }
     return _headView;
 }

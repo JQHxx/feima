@@ -38,7 +38,7 @@
 - (void)fillContentWithData:(id)obj {
     FMEmployeeModel *model = (FMEmployeeModel *)obj;
     self.nameLabel.text = model.name;
-    self.typeLabel.text = [model.organizationName substringToIndex:1];
+    self.typeLabel.text = [model.postName substringToIndex:1];
 }
 
 #pragma mark -- Private methods
@@ -49,7 +49,6 @@
         make.centerY.mas_equalTo(self.contentView.mas_centerY);
         make.size.mas_equalTo(CGSizeMake(36, 36));
     }];
-    
     
     [self.contentView addSubview:self.nameLabel];
     [self.nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -111,7 +110,7 @@
 - (UIButton *)moreBtn {
     if (!_moreBtn) {
         _moreBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_moreBtn setImage:ImageNamed(@"back_theme") forState:UIControlStateNormal];
+        [_moreBtn setImage:ImageNamed(@"more") forState:UIControlStateNormal];
         [_moreBtn addTarget:self action:@selector(moreAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _moreBtn;

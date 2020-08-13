@@ -24,7 +24,8 @@
 @property (nonatomic, strong) UITextField    *areaTextField; //陈列面积
 @property (nonatomic, strong) UILabel        *followPressLab; //跟进进度
 @property (nonatomic, strong) UILabel        *followLab;    //跟进人
-@property (nonatomic, strong) UIButton       *submitBtn; //保存
+
+@property (nonatomic, strong) UIView         *bottomView;
 
 @end
 
@@ -32,7 +33,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.baseTitle = @"新增客户";
+    self.baseTitle = self.customerModel ? @"修改客户信息" : @"新增客户";
     
     titlesArr = @[@{@"title":@"基本信息",@"subtitles":@[@"名称*",@"简称",@"联系人*",@"手机号*",@"位置*",@"门头照(0/5)"]},@{@"title":@"详细信息",@"subtitles":@[@"行业类型*",@"客户等级*",@"陈列面积*",@"跟进进度*",@"跟进人"]}];
     
@@ -85,6 +86,7 @@
     [cell.contentView addSubview:lab];
     
     if (indexPath.section == 0 ) {
+        cell.accessoryType = UITableViewCellAccessoryNone;
         if (indexPath.row < 4) {
             UITextField *textField = [self setupTextFieldWithPlaceholder:titleStr];
             [cell.contentView addSubview:textField];
@@ -110,9 +112,11 @@
         }
     } else {
         if (indexPath.row == 2) { //陈列面积
+            cell.accessoryType = UITableViewCellAccessoryNone;
             [cell.contentView addSubview:self.areaTextField];
         } else {
-            UILabel *valueLab = [self setupLabelWithTitleStr:titleStr];
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            UILabel *valueLab = [self setupLabelWithTitleStr:titleStr tag:indexPath.section*100+indexPath.row];
             [cell.contentView addSubview:valueLab];
             if (indexPath.row == 0) { //行业类型
                 self.industryLab = valueLab;
@@ -124,6 +128,23 @@
                 self.followLab = valueLab;
             }
         }
+    }
+    if (self.customerModel) {
+        self.nameTextField.text = self.customerModel.businessName;
+        self.shortNameTextField.text = self.customerModel.nickName;
+        self.contactTextField.text = self.customerModel.contactName;
+        self.phoneTextField.text = [NSString stringWithFormat:@"%ld",self.customerModel.telephone];
+        self.addressLabel.text = self.customerModel.address;
+        
+        self.industryLab.textColor = [UIColor colorWithHexString:@"#666666"];
+        self.industryLab.text = self.customerModel.industryName;
+        self.levelLab.textColor = [UIColor colorWithHexString:@"#666666"];
+        self.levelLab.text = self.customerModel.gradeName;
+        self.areaTextField.text = [NSString stringWithFormat:@"%ld",self.customerModel.displayArea];
+        self.followPressLab.textColor = [UIColor colorWithHexString:@"#666666"];
+        self.followPressLab.text = self.customerModel.progressName;
+        self.followLab.textColor = [UIColor colorWithHexString:@"#666666"];
+        self.followLab.text = self.customerModel.employeeName;
     }
     return cell;
 }
@@ -168,7 +189,8 @@
 
 #pragma mark
 - (void)selectedInfoAction:(UITapGestureRecognizer *)gesture {
-    
+    NSInteger tag = gesture.view.tag;
+    MyLog(@"tag:%ld",tag);
 }
 
 #pragma mark -- Private methods
@@ -180,15 +202,6 @@
         make.left.right.mas_equalTo(0);
         make.height.mas_equalTo(kScreen_Height-kNavBar_Height);
     }];
-    
-    /*
-    [self.view addSubview:self.submitBtn];
-    [self.submitBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self.myTableView.mas_bottom).offset(30);
-        make.left.mas_equalTo(18);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-36, 46));
-    }];
-     */
 }
 
 #pragma mark setup title label
@@ -209,7 +222,7 @@
 }
 
 #pragma mark setup Label
-- (UILabel *)setupLabelWithTitleStr:(NSString *)titleStr {
+- (UILabel *)setupLabelWithTitleStr:(NSString *)titleStr tag:(NSInteger)tag{
     UILabel *valueLab = [[UILabel alloc] initWithFrame:CGRectMake(105, 15,kScreen_Width-115, 30)];
     valueLab.font = [UIFont regularFontWithSize:14];
     valueLab.textColor = [UIColor colorWithHexString:@"#999999"];
@@ -217,7 +230,9 @@
     if ([titleStr containsString:@"*"]) {
         placeholder = [titleStr substringToIndex:titleStr.length-1];
     }
-    valueLab.text = [NSString stringWithFormat:@"请填写%@",placeholder];
+    valueLab.text = [NSString stringWithFormat:@"请选择%@",placeholder];
+    valueLab.tag = tag;
+    [valueLab addTapPressed:@selector(selectedInfoAction:) target:self];
     return valueLab;
 }
 
@@ -239,6 +254,16 @@
 }
 
 #pragma mark -- Getters
+#pragma mark 提交
+- (UIView *)bottomView {
+    if (!_bottomView) {
+        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 80)];
+        UIButton *submitBtn = [UIButton submitButtonWithFrame:CGRectMake(18, 20, kScreen_Width-36, 46) title:@"保存" target:self selector:@selector(submitCustomerAction:)];
+        [_bottomView addSubview:submitBtn];
+    }
+    return _bottomView;
+}
+
 #pragma mark tableView
 - (UITableView *)myTableView {
     if (!_myTableView) {
@@ -246,8 +271,8 @@
         _myTableView.delegate = self;
         _myTableView.dataSource = self;
         _myTableView.showsVerticalScrollIndicator = NO;
-//        _myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _myTableView.backgroundColor = [UIColor whiteColor];
+        _myTableView.tableFooterView = self.bottomView;
     }
     return _myTableView;
 }
@@ -270,14 +295,6 @@
         _areaTextField = [self setupTextFieldWithPlaceholder:@"陈列面积"];
     }
     return _areaTextField;
-}
-
-#pragma mark 提交
-- (UIButton *)submitBtn {
-    if (!_submitBtn) {
-        _submitBtn = [UIButton submitButtonWithFrame:CGRectZero title:@"保存" target:self selector:@selector(submitCustomerAction:)];
-    }
-    return _submitBtn;
 }
 
 

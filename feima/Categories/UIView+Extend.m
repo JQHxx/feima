@@ -153,4 +153,11 @@
     self.layer.mask = maskLayer;
 }
 
+#pragma mark 添加点击事件
+-(void)addTapPressed:(SEL)tapViewPressed target:(id)target{
+    self.userInteractionEnabled = YES;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:target action:tapViewPressed];
+    [self addGestureRecognizer:tap];
+}
+
 @end

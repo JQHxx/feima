@@ -45,5 +45,12 @@
 - (void)setCircleCorner:(UIRectCorner)corners
                  radius: (CGFloat)radius;
 
+/*
+* 添加点击事件
+* @param tapViewPressed 点击事件
+* @param target 事件对象
+*/
+- (void)addTapPressed:(SEL)tapViewPressed target:(id)target;
+
 @end
 

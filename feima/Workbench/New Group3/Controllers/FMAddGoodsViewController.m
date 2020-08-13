@@ -83,9 +83,7 @@
     lab.text = @"请选择品类";
     [self.view addSubview:lab];
     self.cateLabel = lab;
-    self.cateLabel.userInteractionEnabled = YES;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chooseCategoryAction:)];
-    [self.cateLabel addGestureRecognizer:tap];
+    [self.cateLabel addTapPressed:@selector(chooseCategoryAction:) target:self];
     
     //标题2
     UILabel *picTitleLab = [[UILabel alloc] initWithFrame:CGRectMake(18, self.cateLabel.bottom+30, 120, 24)];

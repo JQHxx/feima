@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger sex;
 @property (nonatomic, assign) NSInteger status;
 @property (nonatomic,  copy ) NSString  *telephone;
+@property (nonatomic,  copy ) NSString  *address;
 
 @end
 

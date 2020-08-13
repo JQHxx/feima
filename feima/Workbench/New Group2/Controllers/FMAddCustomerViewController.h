@@ -7,10 +7,13 @@
 //
 
 #import "BaseViewController.h"
+#import "FMCustomerModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FMAddCustomerViewController : BaseViewController
+
+@property (nonatomic, strong) FMCustomerModel *customerModel;
 
 @end
 

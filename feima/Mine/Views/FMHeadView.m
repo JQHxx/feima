@@ -81,8 +81,8 @@
         _rootView = [[UIView alloc] init];
         _rootView.backgroundColor = [UIColor whiteColor];
         _rootView.layer.cornerRadius = 4;
-        _rootView.clipsToBounds = YES;
-        [_rootView drawShadowColor:[UIColor blackColor] offset:CGSizeMake(0, 5) opacity:0.5 radius:5];
+//        _rootView.clipsToBounds = YES;
+        [_rootView drawShadowColor:[UIColor blackColor] offset:CGSizeMake(0, 5) opacity:0.2 radius:5];
     }
     return _rootView;
 }

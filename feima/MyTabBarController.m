@@ -22,10 +22,11 @@
     [super viewDidLoad];
     
     [[UITabBarItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor colorWithHexString:@"#B8B8B8"],NSFontAttributeName:[UIFont mediumFontWithSize:10]} forState:UIControlStateNormal];
-    [[UITabBarItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor colorWithHexString:@"#FCB411"],NSFontAttributeName:[UIFont mediumFontWithSize:10]} forState:UIControlStateSelected];
+    [[UITabBarItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor systemColor],NSFontAttributeName:[UIFont mediumFontWithSize:10]} forState:UIControlStateSelected];
     
     [UITabBar appearance].translucent = NO;
     
+    self.tabBar.tintColor = [UIColor systemColor];
     self.tabBar.barStyle = UIBarStyleDefault;
     
     [self setupMyTabBar];

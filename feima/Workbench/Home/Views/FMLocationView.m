@@ -30,7 +30,6 @@
         
         [self drawShadowColor:[UIColor blackColor] offset:CGSizeMake(0, 0) opacity:0.2 radius:5];
         self.layer.cornerRadius = 5;
-        self.clipsToBounds = YES;
         
         [self addSubview:self.backBtn];
         [self.backBtn mas_makeConstraints:^(MASConstraintMaker *make) {

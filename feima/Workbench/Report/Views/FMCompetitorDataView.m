@@ -91,7 +91,6 @@
     }
 }
 
-
 - (void)stroke{
     CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
     animation.duration = 1.f;

@@ -7,10 +7,13 @@
 //
 
 #import "BaseViewController.h"
+#import "FMEmployeeModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FMEditEmployeeViewController : BaseViewController
+
+@property (nonatomic,strong) FMEmployeeModel *employee;
 
 @end
 

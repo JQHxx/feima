@@ -114,7 +114,7 @@
 }
 
 #pragma mark 头像
--(UIImageView *)myImgView{
+- (UIImageView *)myImgView {
     if (!_myImgView) {
         _myImgView = [[UIImageView alloc] init];
         _myImgView.backgroundColor = [UIColor lightGrayColor];
@@ -123,7 +123,7 @@
 }
 
 #pragma mark 用户名
--(UILabel *)nameLabel{
+- (UILabel *)nameLabel {
     if (!_nameLabel) {
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.font = [UIFont mediumFontWithSize:16];
@@ -133,7 +133,7 @@
 }
 
 #pragma mark 联系人
--(UILabel *)contactsLabel{
+- (UILabel *)contactsLabel {
     if (!_contactsLabel) {
         _contactsLabel = [[UILabel alloc] init];
         _contactsLabel.font = [UIFont regularFontWithSize:12];
@@ -143,7 +143,7 @@
 }
 
 #pragma mark 跟进人
--(UILabel *)followLabel{
+- (UILabel *)followLabel {
     if (!_followLabel) {
         _followLabel = [[UILabel alloc] init];
         _followLabel.font = [UIFont regularFontWithSize:12];
@@ -153,7 +153,7 @@
 }
 
 #pragma mark 地址
--(UILabel *)addressLabel{
+- (UILabel *)addressLabel {
     if (!_addressLabel) {
         _addressLabel = [[UILabel alloc] init];
         _addressLabel.font = [UIFont regularFontWithSize:12];
@@ -164,7 +164,7 @@
 }
 
 #pragma mark 状态
--(UILabel *)stateLabel{
+- (UILabel *)stateLabel {
     if (!_stateLabel) {
         _stateLabel = [[UILabel alloc] init];
         _stateLabel.font = [UIFont regularFontWithSize:12];

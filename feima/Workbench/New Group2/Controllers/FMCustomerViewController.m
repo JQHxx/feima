@@ -8,6 +8,8 @@
 
 #import "FMCustomerViewController.h"
 #import "FMAddCustomerViewController.h"
+#import "FMCustomerDetailsViewController.h"
+#import "FMStatisticsViewController.h"
 #import "FMCustomerTableViewCell.h"
 #import "FMCustomerModel.h"
 
@@ -24,7 +26,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.baseTitle = @"客户管理";
+    self.baseTitle = self.isShowList ? @"客户分布" : @"客户管理";
     
     [self setupUI];
     [self loadCustomerData];
@@ -47,6 +49,20 @@
     return 120;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    FMCustomerModel *model = self.customerArray[indexPath.row];
+    if (self.isShowList) {
+        FMStatisticsViewController *statisticsVC = [[FMStatisticsViewController alloc] init];
+        statisticsVC.customer = model;
+        [self.navigationController pushViewController:statisticsVC animated:YES];
+    } else {
+        FMCustomerDetailsViewController *customerVC = [[FMCustomerDetailsViewController alloc] init];
+        customerVC.customer = model;
+        [self.navigationController pushViewController:customerVC animated:YES];
+    }
+    
+}
+
 #pragma mark -- Events response
 #pragma mark 新增客户
 - (void)addCustomerAction:(UIButton *)sender {
@@ -64,8 +80,14 @@
         model.contactName = @"俊哥";
         model.telephone = 18974022637;
         model.employeeName = @"业务员";
-        model.address = @"湖南省长沙市岳麓区文轩路185号靠近成城工业园";
+        model.address = @"湖南省长沙市岳麓区文轩路185号靠近成城工业园文轩路185号靠近成城工业园";
         model.statusName = @"未拜访";
+        model.nickName = @"铺子";
+        model.industryName =  @"商超";
+        model.gradeName = @"C";
+        model.displayArea = 3;
+        model.progressName = @"签约";
+        model.employeeName = @"李氏";
         [tempArr addObject:model];
     }
     self.customerArray = tempArr;
@@ -88,12 +110,14 @@
         make.height.mas_equalTo(kScreen_Height-kNavBar_Height);
     }];
     
-    [self.view addSubview:self.addBtn];
-    [self.addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(-20);
-        make.bottom.mas_equalTo(-(kTabBar_Height-30));
-        make.size.mas_equalTo(CGSizeMake(60, 60));
-    }];
+    if (!self.isShowList) {
+        [self.view addSubview:self.addBtn];
+        [self.addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(-20);
+            make.bottom.mas_equalTo(-(kTabBar_Height-30));
+            make.size.mas_equalTo(CGSizeMake(60, 60));
+        }];
+    }
 }
 
 #pragma mark -- Getters
@@ -103,7 +127,7 @@
         _filterBtn = [[UIButton alloc] init];
         [_filterBtn setTitle:@"筛选" forState:UIControlStateNormal];
         [_filterBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        _filterBtn.titleLabel.font = [UIFont mediumFontWithSize:12];
+        _filterBtn.titleLabel.font = [UIFont mediumFontWithSize:14];
     }
     return _filterBtn;
 }

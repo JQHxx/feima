@@ -85,7 +85,7 @@
 #pragma mark -- Private methods
 #pragma mark 获取菜单列表
 - (void)loadMenuListData {
-    NSArray *arr = @[@{@"icon":@"contacts",@"name":@"通讯录",@"router":@"Address"},@{@"icon":@"customer",@"name":@"客户管理",@"router":@"Customer"},@{@"icon":@"visit",@"name":@"客户拜访",@"router":@"Visit"},@{@"icon":@"work_path",@"name":@"工作路线",@"router":@"WorkRouter"},@{@"icon":@"work_path",@"name":@"员工分布",@"router":@"Distributed"},@{@"icon":@"intructions",@"name":@"指令",@"router":@"Instruction"},@{@"icon":@"goods",@"name":@"进销存",@"router":@"Invoicing"},@{@"icon":@"employee_manage",@"name":@"员工管理",@"router":@"Employee"},@{@"icon":@"goods_manage",@"name":@"商品管理",@"router":@"Goods"},@{@"icon":@"company_manager",@"name":@"公司管理",@"router":@"Company"},@{@"icon":@"company_manager",@"name":@"报表管理",@"router":@"Report"}];
+    NSArray *arr = @[@{@"icon":@"contacts",@"name":@"通讯录",@"router":@"Address"},@{@"icon":@"customer",@"name":@"客户管理",@"router":@"Customer"},@{@"icon":@"visit",@"name":@"客户分布",@"router":@"CustomerDistributed"},@{@"icon":@"work_path",@"name":@"工作路线",@"router":@"WorkRoute"},@{@"icon":@"work_path",@"name":@"员工分布",@"router":@"Distributed"},@{@"icon":@"intructions",@"name":@"指令",@"router":@"Instruction"},@{@"icon":@"goods",@"name":@"进销存",@"router":@"Invoicing"},@{@"icon":@"employee_manage",@"name":@"员工管理",@"router":@"Employee"},@{@"icon":@"goods_manage",@"name":@"商品管理",@"router":@"Goods"},@{@"icon":@"company_manager",@"name":@"公司管理",@"router":@"Company"},@{@"icon":@"company_manager",@"name":@"报表管理",@"router":@"Report"}];
     
     [self.workbenchArray addObjectsFromArray:arr];
     [self.workCollectionView reloadData];
