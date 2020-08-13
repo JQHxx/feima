@@ -7,7 +7,9 @@
 //
 
 #import "FMClockInViewController.h"
+#import "FMClockInRecordViewController.h"
 #import "FMLocationView.h"
+#import "FMClockInAlertView.h"
 #import "UIView+Extend.h"
 #import <BMKLocationKit/BMKLocationComponent.h>
 #import <BaiduMapAPI_Base/BMKBaseComponent.h> //引入base相关所有的头文件
@@ -58,23 +60,22 @@
 
 #pragma mark -- Delegate
 #pragma mark FMLocationViewDelegate
-- (void)locationView:(FMLocationView *)view didClickBtnWithTag:(NSInteger)tag {
-    switch (tag) {
-        case 0:{ //返回
-            [self.navigationController popViewControllerAnimated:YES];
-        }
-        case 1:{ //记录
-            
-        }
-        case 2:{ //刷新
-            [self startLoaction];
-        }
-            break;
-            
-        default:
-            break;
-    }
+#pragma mark 返回
+- (void)locationViewBackAction:(FMLocationView *)view {
+    [self.navigationController popViewControllerAnimated:YES];
 }
+
+#pragma mark 记录
+- (void)locationViewPushToRecords:(FMLocationView *)view {
+    FMClockInRecordViewController *clockRecordVC = [[FMClockInRecordViewController alloc] init];
+    [self.navigationController pushViewController:clockRecordVC animated:YES];
+}
+
+#pragma mark 刷新
+- (void)locationViewDidRefreshLocation:(FMLocationView *)view {
+     [self startLoaction];
+}
+
 
 #pragma mark BMKLocationManagerDelegate
 /**
@@ -88,7 +89,15 @@
 #pragma mark -- Event response
 #pragma mark 打卡
 - (void)clockInAction:(UIButton *)sender {
-    
+    FMClockInAlertViewType type;
+    if ([sender.currentTitle isEqualToString:@"上班打卡"]) {
+        type = FMClockInAlertViewTypeToWork;
+    } else {
+        type = FMClockInAlertViewTypeOffWork;
+    }
+    [FMClockInAlertView showClockInAlertWithFrame:CGRectMake(0, 0, kScreen_Width-30, 400) type:type confirmAction:^{
+        
+    }];
 }
 
 #pragma mark -- Private methods
@@ -210,6 +219,7 @@
         _toWorkBtn.titleLabel.font = [UIFont mediumFontWithSize:16];
         _toWorkBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
         [_toWorkBtn setCircleCorner:UIRectCornerTopLeft | UIRectCornerBottomLeft radius:25];
+        [_toWorkBtn addTarget:self action:@selector(clockInAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _toWorkBtn;
 }

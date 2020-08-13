@@ -1,8 +1,8 @@
 //
-//  FMVisitViewController.h
+//  FMClockInRecordViewController.h
 //  feima
 //
-//  Created by fei on 2020/8/4.
+//  Created by fei on 2020/8/13.
 //  Copyright © 2020 hegui. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FMVisitViewController : BaseViewController
+@interface FMClockInRecordViewController : BaseViewController
 
 @end
 

@@ -43,7 +43,8 @@
 
 
 // keyWindow
-#define kKeyWindow     [UIApplication sharedApplication].keyWindow
+#define kKeyWindow [[UIApplication sharedApplication] delegate].window
+
 //block weakself
 #define kSelfWeak     __weak typeof(self) weakSelf = self
 //block strongself

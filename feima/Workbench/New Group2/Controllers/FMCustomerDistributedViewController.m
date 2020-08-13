@@ -9,6 +9,8 @@
 #import "FMCustomerDistributedViewController.h"
 #import "FMCustomerViewController.h"
 #import "FMDistributedBottomView.h"
+#import "FMHomepageViewController.h"
+#import "FMCustomerModel.h"
 #import <BaiduMapAPI_Base/BMKBaseComponent.h> //引入base相关所有的头文件
 #import <BaiduMapAPI_Map/BMKMapComponent.h> //引入地图功能所有的头文件
 
@@ -44,9 +46,27 @@
 #pragma mark -- Event response
 #pragma mark 列表
 - (void)showListAction:(UIButton *)sender {
+    FMCustomerModel *model = [[FMCustomerModel alloc] init];
+    model.businessName = @"俊哥铺子";
+    model.contactName = @"俊哥";
+    model.telephone = 18974022637;
+    model.employeeName = @"业务员";
+    model.address = @"湖南省长沙市岳麓区文轩路185号靠近成城工业园文轩路185号靠近成城工业园";
+    model.statusName = @"未拜访";
+    model.nickName = @"铺子";
+    model.industryName =  @"商超";
+    model.gradeName = @"C";
+    model.displayArea = 3;
+    model.progressName = @"签约";
+    model.employeeName = @"李氏";
+    FMHomepageViewController *homepageVC = [[FMHomepageViewController alloc] init];
+    homepageVC.customer = model;
+    [self.navigationController pushViewController:homepageVC animated:YES];
+    /*
     FMCustomerViewController *customerVC = [[FMCustomerViewController alloc] init];
     customerVC.isShowList = YES;
     [self.navigationController pushViewController:customerVC animated:YES];
+     */
 }
 
 #pragma mark 客户管理

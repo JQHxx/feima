@@ -43,6 +43,10 @@ singleton_interface(FeimaManager)
  */
 - (NSArray *)getMonthFirstAndLastDayWithDate:(NSString *)dateStr format:(NSString *)format;
 
+
+//退出登录
+- (void)logoutActionWithMessage:(NSString *)message;
+
 @end
 
 NS_ASSUME_NONNULL_END

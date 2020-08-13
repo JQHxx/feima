@@ -171,6 +171,7 @@
     btn.clipsToBounds = YES;
     btn.imageEdgeInsets = UIEdgeInsetsMake(0, -20, 0, 0);
     btn.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+    btn.adjustsImageWhenHighlighted = NO;
     btn.tag = tag;
     [btn addTarget:self action:@selector(workForPauchCardAction:) forControlEvents:UIControlEventTouchUpInside];
     return btn;

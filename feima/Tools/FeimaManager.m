@@ -7,6 +7,8 @@
 //
 
 #import "FeimaManager.h"
+#import "AppDelegate.h"
+#import "FMLoginViewController.h"
 
 @implementation FeimaManager
 
@@ -75,6 +77,18 @@ singleton_implementation(FeimaManager)
     NSString *firstString = [myDateFormatter stringFromDate: firstDate];
     NSString *lastString = [myDateFormatter stringFromDate: lastDate];
     return @[firstString, lastString];
+}
+
+
+#pragma mark 退出登录
+- (void)logoutActionWithMessage:(NSString *)message {
+    [NSUserDefaultsInfos removeObjectForKey:kUserTypeKey];
+    [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:NO]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [kKeyWindow makeToast:message duration:1.0 position:CSToastPositionCenter];
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        appDelegate.window.rootViewController = [[FMLoginViewController alloc] init];
+    });
 }
 
 @end

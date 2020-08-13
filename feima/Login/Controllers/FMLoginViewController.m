@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import "MyTabBarController.h"
 #import "FMUserModel.h"
+#import "FMLoginViewModel.h"
 
 @interface FMLoginViewController ()<UITextFieldDelegate>
 
@@ -22,6 +23,8 @@
 @property (nonatomic, strong) UITextField *passworTextField;
 @property (nonatomic, strong) UIImageView *passwordIconView;
 @property (nonatomic, strong) UIButton    *loginButton;
+
+@property (nonatomic, strong) FMLoginViewModel *adapter;
 
 @end
 
@@ -50,24 +53,19 @@
 #pragma mark 登录
 - (void)loginAction:(UIButton *)sender {
     [SVProgressHUD show];
-    NSDictionary *paraDict = @{@"telephone":self.phoneTextField.text, @"password": self.passworTextField.text};
-    [[HttpRequest sharedInstance] postWithUrl:@"rest/login" parameters:paraDict success:^(id responseObject) {
-        NSDictionary *data = responseObject[@"data"];
-        FMUserBeanModel *userBean = [FMUserBeanModel  yy_modelWithJSON:data[@"userBean"]];
-//        FMUserModel *user = userBean.users;
-        [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:YES]];
-        [NSUserDefaultsInfos putKey:kUserTypeKey andValue:@(userBean.type)];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [SVProgressHUD dismiss];
-            AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-            appDelegate.window.rootViewController = [[MyTabBarController alloc] init];
-        });
-    } failure:^(NSString *errorStr) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [SVProgressHUD dismiss];
-            [self.view makeToast:errorStr duration:2.0 position:CSToastPositionCenter];
-        });
+    [self.adapter loginWithAccount:self.phoneTextField.text password:self.passworTextField.text complete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [SVProgressHUD dismiss];
+                AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+                appDelegate.window.rootViewController = [[MyTabBarController alloc] init];
+            });
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [SVProgressHUD dismiss];
+                [self.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
+            });
+        }
     }];
 }
 
@@ -265,6 +263,13 @@
         [_loginButton addTarget:self action:@selector(loginAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _loginButton;
+}
+
+- (FMLoginViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMLoginViewModel alloc] init];
+    }
+    return _adapter;
 }
 
 @end

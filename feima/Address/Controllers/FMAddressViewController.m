@@ -94,6 +94,16 @@
     return nil;
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    if (section == 1) {
+        return nil;
+    } else {
+        UIView *aView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 15)];
+        aView.backgroundColor = [UIColor colorWithHexString:@"#F6F6F6"];
+        return aView;
+    }
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 0.01;
 }
@@ -123,11 +133,7 @@
 #pragma mark -- Private methods
 #pragma mark 加载数据
 - (void)loadContactsData {
-    [[HttpRequest sharedInstance] postWithUrl:api_customer_phone parameters:nil success:^(id responseObject) {
-        
-    } failure:^(NSString *errorStr) {
-        
-    }];
+    
 }
 
 #pragma mark 界面初始化
@@ -167,6 +173,7 @@
         _contactsTableView.dataSource = self;
         _contactsTableView.separatorStyle = UITableViewCellSelectionStyleNone;
         _contactsTableView.showsVerticalScrollIndicator = NO;
+        _contactsTableView.backgroundColor = [UIColor whiteColor];
     }
     return _contactsTableView;
 }

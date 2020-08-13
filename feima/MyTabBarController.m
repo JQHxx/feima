@@ -12,7 +12,7 @@
 #import "FMWorkViewController.h"
 #import "FMMineViewController.h"
 
-@interface MyTabBarController ()
+@interface MyTabBarController ()<UITabBarControllerDelegate>
 
 @end
 
@@ -28,10 +28,41 @@
     
     self.tabBar.tintColor = [UIColor systemColor];
     self.tabBar.barStyle = UIBarStyleDefault;
+    self.delegate = self;
     
     [self setupMyTabBar];
 }
 
+
+#pragma mark -- UITabBarControllerDelegate
+#pragma mark 点击响应
+- (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item {
+    //添加点击动画
+    UIImageView *imageView;
+    for (UIView *view in tabBar.subviews) {
+        if ([NSStringFromClass([view class]) isEqualToString:@"UITabBarButton"]) {
+            for (UIView *sv in view.subviews) {
+                if ([sv isKindOfClass:[UIImageView class]] && ((UIImageView *)sv).image == item.selectedImage) {
+                    imageView = (UIImageView *)sv;
+                }
+            }
+        }
+    }
+    
+    if (imageView == nil) {
+        return;
+    }
+    
+    imageView.transform = CGAffineTransformMakeScale(0.7, 0.7);
+    [UIView animateWithDuration:1
+                          delay:0
+         usingSpringWithDamping:0.3
+          initialSpringVelocity:0.3
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{
+        imageView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+    } completion:nil];
+}
 
 #pragma mark -- Private Methods
 #pragma mark 初始化

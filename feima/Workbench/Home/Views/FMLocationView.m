@@ -89,10 +89,24 @@
 }
 
 #pragma mark -- Events response
-#pragma mark 按钮点击
-- (void)btnClickAction:(UIButton *)sender {
-    if ([self.delegate respondsToSelector:@selector(locationView:didClickBtnWithTag:)]) {
-        [self.delegate locationView:self didClickBtnWithTag:sender.tag];
+#pragma mark 返回
+- (void)backAction:(UIButton *)sender {
+    if ([self.delegate respondsToSelector:@selector(locationViewBackAction:)]) {
+        [self.delegate locationViewBackAction:self];
+    }
+}
+
+#pragma mark 记录
+- (void)pushToRecordsAction:(UIButton *)sender {
+    if ([self.delegate respondsToSelector:@selector(locationViewPushToRecords:)]) {
+        [self.delegate locationViewPushToRecords:self];
+    }
+}
+
+#pragma mark 刷新
+- (void)refreshAction:(UIButton *)sender {
+    if ([self.delegate respondsToSelector:@selector(locationViewDidRefreshLocation:)]) {
+        [self.delegate locationViewDidRefreshLocation:self];
     }
 }
 
@@ -111,8 +125,7 @@
     if (!_backBtn) {
         _backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_backBtn setImage:ImageNamed(@"back_theme") forState:UIControlStateNormal];
-        _backBtn.tag = 0;
-        [_backBtn addTarget:self action:@selector(btnClickAction:) forControlEvents:UIControlEventTouchUpInside];
+        [_backBtn addTarget:self action:@selector(backAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _backBtn;
 }
@@ -136,8 +149,7 @@
         [_recordsBtn setTitle:@"记录" forState:UIControlStateNormal];
         [_recordsBtn setTitleColor:[UIColor systemColor] forState:UIControlStateNormal];
         _recordsBtn.titleLabel.font = [UIFont mediumFontWithSize:13];
-        _recordsBtn.tag = 1;
-        [_recordsBtn addTarget:self action:@selector(btnClickAction:) forControlEvents:UIControlEventTouchUpInside];
+        [_recordsBtn addTarget:self action:@selector(pushToRecordsAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _recordsBtn;
 }
@@ -177,8 +189,7 @@
     if (!_refreshBtn) {
         _refreshBtn = [[UIButton alloc] init];
         [_refreshBtn setImage:ImageNamed(@"refresh") forState:UIControlStateNormal];
-        _refreshBtn.tag = 2;
-        [_refreshBtn addTarget:self action:@selector(btnClickAction:) forControlEvents:UIControlEventTouchUpInside];
+        [_refreshBtn addTarget:self action:@selector(refreshAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _refreshBtn;
 }

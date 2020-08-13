@@ -40,7 +40,6 @@
 		A522E70824D9117D00DBF5F4 /* FMWorkbenchModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A522E70724D9117D00DBF5F4 /* FMWorkbenchModel.m */; };
 		A522E70B24D9168900DBF5F4 /* FMWorkCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A522E70A24D9168900DBF5F4 /* FMWorkCollectionViewCell.m */; };
 		A522E71024D93EE800DBF5F4 /* FMCustomerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A522E70F24D93EE800DBF5F4 /* FMCustomerViewController.m */; };
-		A522E71324D93EF500DBF5F4 /* FMVisitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A522E71224D93EF500DBF5F4 /* FMVisitViewController.m */; };
 		A522E71624D93F0E00DBF5F4 /* FMWorkRouteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A522E71524D93F0E00DBF5F4 /* FMWorkRouteViewController.m */; };
 		A522E71924D93F3000DBF5F4 /* FMDistributedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A522E71824D93F3000DBF5F4 /* FMDistributedViewController.m */; };
 		A522E71C24D93F4800DBF5F4 /* FMInstructionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A522E71B24D93F4800DBF5F4 /* FMInstructionViewController.m */; };
@@ -63,6 +62,17 @@
 		A52C676A24E3DD9500840361 /* FMListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C676924E3DD9500840361 /* FMListTableViewCell.m */; };
 		A52C676D24E3EA3800840361 /* FMRouteRecordsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C676C24E3EA3800840361 /* FMRouteRecordsViewController.m */; };
 		A52C677024E3EE0000840361 /* FMHomepageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C676F24E3EE0000840361 /* FMHomepageViewController.m */; };
+		A52C677324E4D78900840361 /* FMVisitTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C677224E4D78900840361 /* FMVisitTableViewCell.m */; };
+		A52C677624E4D7BC00840361 /* FMMainGoodsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C677524E4D7BC00840361 /* FMMainGoodsTableViewCell.m */; };
+		A52C677C24E4D80A00840361 /* FMCompetitorTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C677B24E4D80A00840361 /* FMCompetitorTableViewCell.m */; };
+		A52C678224E513A300840361 /* FMClockInRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C678124E513A300840361 /* FMClockInRecordViewController.m */; };
+		A52C678524E5168600840361 /* QWAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C678424E5168600840361 /* QWAlertView.m */; };
+		A52C678B24E5192900840361 /* FMClockInAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C678A24E5192900840361 /* FMClockInAlertView.m */; };
+		A52C678E24E52F3700840361 /* FMContactViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C678D24E52F3700840361 /* FMContactViewModel.m */; };
+		A52C679124E5328000840361 /* FMPageModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C679024E5328000840361 /* FMPageModel.m */; };
+		A52C679624E5333000840361 /* NSDictionary+Safety.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C679224E5332F00840361 /* NSDictionary+Safety.m */; };
+		A52C679724E5333000840361 /* NSArray+Safety.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C679524E5333000840361 /* NSArray+Safety.m */; };
+		A52C679B24E540B800840361 /* FMLoginViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A52C679A24E540B800840361 /* FMLoginViewModel.m */; };
 		A530B0E524DCFCEF006CBE64 /* FMSaleReportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A530B0E424DCFCEF006CBE64 /* FMSaleReportViewController.m */; };
 		A530B0EB24DCFD95006CBE64 /* FMReportHeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = A530B0EA24DCFD95006CBE64 /* FMReportHeadView.m */; };
 		A542BB0D24DBC54B00E68100 /* FMInstrucationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A542BB0C24DBC54B00E68100 /* FMInstrucationModel.m */; };
@@ -192,8 +202,6 @@
 		A522E70A24D9168900DBF5F4 /* FMWorkCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMWorkCollectionViewCell.m; sourceTree = "<group>"; };
 		A522E70E24D93EE800DBF5F4 /* FMCustomerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMCustomerViewController.h; sourceTree = "<group>"; };
 		A522E70F24D93EE800DBF5F4 /* FMCustomerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMCustomerViewController.m; sourceTree = "<group>"; };
-		A522E71124D93EF500DBF5F4 /* FMVisitViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMVisitViewController.h; sourceTree = "<group>"; };
-		A522E71224D93EF500DBF5F4 /* FMVisitViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMVisitViewController.m; sourceTree = "<group>"; };
 		A522E71424D93F0E00DBF5F4 /* FMWorkRouteViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMWorkRouteViewController.h; sourceTree = "<group>"; };
 		A522E71524D93F0E00DBF5F4 /* FMWorkRouteViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMWorkRouteViewController.m; sourceTree = "<group>"; };
 		A522E71724D93F3000DBF5F4 /* FMDistributedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMDistributedViewController.h; sourceTree = "<group>"; };
@@ -237,6 +245,28 @@
 		A52C676C24E3EA3800840361 /* FMRouteRecordsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMRouteRecordsViewController.m; sourceTree = "<group>"; };
 		A52C676E24E3EE0000840361 /* FMHomepageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMHomepageViewController.h; sourceTree = "<group>"; };
 		A52C676F24E3EE0000840361 /* FMHomepageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMHomepageViewController.m; sourceTree = "<group>"; };
+		A52C677124E4D78900840361 /* FMVisitTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMVisitTableViewCell.h; sourceTree = "<group>"; };
+		A52C677224E4D78900840361 /* FMVisitTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMVisitTableViewCell.m; sourceTree = "<group>"; };
+		A52C677424E4D7BC00840361 /* FMMainGoodsTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMMainGoodsTableViewCell.h; sourceTree = "<group>"; };
+		A52C677524E4D7BC00840361 /* FMMainGoodsTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMMainGoodsTableViewCell.m; sourceTree = "<group>"; };
+		A52C677A24E4D80A00840361 /* FMCompetitorTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMCompetitorTableViewCell.h; sourceTree = "<group>"; };
+		A52C677B24E4D80A00840361 /* FMCompetitorTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMCompetitorTableViewCell.m; sourceTree = "<group>"; };
+		A52C678024E513A300840361 /* FMClockInRecordViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMClockInRecordViewController.h; sourceTree = "<group>"; };
+		A52C678124E513A300840361 /* FMClockInRecordViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMClockInRecordViewController.m; sourceTree = "<group>"; };
+		A52C678324E5168600840361 /* QWAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QWAlertView.h; sourceTree = "<group>"; };
+		A52C678424E5168600840361 /* QWAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QWAlertView.m; sourceTree = "<group>"; };
+		A52C678924E5192900840361 /* FMClockInAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMClockInAlertView.h; sourceTree = "<group>"; };
+		A52C678A24E5192900840361 /* FMClockInAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMClockInAlertView.m; sourceTree = "<group>"; };
+		A52C678C24E52F3600840361 /* FMContactViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMContactViewModel.h; sourceTree = "<group>"; };
+		A52C678D24E52F3700840361 /* FMContactViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMContactViewModel.m; sourceTree = "<group>"; };
+		A52C678F24E5328000840361 /* FMPageModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMPageModel.h; sourceTree = "<group>"; };
+		A52C679024E5328000840361 /* FMPageModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMPageModel.m; sourceTree = "<group>"; };
+		A52C679224E5332F00840361 /* NSDictionary+Safety.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Safety.m"; sourceTree = "<group>"; };
+		A52C679324E5332F00840361 /* NSArray+Safety.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+Safety.h"; sourceTree = "<group>"; };
+		A52C679424E5333000840361 /* NSDictionary+Safety.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Safety.h"; sourceTree = "<group>"; };
+		A52C679524E5333000840361 /* NSArray+Safety.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Safety.m"; sourceTree = "<group>"; };
+		A52C679924E540B800840361 /* FMLoginViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMLoginViewModel.h; sourceTree = "<group>"; };
+		A52C679A24E540B800840361 /* FMLoginViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMLoginViewModel.m; sourceTree = "<group>"; };
 		A530B0E324DCFCEF006CBE64 /* FMSaleReportViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMSaleReportViewController.h; sourceTree = "<group>"; };
 		A530B0E424DCFCEF006CBE64 /* FMSaleReportViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMSaleReportViewController.m; sourceTree = "<group>"; };
 		A530B0E924DCFD95006CBE64 /* FMReportHeadView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMReportHeadView.h; sourceTree = "<group>"; };
@@ -430,6 +460,8 @@
 				A522E64A24D165B600DBF5F4 /* FMWorkViewController.m */,
 				A5CBBCE724D945F000E27D74 /* FMClockInViewController.h */,
 				A5CBBCE824D945F000E27D74 /* FMClockInViewController.m */,
+				A52C678024E513A300840361 /* FMClockInRecordViewController.h */,
+				A52C678124E513A300840361 /* FMClockInRecordViewController.m */,
 			);
 			name = Controllers;
 			path = "../New Group1/Controllers";
@@ -442,6 +474,8 @@
 				A522E70A24D9168900DBF5F4 /* FMWorkCollectionViewCell.m */,
 				A5CBBCEA24D9535B00E27D74 /* FMLocationView.h */,
 				A5CBBCEB24D9535B00E27D74 /* FMLocationView.m */,
+				A52C678924E5192900840361 /* FMClockInAlertView.h */,
+				A52C678A24E5192900840361 /* FMClockInAlertView.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -470,8 +504,6 @@
 				A52C676F24E3EE0000840361 /* FMHomepageViewController.m */,
 				A52C675C24E3CD0000840361 /* FMStatisticsViewController.h */,
 				A52C675D24E3CD0000840361 /* FMStatisticsViewController.m */,
-				A522E71124D93EF500DBF5F4 /* FMVisitViewController.h */,
-				A522E71224D93EF500DBF5F4 /* FMVisitViewController.m */,
 			);
 			name = Controllers;
 			path = "../New Group2/Controllers";
@@ -488,6 +520,12 @@
 				A52C675A24E3C4C000840361 /* FMDistributedBottomView.m */,
 				A52C675F24E3D0A400840361 /* FMCustomerChartView.h */,
 				A52C676024E3D0A400840361 /* FMCustomerChartView.m */,
+				A52C677124E4D78900840361 /* FMVisitTableViewCell.h */,
+				A52C677224E4D78900840361 /* FMVisitTableViewCell.m */,
+				A52C677424E4D7BC00840361 /* FMMainGoodsTableViewCell.h */,
+				A52C677524E4D7BC00840361 /* FMMainGoodsTableViewCell.m */,
+				A52C677A24E4D80A00840361 /* FMCompetitorTableViewCell.h */,
+				A52C677B24E4D80A00840361 /* FMCompetitorTableViewCell.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -640,6 +678,10 @@
 				A522E6EA24D7B5B900DBF5F4 /* UIView+Extend.m */,
 				A51C5E7824DC05CC000D1FC9 /* UIButton+Extend.h */,
 				A51C5E7924DC05CC000D1FC9 /* UIButton+Extend.m */,
+				A52C679324E5332F00840361 /* NSArray+Safety.h */,
+				A52C679524E5333000840361 /* NSArray+Safety.m */,
+				A52C679424E5333000840361 /* NSDictionary+Safety.h */,
+				A52C679224E5332F00840361 /* NSDictionary+Safety.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -660,6 +702,8 @@
 				A5E04E9F24E14C2B00D4282B /* FMCircleView.m */,
 				A570FC7A24E2419E007A15FD /* FMDateToolView.h */,
 				A570FC7B24E2419E007A15FD /* FMDateToolView.m */,
+				A52C678324E5168600840361 /* QWAlertView.h */,
+				A52C678424E5168600840361 /* QWAlertView.m */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -667,6 +711,7 @@
 		A522E6E324D7B35900DBF5F4 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				A52C679824E540A200840361 /* ViewModels */,
 				A522E6E424D7B37000DBF5F4 /* Controllers */,
 			);
 			path = Login;
@@ -686,6 +731,8 @@
 			children = (
 				A522E6F224D8014600DBF5F4 /* BaseModel.h */,
 				A522E6F324D8014600DBF5F4 /* BaseModel.m */,
+				A52C678F24E5328000840361 /* FMPageModel.h */,
+				A52C679024E5328000840361 /* FMPageModel.m */,
 				A522E6F524D8021100DBF5F4 /* FMUserModel.h */,
 				A522E6F624D8021100DBF5F4 /* FMUserModel.m */,
 				A522E70624D9117D00DBF5F4 /* FMWorkbenchModel.h */,
@@ -763,6 +810,15 @@
 			children = (
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		A52C679824E540A200840361 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A52C679924E540B800840361 /* FMLoginViewModel.h */,
+				A52C679A24E540B800840361 /* FMLoginViewModel.m */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		A530B0E624DCFD10006CBE64 /* Report */ = {
@@ -967,6 +1023,8 @@
 		A57999B724D11593002491C4 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				A52C678C24E52F3600840361 /* FMContactViewModel.h */,
+				A52C678D24E52F3700840361 /* FMContactViewModel.m */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1107,7 +1165,9 @@
 				A522E72224D93F9500DBF5F4 /* FMInvoicingViewController.m in Sources */,
 				A522E73124D93FFE00DBF5F4 /* FMReportViewController.m in Sources */,
 				A5E04E8E24E1299300D4282B /* FMProductReportViewController.m in Sources */,
+				A52C677C24E4D80A00840361 /* FMCompetitorTableViewCell.m in Sources */,
 				A522E72E24D93FEA00DBF5F4 /* FMCompanyViewController.m in Sources */,
+				A52C679724E5333000840361 /* NSArray+Safety.m in Sources */,
 				A52C676124E3D0A400840361 /* FMCustomerChartView.m in Sources */,
 				A5CBBCF224DA703F00E27D74 /* FMInContactsViewController.m in Sources */,
 				A51C5E7A24DC05CC000D1FC9 /* UIButton+Extend.m in Sources */,
@@ -1119,7 +1179,9 @@
 				A522E6F424D8014600DBF5F4 /* BaseModel.m in Sources */,
 				A51C5E7424DC033B000D1FC9 /* FMAddCompanyViewController.m in Sources */,
 				A5CBBD1624DAA7E000E27D74 /* FMMineTableViewCell.m in Sources */,
+				A52C679B24E540B800840361 /* FMLoginViewModel.m in Sources */,
 				A52C677024E3EE0000840361 /* FMHomepageViewController.m in Sources */,
+				A52C678524E5168600840361 /* QWAlertView.m in Sources */,
 				A52C676D24E3EA3800840361 /* FMRouteRecordsViewController.m in Sources */,
 				A522E64E24D165C400DBF5F4 /* FMMineViewController.m in Sources */,
 				A522E6E724D7B38300DBF5F4 /* FMLoginViewController.m in Sources */,
@@ -1151,8 +1213,10 @@
 				A542BB1424DBD46300E68100 /* FMOrderModel.m in Sources */,
 				A51C5E6B24DBE6E4000D1FC9 /* FMGoodsTableViewCell.m in Sources */,
 				A530B0E524DCFCEF006CBE64 /* FMSaleReportViewController.m in Sources */,
+				A52C678B24E5192900840361 /* FMClockInAlertView.m in Sources */,
 				A5E04EA024E14C2B00D4282B /* FMCircleView.m in Sources */,
 				A52C675224E397D500840361 /* FMCustomerDistributedViewController.m in Sources */,
+				A52C679124E5328000840361 /* FMPageModel.m in Sources */,
 				A5CBBD0D24DAA37600E27D74 /* FMMessageViewController.m in Sources */,
 				A570FC7C24E2419E007A15FD /* FMDateToolView.m in Sources */,
 				A522E72524D93FAE00DBF5F4 /* FMCompetitorViewController.m in Sources */,
@@ -1172,9 +1236,11 @@
 				A522E70824D9117D00DBF5F4 /* FMWorkbenchModel.m in Sources */,
 				A52C675E24E3CD0000840361 /* FMStatisticsViewController.m in Sources */,
 				A522E64224D161A100DBF5F4 /* BaseViewController.m in Sources */,
+				A52C677324E4D78900840361 /* FMVisitTableViewCell.m in Sources */,
 				A542BB2924DBE3EB00E68100 /* FMOrderGoodsModel.m in Sources */,
 				A570FC8824E27BB0007A15FD /* FMDailyDetailsViewController.m in Sources */,
 				A5E04E9124E12B8E00D4282B /* FMGoodsSalesModel.m in Sources */,
+				A52C677624E4D7BC00840361 /* FMMainGoodsTableViewCell.m in Sources */,
 				A57999A924D107C9002491C4 /* main.m in Sources */,
 				A570FC7924E2402E007A15FD /* FMMonthHeadView.m in Sources */,
 				A57999B124D108E6002491C4 /* MyTabBarController.m in Sources */,
@@ -1200,14 +1266,16 @@
 				A5CBBD1924DAAE7200E27D74 /* FMChangeViewController.m in Sources */,
 				A5CBBCE924D945F000E27D74 /* FMClockInViewController.m in Sources */,
 				A5531CB324DD4C49005EFDF2 /* FMDailyTableViewCell.m in Sources */,
+				A52C679624E5333000840361 /* NSDictionary+Safety.m in Sources */,
+				A52C678224E513A300840361 /* FMClockInRecordViewController.m in Sources */,
 				A505606624DB9B9400963C8D /* FeimaManager.m in Sources */,
 				A505605D24DB924700963C8D /* FMMessageTableViewCell.m in Sources */,
 				A522E70B24D9168900DBF5F4 /* FMWorkCollectionViewCell.m in Sources */,
 				A542BB1724DBD5C800E68100 /* FMGoodsModel.m in Sources */,
+				A52C678E24E52F3700840361 /* FMContactViewModel.m in Sources */,
 				A522E71F24D93F6800DBF5F4 /* FMUploadViewController.m in Sources */,
 				A542BB2624DBDFFD00E68100 /* FMDistributionTableViewCell.m in Sources */,
 				A542BB1D24DBDCA200E68100 /* SlideMenuView.m in Sources */,
-				A522E71324D93EF500DBF5F4 /* FMVisitViewController.m in Sources */,
 				A5E04E9724E13BF700D4282B /* FMStatisticsView.m in Sources */,
 				A542BB1A24DBDBC700E68100 /* NSString+Extend.m in Sources */,
 			);

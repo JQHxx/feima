@@ -84,8 +84,7 @@ static id _instance = nil;
 #pragma mark -- POST请求 ---
 - (void)postWithUrl:(NSString *)url
          parameters:(id)parameters
-            success:(void (^)(id))success
-            failure:(void (^)(NSString *))failure {
+           complete:(RequstCompleteBlock)complete {
     NSString *urlStr = [NSString stringWithFormat:kHostTempURL,url];
     MyLog(@"url:%@,params:%@",urlStr,parameters);
     AFHTTPSessionManager *manager =[AFHTTPSessionManager manager];
@@ -105,53 +104,45 @@ static id _instance = nil;
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html", @"text/plain", nil];
 
     [manager POST:urlStr parameters:parameters headers:headers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        MyLog(@"html:%@",[[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
         id json=[NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
         MyLog(@"json:%@",json);
-        if ([[json objectForKey:@"code"] isKindOfClass:[NSNumber class]]) {
-            NSInteger status=[[json objectForKey:@"code"] integerValue];
-            NSString *message=[json objectForKey:@"msg"];
-            if (status==200) {
-                //获取 Cookie
-                NSHTTPURLResponse* response = (NSHTTPURLResponse* )task.response;
-                NSDictionary *allHeaderFieldsDic = response.allHeaderFields;
-                MyLog(@"allHeaderFieldsDic:%@",allHeaderFieldsDic);
-                NSString *setCookie = allHeaderFieldsDic[@"Set-Cookie"];
-                if (setCookie != nil) {
-                    NSString *cookie = [[setCookie componentsSeparatedByString:@";"] objectAtIndex:0];
-                    MyLog(@"cookie : %@", cookie);
-                    [NSUserDefaultsInfos putKey:@"Cookie" andValue:cookie];
-                }
-                success(json);
-            }else{
-                if (status == -1379) {
-                    MyLog(@"%@",message);
-                    [NSUserDefaultsInfos removeObjectForKey:kUserTypeKey];
-                    [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:NO]];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                        appDelegate.window.rootViewController = [[FMLoginViewController alloc] init];
-                    });
-                }else{
-                    message=kIsEmptyString(message)?@"暂时无法访问，请稍后再试":message;
-                    MyLog(@"postWithUrl:%@,error:%@",urlStr,message);
-                    failure(message);
-                }
+        NSInteger status = [json safe_integerForKey:@"code"];
+        BOOL isSuccess = status == 200;
+        NSError *error;
+        if (status==200) {
+            complete(isSuccess, [json safe_objectForKey:@"data"] , error);
+        
+            //获取 Cookie
+            NSHTTPURLResponse* response = (NSHTTPURLResponse* )task.response;
+            NSDictionary *allHeaderFieldsDic = response.allHeaderFields;
+            MyLog(@"allHeaderFieldsDic:%@",allHeaderFieldsDic);
+            NSString *setCookie = allHeaderFieldsDic[@"Set-Cookie"];
+            if (setCookie != nil) {
+                NSString *cookie = [[setCookie componentsSeparatedByString:@";"] objectAtIndex:0];
+                MyLog(@"cookie : %@", cookie);
+                [NSUserDefaultsInfos putKey:@"Cookie" andValue:cookie];
             }
-        }else{
-            NSString *message = @"暂时无法访问，请稍后再试";
-            failure(message);
+        } else {
+            error = [NSError errorWithDomain:@"api_error_code" code:[json safe_integerForKey:@"code"] userInfo:@{ NSLocalizedDescriptionKey:[json safe_stringForKey:@"msg"]}];
+            complete(NO , nil ,error);
+            
+            if (status == -1379) { //帐号被挤退
+                NSString *message = [json safe_stringForKey:@"msg"];
+                if (kIsEmptyString(message)) {
+                    message = @"帐号已在他处登录";
+                }
+                [[FeimaManager sharedFeimaManager] logoutActionWithMessage:message];
+            }
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         MyLog(@"postWithUrl:%@,error:%@",urlStr,error);
-        failure(error.localizedDescription);
+        complete(NO,nil,error);
     }];
 }
 
 #pragma mark -- GET请求 ---
 - (void)getRequestWithUrl:(NSString *)url
-                  success:(void (^)(id))success
-                  failure:(void (^)(NSString *))failure {
+                  complete:(RequstCompleteBlock)complete {
     NSString *urlStr = [NSString stringWithFormat:kHostTempURL,url];
     MyLog(@"url:%@",urlStr);
     AFHTTPSessionManager *manager =[AFHTTPSessionManager manager];
@@ -174,33 +165,26 @@ static id _instance = nil;
         MyLog(@"html:%@",[[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
         id json=[NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
         MyLog(@"json:%@",json);
-        if ([[json objectForKey:@"code"] isKindOfClass:[NSNumber class]]) {
-            NSInteger status=[[json objectForKey:@"code"] integerValue];
-            NSString *message=[json objectForKey:@"msg"];
-            if (status==200) {
-                success(json);
-            }else{
-                if (status == -1379) {
-                    MyLog(@"%@",message);
-                    [NSUserDefaultsInfos removeObjectForKey:kUserTypeKey];
-                    [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:NO]];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                        appDelegate.window.rootViewController = [[FMLoginViewController alloc] init];
-                    });
-                }else{
-                    message=kIsEmptyString(message)?@"暂时无法访问，请稍后再试":message;
-                    MyLog(@"error:%@",message);
-                    failure(message);
+        NSInteger status = [json safe_integerForKey:@"code"];
+        BOOL isSuccess = status == 200;
+        NSError *error;
+        if (status==200) {
+            complete(isSuccess, [json safe_objectForKey:@"data"] , error);
+        } else {
+            error = [NSError errorWithDomain:@"api_error_code" code:[json safe_integerForKey:@"code"] userInfo:@{ NSLocalizedDescriptionKey:[json safe_stringForKey:@"msg"]}];
+              complete(NO , nil ,error);
+            
+            if (status == -1379) { //帐号被挤退
+                NSString *message = [json safe_stringForKey:@"msg"];
+                if (kIsEmptyString(message)) {
+                    message = @"帐号已在他处登录";
                 }
+                [[FeimaManager sharedFeimaManager] logoutActionWithMessage:message];
             }
-        }else{
-            NSString *message = @"暂时无法访问，请稍后再试";
-            failure(message);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         MyLog(@"postWithUrl:%@,error:%@",urlStr,error);
-        failure(error.localizedDescription);
+        complete(NO,nil,error);
     }];
 }
 

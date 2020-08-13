@@ -13,7 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 @class FMLocationView;
 @protocol FMLocationViewDelegate <NSObject>
 
-- (void)locationView:(FMLocationView *)view didClickBtnWithTag:(NSInteger)tag;
+//返回
+- (void)locationViewBackAction:(FMLocationView *)view;
+
+//记录
+- (void)locationViewPushToRecords:(FMLocationView *)view;
+
+//刷新
+- (void)locationViewDidRefreshLocation:(FMLocationView *)view;
 
 @end
 

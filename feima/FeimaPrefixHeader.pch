@@ -31,6 +31,8 @@
 #import "UIButton+Extend.h"
 #import "NSString+Extend.h"
 #import "UIImage+Extend.h"
+#import "NSDictionary+Safety.h"
+#import "NSArray+Safety.h"
 #import "UIView+Toast.h"
 #import "NSUserDefaultsInfos.h"
 #import <SDWebImage/SDWebImage.h>
