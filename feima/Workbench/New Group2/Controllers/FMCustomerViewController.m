@@ -78,7 +78,7 @@
         FMCustomerModel *model = [[FMCustomerModel alloc] init];
         model.businessName = @"俊哥铺子";
         model.contactName = @"俊哥";
-        model.telephone = 18974022637;
+        model.telephone = @"18974022637";
         model.employeeName = @"业务员";
         model.address = @"湖南省长沙市岳麓区文轩路185号靠近成城工业园文轩路185号靠近成城工业园";
         model.statusName = @"未拜访";

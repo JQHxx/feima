@@ -81,14 +81,23 @@ singleton_implementation(FeimaManager)
 
 
 #pragma mark 退出登录
-- (void)logoutActionWithMessage:(NSString *)message {
+- (void)logout {
     [NSUserDefaultsInfos removeObjectForKey:kUserTypeKey];
     [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:NO]];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [kKeyWindow makeToast:message duration:1.0 position:CSToastPositionCenter];
+        [kKeyWindow makeToast:@"帐号已在他处登录" duration:1.0 position:CSToastPositionCenter];
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         appDelegate.window.rootViewController = [[FMLoginViewController alloc] init];
     });
+}
+
+#pragma mark 打电话
+- (void)callPhoneWithNumber:(NSString *)telephone {
+    if (kIsEmptyString(telephone)) {
+        return;
+    }
+    NSString *callPhone = [NSString stringWithFormat:@"telprompt://%@", telephone];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:callPhone] options:@{} completionHandler:nil];
 }
 
 @end

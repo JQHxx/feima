@@ -9,9 +9,10 @@
 #import "FMWorkViewController.h"
 #import "FMClockInViewController.h"
 #import "FMWorkCollectionViewCell.h"
-#import <SDCycleScrollView/SDCycleScrollView.h>
-#import "UIView+Extend.h"
+#import "FMMainViewModel.h"
 #import "FMWorkbenchModel.h"
+#import <SDCycleScrollView/SDCycleScrollView.h>
+
 
 @interface FMWorkViewController ()<UICollectionViewDataSource,UICollectionViewDelegate>
 
@@ -20,10 +21,10 @@
 @property (nonatomic, strong) SDCycleScrollView  *cycleScrollView;
 @property (nonatomic, strong) UIButton           *toWorkBtn;
 @property (nonatomic, strong) UIButton           *offWorkBtn;
-@property (nonatomic,strong) UILabel             *workTitleLab;
-@property (nonatomic,strong) UICollectionView    *workCollectionView;
+@property (nonatomic, strong) UILabel            *workTitleLab;
+@property (nonatomic, strong) UICollectionView   *workCollectionView;
 
-@property (nonatomic,strong) NSMutableArray      *workbenchArray;
+@property (nonatomic, strong) FMMainViewModel    *adapter;
 
 @end
 
@@ -32,6 +33,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.isHiddenNavBar = YES;
+    
+    self.adapter = [[FMMainViewModel alloc] init];
     
     [self setupView];
     [self loadMenuListData];
@@ -44,19 +47,19 @@
 
 #pragma mark -- UICollectionViewDataSource and UICollectionViewDelegate
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.workbenchArray.count;
+    return [self.adapter numberOfWorkbenchList];
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     FMWorkCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"FMWorkCollectionViewCell" forIndexPath:indexPath];
-    NSDictionary *dict = self.workbenchArray[indexPath.row];
+    NSDictionary *dict = [self.adapter getWorkbenchInfoWithIndex:indexPath.row];
     cell.iconImgView.image = ImageNamed(dict[@"icon"]);
     cell.titleLab.text = dict[@"name"];
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    NSDictionary *dict = self.workbenchArray[indexPath.row];
+    NSDictionary *dict = [self.adapter getWorkbenchInfoWithIndex:indexPath.row];
     NSString *classStr = [NSString stringWithFormat:@"FM%@ViewController",dict[@"router"]];
     Class aClass = NSClassFromString(classStr);
     BaseViewController *vc = (BaseViewController *)[[aClass alloc] init];
@@ -85,24 +88,18 @@
 #pragma mark -- Private methods
 #pragma mark 获取菜单列表
 - (void)loadMenuListData {
-    NSArray *arr = @[@{@"icon":@"contacts",@"name":@"通讯录",@"router":@"Address"},@{@"icon":@"customer",@"name":@"客户管理",@"router":@"Customer"},@{@"icon":@"visit",@"name":@"客户分布",@"router":@"CustomerDistributed"},@{@"icon":@"work_path",@"name":@"工作路线",@"router":@"WorkRoute"},@{@"icon":@"work_path",@"name":@"员工分布",@"router":@"Distributed"},@{@"icon":@"intructions",@"name":@"指令",@"router":@"Instruction"},@{@"icon":@"goods",@"name":@"进销存",@"router":@"Invoicing"},@{@"icon":@"employee_manage",@"name":@"员工管理",@"router":@"Employee"},@{@"icon":@"goods_manage",@"name":@"商品管理",@"router":@"Goods"},@{@"icon":@"company_manager",@"name":@"公司管理",@"router":@"Company"},@{@"icon":@"company_manager",@"name":@"报表管理",@"router":@"Report"}];
-    
-    [self.workbenchArray addObjectsFromArray:arr];
-    [self.workCollectionView reloadData];
-    
-    [self.workCollectionView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo((self.workbenchArray.count/4+1)*80+(self.workbenchArray.count/4)*25);
+    [SVProgressHUD show];
+    [self.adapter loadMenuListComplete:^(BOOL isSuccess) {
+        [SVProgressHUD dismiss];
+        if (isSuccess) {
+            [self.workCollectionView reloadData];
+            [self.workCollectionView mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.height.mas_equalTo(([self.adapter numberOfWorkbenchList]/4+1)*80+([self.adapter numberOfWorkbenchList]/4)*25);
+            }];
+        } else {
+            [self.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
+        }
     }];
-    
-    /*
-    [[HttpRequest sharedInstance] getRequestWithUrl:api_menu_list success:^(id responseObject) {
-        NSArray *data = responseObject[@"data"];
-        NSArray *list = [NSArray yy_modelArrayWithClass:[FMWorkbenchModel class] json:data];
-        
-    } failure:^(NSString *errorStr) {
-        
-    }];
-     */
 }
 
 #pragma mark 界面初始化
@@ -256,11 +253,5 @@
     return _workCollectionView;
 }
 
-- (NSMutableArray *)workbenchArray{
-    if (!_workbenchArray) {
-        _workbenchArray = [[NSMutableArray alloc] init];
-    }
-    return _workbenchArray;
-}
 
 @end

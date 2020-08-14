@@ -9,9 +9,6 @@
 #import "FMLoginViewModel.h"
 #import "FMUserModel.h"
 
-//登录
-static NSString * const api_login = @"login";
-
 @implementation FMLoginViewModel
 
 #pragma mark 登录
@@ -22,12 +19,25 @@ static NSString * const api_login = @"login";
         @"telephone":account,
         @"password": password
     };
-    [[HttpRequest sharedInstance] postWithUrl:api_login parameters:paraDict complete:^(BOOL isSuccess, id data, NSError *error) {
+    [[HttpRequest sharedInstance] postWithUrl:api_login parameters:paraDict complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
         if (isSuccess) {
+            NSDictionary *data = [json safe_objectForKey:@"data"];
             FMUserBeanModel *userBean = [FMUserBeanModel  yy_modelWithJSON:data[@"userBean"]];
             [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:YES]];
             [NSUserDefaultsInfos putKey:kUserTypeKey andValue:@(userBean.type)];
+            if (complete) complete(YES);
+        } else {
+            if (complete) complete(NO);
+        }
+    }];
+}
+
+#pragma mark 退出登录
+- (void)logoutComplete:(AdpaterComplete)complete {
+    [[HttpRequest sharedInstance] postWithUrl:api_logout parameters:nil complete:^(BOOL isSuccess, id json, NSError *error) {
+        [self handlerError:error];
+        if (isSuccess) {
             if (complete) complete(YES);
         } else {
             if (complete) complete(NO);

@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger progress;   //进度
 @property (nonatomic,  copy ) NSString  *progressName;
 @property (nonatomic,  copy ) NSString  *statusName;
-@property (nonatomic, assign) NSInteger telephone;  //手机号码
+@property (nonatomic,  copy ) NSString  *telephone;  //手机号码
 @property (nonatomic,  copy ) NSString  *threeDayVisit;
 @property (nonatomic,  copy ) NSString  *visit;
 @property (nonatomic,  copy ) NSString  *visitCode;

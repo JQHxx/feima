@@ -45,7 +45,10 @@ singleton_interface(FeimaManager)
 
 
 //退出登录
-- (void)logoutActionWithMessage:(NSString *)message;
+- (void)logout;
+
+//打电话
+- (void)callPhoneWithNumber:(NSString *)telephone;
 
 @end
 

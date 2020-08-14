@@ -54,18 +54,15 @@
 - (void)loginAction:(UIButton *)sender {
     [SVProgressHUD show];
     [self.adapter loginWithAccount:self.phoneTextField.text password:self.passworTextField.text complete:^(BOOL isSuccess) {
-        if (isSuccess) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [SVProgressHUD dismiss];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SVProgressHUD dismiss];
+            if (isSuccess) {
                 AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
                 appDelegate.window.rootViewController = [[MyTabBarController alloc] init];
-            });
-        } else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [SVProgressHUD dismiss];
+            } else {
                 [self.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
-            });
-        }
+            }
+        });
     }];
 }
 

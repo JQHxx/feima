@@ -22,6 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
                 password:(NSString *)password
                 complete:(AdpaterComplete)complete;
 
+/**
+ *  退出登录
+ *  @param complete  请求成功
+*/
+- (void)logoutComplete:(AdpaterComplete)complete;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void (^RequstCompleteBlock)(BOOL isSuccess,id data, NSError* error);
+typedef void (^RequstCompleteBlock)(BOOL isSuccess,id json, NSError* error);
 
 @interface HttpRequest : NSObject
 
@@ -31,13 +31,12 @@ typedef void (^RequstCompleteBlock)(BOOL isSuccess,id data, NSError* error);
  *  发送get请求
  *
  *  @param url  请求的网址字符串
+ *  @param parameters 请求的参数
  *  @param complete    请求完成的回调
- *  
+
 */
 - (void)getRequestWithUrl:(NSString *)url
-            complete:(RequstCompleteBlock)complete;
-
-//退出登录
-- (void)logoutActionWithMessage:(NSString *)mssage;
+               parameters:(id)parameters
+                 complete:(RequstCompleteBlock)complete;
 
 @end

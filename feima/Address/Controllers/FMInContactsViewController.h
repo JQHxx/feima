@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FMInContactsViewController : BaseViewController
 
+@property (nonatomic,assign) NSInteger pid;
+
 
 @end
 

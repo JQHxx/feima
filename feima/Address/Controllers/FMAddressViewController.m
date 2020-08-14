@@ -9,11 +9,19 @@
 #import "FMAddressViewController.h"
 #import "FMInContactsViewController.h"
 #import "FMOutContactsViewController.h"
+#import "FMSubEmployeeTableViewCell.h"
+#import "FMContactViewModel.h"
 
-@interface FMAddressViewController ()<UISearchBarDelegate,UITableViewDelegate,UITableViewDataSource>
+@interface FMAddressViewController ()<UISearchBarDelegate,UITableViewDelegate,UITableViewDataSource>{
+    NSArray *imagesArr;
+    NSArray *titlesArr;
+}
 
-@property (nonatomic, strong) UISearchBar  *searchBar;
-@property (nonatomic, strong) UITableView  *contactsTableView;
+@property (nonatomic, strong) UISearchBar        *searchBar;
+@property (nonatomic, strong) UITableView        *contactsTableView;
+@property (nonatomic, strong) FMContactViewModel *adapter;
+@property (nonatomic, strong) FMPageModel        *pageModel;
+@property (nonatomic,  copy ) NSString           *nameStr;
 
 @end
 
@@ -24,7 +32,13 @@
     self.baseTitle = @"通讯录";
     self.isHiddenBackBtn = self.backBtnHidden;
     
+    imagesArr = @[@"company_manager",@"customer"];
+    titlesArr = @[@"公司内部通讯录",@"外部客户通讯录"];
+    self.nameStr = @"";
+    
     [self setupUI];
+    [self loadContactsData];
+    [self loadEmployeeContactsData];
 }
 
 #pragma mark -- UITableViewDataSource and UITableViewDelegate
@@ -34,7 +48,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 1) {
-        return 10;
+        return [self.adapter numberOfEmployeesList];
     } else {
         return 2;
     }
@@ -42,52 +56,29 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1) {
-        static NSString *identifier = @"ContactTableViewCell";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-        if (cell == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        }
+        FMSubEmployeeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMSubEmployeeTableViewCell identifier] forIndexPath:indexPath];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.imageView.image = ImageNamed(@"customer");
-        cell.textLabel.text = @"曹磊";
-    
-        UIButton *callBtn = [[UIButton alloc] initWithFrame:CGRectMake(kScreen_Width-60, 10, 34, 34)];
-        [callBtn setImage:ImageNamed(@"call") forState:UIControlStateNormal];
-        callBtn.tag = indexPath.row;
-        [callBtn addTarget:self action:@selector(callAction:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.contentView addSubview:callBtn];
-        
-        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(90, 53, kScreen_Width-94, 1)];
-        line.backgroundColor = [UIColor colorWithHexString:@"#F6F6F6"];
-        [cell.contentView addSubview:line];
+        FMEmployeeModel *model = [self.adapter getEmployeeModelWithIndex:indexPath.row];
+        [cell fillContentWithData:model];
         return cell;
     } else {
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.imageView.image = ImageNamed(imagesArr[indexPath.row]);
+        cell.textLabel.text = titlesArr[indexPath.row];
+        
         if (indexPath.row == 0) {
-            cell.imageView.image = ImageNamed(@"company_manager");
-            cell.textLabel.text = @"公司内部通讯录";
-            cell.detailTextLabel.text = @"17";
-            
-            UIView *line = [[UIView alloc] initWithFrame:CGRectMake(90, 61, kScreen_Width-90, 1)];
-            line.backgroundColor = [UIColor colorWithHexString:@"#F6F6F6"];
-            [cell.contentView addSubview:line];
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld",[self.adapter employeeTotalCount]];
         } else {
-            cell.imageView.image = ImageNamed(@"customer");
-            cell.textLabel.text = @"外部客户通讯录";
-            cell.detailTextLabel.text = @"3";
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld",[self.adapter customerTotalCount]];
         }
         return cell;
     }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0) {
-        return 62;
-    } else {
-        return 54;
-    }
+    return 62;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -116,6 +107,7 @@
     if (indexPath.section == 0) {
         if (indexPath.row == 0) {
             FMInContactsViewController *inContactsVC = [[FMInContactsViewController alloc] init];
+            inContactsVC.pid = 0;
             [self.navigationController pushViewController:inContactsVC animated:YES];
         } else {
             FMOutContactsViewController *outContactsVC = [[FMOutContactsViewController alloc] init];
@@ -124,16 +116,64 @@
     }
 }
 
+#pragma mark -- Delegate
+#pragma mark  UISearchBarDelegate
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    self.nameStr = searchText;
+    self.pageModel.pageNum = 1;
+    [self loadEmployeeContactsData];
+}
+
 #pragma mark -- Event response
 #pragma mark 打电话
 - (void)callAction:(UIButton *)sender {
-    
+    FMEmployeeModel *model = [self.adapter getEmployeeModelWithIndex:sender.tag];
+    [[FeimaManager sharedFeimaManager] callPhoneWithNumber:model.telephone];
 }
 
 #pragma mark -- Private methods
-#pragma mark 加载数据
+#pragma mark 加载客户通讯录
 - (void)loadContactsData {
-    
+    FMPageModel *contactPage = [[FMPageModel alloc] init];
+    contactPage.pageNum = 1;
+    contactPage.pageSize = 15;
+    [self.adapter loadCustomerContactsDataWithPage:contactPage contactName:@"" action:@"total" complete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            [self.contactsTableView reloadData];
+        }
+    }];
+}
+
+#pragma mark 加载员工通讯录
+- (void)loadEmployeeContactsData {
+    [SVProgressHUD show];
+    [self.adapter loadEmployeeContactsDataWithPage:self.pageModel name:self.nameStr complete:^(BOOL isSuccess) {
+        [SVProgressHUD dismiss];
+        if (isSuccess) {
+            [self.contactsTableView.mj_footer endRefreshing];
+            [self.contactsTableView reloadData];
+            [self createLoadMoreView];
+        } else {
+            [self.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
+        }
+    }];
+}
+
+#pragma mark 加载更多
+- (void)loadMoreEmployeeContactsData {
+    self.pageModel.pageNum ++ ;
+    [self loadEmployeeContactsData];
+}
+
+#pragma mark 更多底部视图
+- (void)createLoadMoreView {
+    if ([self.adapter hasMoreEmployeeData]) {
+        MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreEmployeeContactsData)];
+        footer.automaticallyRefresh = NO;
+        self.contactsTableView.mj_footer = footer;
+    } else {
+        self.contactsTableView.mj_footer = nil;
+    }
 }
 
 #pragma mark 界面初始化
@@ -142,14 +182,14 @@
     [self.searchBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.mas_equalTo(15);
         make.top.mas_equalTo(kNavBar_Height);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-30, 50));
+        make.size.mas_equalTo(CGSizeMake(kScreen_Width-30, 60));
     }];
     
     [self.view addSubview:self.contactsTableView];
     [self.contactsTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.searchBar.mas_bottom);
         make.left.right.mas_equalTo(0);
-        make.height.mas_equalTo(kScreen_Height-kNavBar_Height-kTabBar_Height-50);
+        make.height.mas_equalTo(kScreen_Height-kNavBar_Height-60-(self.backBtnHidden?kTabBar_Height:0));
     }];
 }
 
@@ -171,13 +211,28 @@
         _contactsTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
         _contactsTableView.delegate = self;
         _contactsTableView.dataSource = self;
-        _contactsTableView.separatorStyle = UITableViewCellSelectionStyleNone;
         _contactsTableView.showsVerticalScrollIndicator = NO;
         _contactsTableView.backgroundColor = [UIColor whiteColor];
+        _contactsTableView.separatorInset = UIEdgeInsetsMake(0, 84, 0, 0);
+        [_contactsTableView registerClass:[FMSubEmployeeTableViewCell class] forCellReuseIdentifier:[FMSubEmployeeTableViewCell identifier]];
     }
     return _contactsTableView;
 }
 
+- (FMContactViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMContactViewModel alloc] init];
+    }
+    return _adapter;
+}
 
+- (FMPageModel *)pageModel {
+    if (!_pageModel) {
+        _pageModel = [[FMPageModel alloc] init];
+        _pageModel.pageNum = 1;
+        _pageModel.pageSize = 15;
+    }
+    return _pageModel;
+}
 
 @end

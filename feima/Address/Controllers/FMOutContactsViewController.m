@@ -7,11 +7,16 @@
 //
 
 #import "FMOutContactsViewController.h"
+#import "FMSubEmployeeTableViewCell.h"
+#import "FMContactViewModel.h"
 
 @interface FMOutContactsViewController ()<UISearchBarDelegate,UITableViewDataSource,UITableViewDelegate>
 
-@property (nonatomic, strong) UISearchBar  *searchBar;
-@property (nonatomic, strong) UITableView  *contactsTableView;
+@property (nonatomic, strong) UISearchBar        *searchBar;
+@property (nonatomic, strong) UITableView        *contactsTableView;
+@property (nonatomic, strong) FMContactViewModel *adapter;
+@property (nonatomic, strong) FMPageModel        *customerPage;
+@property (nonatomic,  copy ) NSString           *nameStr;
 
 @end
 
@@ -22,53 +27,81 @@
     self.baseTitle = @"客户列表";
     
     [self setupUI];
+    [self loadCustomersData];
 }
 
 #pragma mark UITableViewDelegate and UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 10;
+    return [self.adapter numberOfCustomersList];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    FMSubEmployeeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMSubEmployeeTableViewCell identifier] forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.imageView.image = ImageNamed(@"company_manager");
-    cell.textLabel.text = @"飞马测试";
-    
-    UIButton *callBtn = [[UIButton alloc] initWithFrame:CGRectMake(kScreen_Width-60, 10, 34, 34)];
-    [callBtn setImage:ImageNamed(@"call") forState:UIControlStateNormal];
-    callBtn.tag = indexPath.row;
-    [callBtn addTarget:self action:@selector(callAction:) forControlEvents:UIControlEventTouchUpInside];
-    [cell.contentView addSubview:callBtn];
-    
+    FMCustomerModel *model = [self.adapter getCustomerModelWithIndex:indexPath.row];
+    [cell fillContentWithData:model];
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 54;
+    return 62;
 }
 
-#pragma mark -- Event response
-#pragma mark 打电话
-- (void)callAction:(UIButton *)sender {
-    
+#pragma mark -- Delegate
+#pragma mark  UISearchBarDelegate
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    self.nameStr = searchText;
+    self.customerPage.pageNum = 1;
+    [self loadCustomersData];
 }
 
 #pragma mark -- Private methods
+#pragma mark 加载数据
+- (void)loadCustomersData {
+    [SVProgressHUD show];
+    [self.adapter loadCustomerContactsDataWithPage:self.customerPage contactName:self.nameStr action:@"" complete:^(BOOL isSuccess) {
+        [SVProgressHUD dismiss];
+        if (isSuccess) {
+            [self.contactsTableView.mj_footer endRefreshing];
+            [self.contactsTableView reloadData];
+            [self createLoadMoreView];
+        } else {
+            [self.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
+        }
+    }];
+}
+
+#pragma mark 加载更多
+- (void)loadMoreCustomersData {
+    self.customerPage.pageNum ++ ;
+    [self loadCustomersData];
+}
+
+#pragma mark 更多底部视图
+- (void)createLoadMoreView {
+    if ([self.adapter hasMoreCustomerData]) {
+        MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreCustomersData)];
+        footer.automaticallyRefresh = NO;
+        self.contactsTableView.mj_footer = footer;
+    } else {
+        self.contactsTableView.mj_footer = nil;
+    }
+}
+
 #pragma mark 界面初始化
 - (void)setupUI {
     [self.view addSubview:self.searchBar];
     [self.searchBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.mas_equalTo(15);
         make.top.mas_equalTo(kNavBar_Height);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-30, 50));
+        make.size.mas_equalTo(CGSizeMake(kScreen_Width-30, 60));
     }];
     
     [self.view addSubview:self.contactsTableView];
     [self.contactsTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.searchBar.mas_bottom);
         make.left.right.mas_equalTo(0);
-        make.height.mas_equalTo(kScreen_Height-kNavBar_Height-kTabBar_Height-50);
+        make.height.mas_equalTo(kScreen_Height-kNavBar_Height-60);
     }];
 }
 
@@ -92,9 +125,27 @@
         _contactsTableView.dataSource = self;
         _contactsTableView.showsVerticalScrollIndicator = NO;
         _contactsTableView.tableFooterView = [[UIView alloc] init];
+        _contactsTableView.backgroundColor = [UIColor whiteColor];
+        _contactsTableView.separatorInset = UIEdgeInsetsMake(0, 84, 0, 0);
+        [_contactsTableView registerClass:[FMSubEmployeeTableViewCell class] forCellReuseIdentifier:[FMSubEmployeeTableViewCell identifier]];
     }
     return _contactsTableView;
 }
 
+- (FMContactViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMContactViewModel alloc] init];
+    }
+    return _adapter;
+}
+
+- (FMPageModel *)customerPage {
+    if (!_customerPage) {
+        _customerPage = [[FMPageModel alloc] init];
+        _customerPage.pageNum = 1;
+        _customerPage.pageSize = 15;
+    }
+    return _customerPage;
+}
 
 @end

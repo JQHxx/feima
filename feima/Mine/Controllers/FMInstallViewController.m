@@ -8,13 +8,15 @@
 
 #import "FMInstallViewController.h"
 #import "FMChangeViewController.h"
+#import "FMLoginViewModel.h"
 
 @interface FMInstallViewController ()<UITableViewDataSource,UITableViewDelegate>{
     NSArray *titlesArr;
 }
 
-@property (nonatomic,strong) UITableView *setTableView;
-@property (nonatomic,strong) UIButton    *logoutBtn;
+@property (nonatomic, strong) UITableView      *setTableView;
+@property (nonatomic, strong) UIButton         *logoutBtn;
+@property (nonatomic, strong) FMLoginViewModel *adapter;
 
 @end
 
@@ -24,6 +26,7 @@
     [super viewDidLoad];
     self.baseTitle = @"设置";
     titlesArr = @[@"修改密码",@"更改手机号"];
+    self.adapter = [[FMLoginViewModel alloc] init];
     
     [self.view addSubview:self.setTableView];
     [self.setTableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -66,7 +69,15 @@
 #pragma mark -- Events response
 #pragma mark 退出登录
 - (void)logoutAction:(UIButton *)sender {
-    
+    [SVProgressHUD show];
+    [self.adapter logoutComplete:^(BOOL isSuccess) {
+        [SVProgressHUD dismiss];
+        if (isSuccess) {
+            [[FeimaManager sharedFeimaManager] logout];
+        } else {
+            [self.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
+        }
+    }];
 }
 
 #pragma mark -- Getters
