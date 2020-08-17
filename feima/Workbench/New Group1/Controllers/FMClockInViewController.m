@@ -11,26 +11,21 @@
 #import "FMLocationView.h"
 #import "FMClockInAlertView.h"
 #import "UIView+Extend.h"
-#import <BMKLocationKit/BMKLocationComponent.h>
+#import "FMLocationManager.h"
+#import "FMClockInViewModel.h"
 #import <BaiduMapAPI_Base/BMKBaseComponent.h> //引入base相关所有的头文件
 #import <BaiduMapAPI_Map/BMKMapComponent.h> //引入地图功能所有的头文件
  
-@interface FMClockInViewController ()<FMLocationViewDelegate,BMKLocationManagerDelegate>
+@interface FMClockInViewController ()<FMLocationViewDelegate>
 
-//当前位置对象
-@property (nonatomic, strong) BMKUserLocation    *userLocation;
-//定位管理
-@property (nonatomic, strong) BMKLocationManager *locationManager;
-//单次定位返回Block
-@property (nonatomic, copy ) BMKLocatingCompletionBlock completionBlock;
 @property (nonatomic, strong) BMKMapView         *mapView; //百度地图
 @property (nonatomic, strong) FMLocationView     *contentView;
 @property (nonatomic, strong) UIButton           *toWorkBtn; //上班
 @property (nonatomic, strong) UIButton           *offWorkBtn; //下班
 
+@property (nonatomic, strong) FMAddressModel     *userAddress;
+@property (nonatomic, strong) FMClockInViewModel *adapter;
 
-@property (nonatomic, strong) NSMutableArray     *annotationArr;/** 标记数组*/
-@property (nonatomic, strong) NSMutableArray     *circleArr;/** 圆形数组*/
 
 @end
 
@@ -41,9 +36,8 @@
     self.isHiddenNavBar = YES;
     
     [self setupView];
-    [self initBlock];
-    [self initLocation];
-    [self startLoaction];
+    [self startLocation];
+    [self loadPunchTimesData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -73,100 +67,62 @@
 
 #pragma mark 刷新
 - (void)locationViewDidRefreshLocation:(FMLocationView *)view {
-     [self startLoaction];
+    [self startLocation];
 }
-
-
-#pragma mark BMKLocationManagerDelegate
-/**
- *  @brief 为了适配app store关于新的后台定位的审核机制（app store要求如果开发者只配置了使用期间定位，则代码中不能出现申请后台定位的逻辑），当开发者在plist配置NSLocationAlwaysUsageDescription或者NSLocationAlwaysAndWhenInUseUsageDescription时，需要在该delegate中调用后台定位api：[locationManager requestAlwaysAuthorization]。开发者如果只配置了NSLocationWhenInUseUsageDescription，且只有使用期间的定位需求，则无需在delegate中实现逻辑。
-*/
-- (void)BMKLocationManager:(BMKLocationManager *)manager doRequestAlwaysAuthorization:(CLLocationManager *)locationManager {
-    [locationManager requestAlwaysAuthorization];
-}
-
 
 #pragma mark -- Event response
 #pragma mark 打卡
 - (void)clockInAction:(UIButton *)sender {
-    FMClockInAlertViewType type;
+    FMClockInType type;
+    NSString *startTime;
+    NSString *endTime;
     if ([sender.currentTitle isEqualToString:@"上班打卡"]) {
-        type = FMClockInAlertViewTypeToWork;
+        type = FMClockInTypeToWork;
+        startTime = [self.adapter getOnWorkPunchStartTime];
+        endTime = [self.adapter getOnWorkPunchEndTime];
     } else {
-        type = FMClockInAlertViewTypeOffWork;
+        type = FMClockInTypeOffWork;
+        startTime = [self.adapter getOffWorkPunchStartTime];
+        endTime = [self.adapter getOffWorkPunchEndTime];
     }
-    [FMClockInAlertView showClockInAlertWithFrame:CGRectMake(0, 0, kScreen_Width-30, 400) type:type confirmAction:^{
-        
+    kSelfWeak;
+    [FMClockInAlertView showClockInAlertWithFrame:CGRectMake(0, 0, kScreen_Width-30, 400) type:type address:self.userAddress.detailAddress startTime:startTime endTime:endTime confirmAction:^(NSArray *images) {
+        [weakSelf clockInWithType:type images:images];
     }];
 }
 
 #pragma mark -- Private methods
-#pragma mark 初始化定位管理
-- (void)initLocation {
-    _locationManager = [[BMKLocationManager alloc] init];
-    _locationManager.delegate = self;
-     //设置返回位置的坐标系类型
-    _locationManager.coordinateType = BMKLocationCoordinateTypeBMK09LL;
-    //设置距离过滤参数
-    _locationManager.distanceFilter = kCLDistanceFilterNone;
-    //设置预期精度参数
-    _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    //设置应用位置类型
-    _locationManager.activityType = CLActivityTypeAutomotiveNavigation;
-    //设置是否自动停止位置更新
-    _locationManager.pausesLocationUpdatesAutomatically = NO;
-    //设置是否允许后台定位
-    _locationManager.allowsBackgroundLocationUpdates = YES;
-    //设置位置获取超时时间
-    _locationManager.locationTimeout = 10;
-    //设置获取地址信息超时时间
-    _locationManager.reGeocodeTimeout = 10;
+#pragma mark 定位
+- (void)startLocation {
+    kSelfWeak;
+    [[FMLocationManager sharedInstance] getAddressDetail:^(FMAddressModel *addressModel) {
+        weakSelf.userAddress = addressModel;
+        [weakSelf.mapView setCenterCoordinate:CLLocationCoordinate2DMake(addressModel.latitude, addressModel.longitude) animated:YES];
+        BMKPointAnnotation * point = [[BMKPointAnnotation alloc]init];
+        point.coordinate = CLLocationCoordinate2DMake(addressModel.latitude, addressModel.longitude);;
+        point.title = addressModel.street;
+        [weakSelf.mapView addAnnotation:point];
+        
+        MyLog(@"rgc = %@",addressModel.detailAddress);
+        weakSelf.contentView.addr = addressModel.detailAddress;
+    }];
 }
 
-#pragma mark 定位完成
-- (void)initBlock {
-    __weak FMClockInViewController *weakSelf = self;
-    self.completionBlock = ^(BMKLocation * _Nullable location, BMKLocationNetworkState state, NSError * _Nullable error) {
-        if (error) {
-            MyLog(@"locError:{%ld - %@};", (long)error.code, error.localizedDescription);
-        }
-        FMClockInViewController *strongSelf = weakSelf;
-        if (location.location) { //得到定位信息，添加annotation
-            MyLog(@"LOC = %@",location.location);
-            MyLog(@"LOC ID= %@",location.locationID);
-            
-            if (location.rgcData.poiList) {
-                for (BMKLocationPoi * poi in location.rgcData.poiList) {
-                    MyLog(@"poi = %@, %@, %f, %@, %@", poi.name, poi.addr, poi.relaiability, poi.tags, poi.uid);
-                }
-            }
-            
-            if (location.rgcData.poiRegion) {
-                MyLog(@"poiregion = %@, %@, %@", location.rgcData.poiRegion.name, location.rgcData.poiRegion.tags, location.rgcData.poiRegion.directionDesc);
-            }
-            
-            if (!strongSelf.userLocation) {
-                strongSelf.userLocation = [[BMKUserLocation alloc] init];
-            }
-            strongSelf.userLocation.location = location.location;
-            [strongSelf.mapView updateLocationData:strongSelf.userLocation];
-            
-            CLLocationCoordinate2D mycoordinate = location.location.coordinate;
-            strongSelf.mapView.centerCoordinate = mycoordinate;
-        }
+#pragma mark 获取打卡时间
+- (void)loadPunchTimesData {
+    [self.adapter loadPunchTimeDataComplete:^(BOOL isSuccess) {
         
-        
-        if (location.rgcData) {
-            MyLog(@"rgc = %@",[location.rgcData description]);
-            strongSelf.contentView.addr = [NSString stringWithFormat:@"%@%@%@%@%@",location.rgcData.province,location.rgcData.city,location.rgcData.district,location.rgcData.town,location.rgcData.locationDescribe];
-        }
-        
-    };
+    }];
 }
 
-#pragma mark 开始定位
-- (void)startLoaction {
-    [self.locationManager requestLocationWithReGeocode:YES withNetworkState:YES completionBlock:self.completionBlock];
+#pragma mark 打卡
+- (void)clockInWithType:(FMClockInType)type images:(NSArray *)images{
+    kSelfWeak;
+    [self.adapter addPunchRequetWithType:type address:self.userAddress.detailAddress images:images longtude:self.userAddress.longitude latitude:self.userAddress.latitude complete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            [weakSelf.view makeToast:@"打卡成功" duration:2.0 position:CSToastPositionCenter];
+        }
+    }];
 }
 
 #pragma mark 界面初始化
@@ -192,7 +148,7 @@
 - (BMKMapView *)mapView {
     if (!_mapView) {
         _mapView = [[BMKMapView alloc] init];
-        [_mapView setZoomLevel:5];//精确到5米
+        [_mapView setZoomLevel:17];//精确50米
         _mapView.userTrackingMode = BMKUserTrackingModeNone; //设定定位模式为普通模式
     }
     return _mapView;
@@ -240,14 +196,12 @@
     return _offWorkBtn;
 }
 
-#pragma mark 标记数组
-- (NSMutableArray *)annotationArr {
-    if (!_annotationArr) {
-        _annotationArr = [[NSMutableArray alloc] init];
+- (FMClockInViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMClockInViewModel alloc] init];
     }
-    return _annotationArr;
+    return _adapter;
 }
-
 
 - (void)dealloc {
     if (_mapView) {

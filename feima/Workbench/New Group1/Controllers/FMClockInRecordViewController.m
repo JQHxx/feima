@@ -7,8 +7,11 @@
 //
 
 #import "FMClockInRecordViewController.h"
+#import "FMPunchRecordTableViewCell.h"
 
-@interface FMClockInRecordViewController ()
+@interface FMClockInRecordViewController ()<UITableViewDelegate,UITableViewDataSource>
+
+@property (nonatomic, strong) UITableView *recordsTableView;
 
 @end
 
@@ -16,17 +19,33 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+#pragma mark -- UITableViewDataSource
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 10;
 }
-*/
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    FMPunchRecordTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMPunchRecordTableViewCell identifier] forIndexPath:indexPath];
+    
+    return cell;
+}
+
+#pragma mark -- Getters
+#pragma mark 打卡记录
+- (UITableView *)recordsTableView {
+    if (!_recordsTableView) {
+        _recordsTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        _recordsTableView.delegate = self;
+        _recordsTableView.dataSource = self;
+        _recordsTableView.showsVerticalScrollIndicator = NO;
+        [_recordsTableView registerClass:[FMPunchRecordTableViewCell class] forCellReuseIdentifier:[FMPunchRecordTableViewCell identifier]];
+    }
+    return _recordsTableView;
+}
+
 
 @end

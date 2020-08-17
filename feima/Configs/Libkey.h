@@ -19,6 +19,6 @@ static NSString * const key_baidu_ak = @"bUUtr1Oberp1DULkTlt5xvoAXABwLVIO";
  * 自定义key
  */
 static NSString * const kLoginStateKey = @"com.hegui.feima.login.key";
-static NSString * const kUserTypeKey = @"com.hegui.feima.user.key.type";
+static NSString * const kLoginAccountKey = @"com.hegui.feima.account.key";
 
 #endif /* Libkey_h */

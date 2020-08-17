@@ -7,6 +7,8 @@
 //
 
 #import "FMClockInAlertView.h"
+#import "FMPhotoCollectionView.h"
+#import "FMClockInViewModel.h"
 #import "NSDate+Extend.h"
 #import "QWAlertView.h"
 
@@ -15,68 +17,49 @@
 @property (nonatomic, strong ) UILabel  *titleLab;
 @property (nonatomic, strong ) UIButton *closeBtn;
 @property (nonatomic, strong ) UILabel  *descLab;
+@property (nonatomic, strong ) UILabel  *stateLab;
 @property (nonatomic, strong ) UILabel  *timeTitleLab;
 @property (nonatomic, strong ) UILabel  *timeLab;
 @property (nonatomic, strong ) UILabel  *addressTitleLab;
 @property (nonatomic, strong ) UILabel  *addressLab;
 @property (nonatomic, strong ) UILabel  *photoTitleLab;
-@property (nonatomic, strong ) UIButton *photoBtn;
+@property (nonatomic, strong ) FMPhotoCollectionView  *photoView;
 @property (nonatomic, strong ) UIButton *confirmBtn;
 
 @property (nonatomic, copy ) ConfirmBlock confirmBlock;
+
+@property (nonatomic, strong) FMClockInViewModel *adapter;
 
 @end
 
 @implementation FMClockInAlertView
 
-- (instancetype)initWithFrame:(CGRect)frame type:(FMClockInAlertViewType)type confirmAction:(ConfirmBlock)confrim{
+- (instancetype)initWithFrame:(CGRect)frame type:(FMClockInType)type startTime:(NSString *)startTime endTime:(NSString *)endTime address:(NSString *)address confirmAction:(ConfirmBlock)confrim{
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = 5;
         
         self.confirmBlock = confrim;
+        
         [self setupUI];
-        
-        NSInteger toWorkTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:@"2020.08.13 09:00" format:@"yyyy.MM.dd HH:mm"];
-        NSInteger offWorkTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:@"2020.08.13 18:00" format:@"yyyy.MM.dd HH:mm"];
-        
-        NSString *timeStr = [NSDate currentDateTimeWithFormat:@"yyyy.MM.dd HH:mm"];
-        NSInteger currentTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:timeStr format:@"yyyy.MM.dd HH:mm"];
-        
-        if (type == FMClockInAlertViewTypeToWork) { //上班
-            if (toWorkTime < currentTime) {
-                self.titleLab.text = @"打卡状态异常";
-                self.descLab.text = @"当前不在打开时间(09:00-18:00)";
-            } else {
-                self.titleLab.text = @"打卡状态正常";
-                self.descLab.text = @"";
-            }
-        } else {
-            if (offWorkTime > currentTime) {
-                self.titleLab.text = @"打卡状态异常";
-                self.descLab.text = @"您还未打上班卡，是否直接打下班卡\n当前不在打开时间(09:00-18:00)";
-            } else {
-                self.titleLab.text = @"打卡状态正常";
-                self.descLab.text = @"";
-            }
-        }
-        if (kIsEmptyString(self.descLab.text)) {
-            [self.descLab mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.height.mas_equalTo(0);
-            }];
-        }
-        self.timeLab.text = timeStr;
-        self.addressLab.text = @"湖南省长沙市岳麓区枫林三路罗马商业广场附近罗马商业广场附近";
+        //显示打开正常异常
+        [self showDescWithType:type startTime:startTime endTime:endTime];
+        //验证打卡
+        [self verifyRepeatedPunchWithType:type];
+        self.addressLab.text = address;
     }
     return self;
 }
 
 #pragma mark 显示弹出框
 + (void)showClockInAlertWithFrame:(CGRect)frame
-                             type:(FMClockInAlertViewType)type
+                             type:(FMClockInType)type
+                          address:(NSString *)addr
+                        startTime:(NSString *)startTime
+                          endTime:(NSString *)endTime
                     confirmAction:(ConfirmBlock)confrim {
-    FMClockInAlertView *view = [[FMClockInAlertView alloc] initWithFrame:frame type:type confirmAction:confrim];
+    FMClockInAlertView *view = [[FMClockInAlertView alloc] initWithFrame:frame type:type startTime:startTime endTime:endTime address:addr confirmAction:confrim];
     [view show];
 }
 
@@ -88,11 +71,58 @@
 
 #pragma mark  确认
 - (void)confirmClockInAction:(UIButton *)sender {
-    [[QWAlertView sharedMask] dismiss];
-    self.confirmBlock();
+    NSArray *images = [self.photoView getAllImages];
+    if (images.count > 0) {
+        [[QWAlertView sharedMask] dismiss];
+        self.confirmBlock(images);
+    } else {
+        [self makeToast:@"照片不能为空" duration:1.5 position:CSToastPositionCenter];
+    }
 }
 
 #pragma mark -- Private methods
+#pragma mark 打卡验证
+- (void)verifyRepeatedPunchWithType:(FMClockInType)type {
+    [self.adapter verifyRepeatedPunchWithType:type complete:^(BOOL isSuccess) {
+        if (!isSuccess) {
+            self.stateLab.text = self.adapter.errorString;
+            [self.stateLab mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.height.mas_equalTo(20);
+            }];
+        }
+    }];
+}
+
+#pragma mark 解析时间
+- (void)showDescWithType:(FMClockInType)type startTime:(NSString *)startTime endTime:(NSString *)endTime {
+    NSString *currentDay = [NSDate todayDateWithFormat:@"yyyy-MM-dd"];
+    NSString *timeStr = [NSDate currentDateTimeWithFormat:@"yyyy-MM-dd HH:mm"];
+    NSInteger currentTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:timeStr format:@"yyyy-MM-dd HH:mm"];
+    
+    NSString *startTimeStr = [startTime substringToIndex:startTime.length-3];
+    NSInteger sTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:[NSString stringWithFormat:@"%@ %@",currentDay,startTimeStr] format:@"yyyy-MM-dd HH:mm"];
+    
+    NSString *endTimeStr = [endTime substringToIndex:endTime.length-3];
+    NSInteger eTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:[NSString stringWithFormat:@"%@ %@",currentDay,endTimeStr] format:@"yyyy-MM-dd HH:mm"];
+    if (sTime < currentTime && eTime > currentTime) {
+        self.titleLab.text = @"打卡状态正常";
+        self.descLab.text = @"";
+    } else {
+        self.titleLab.text = @"打卡状态异常";
+        self.descLab.text = [NSString stringWithFormat:@"当前不在打卡时间(%@-%@)",startTimeStr,endTimeStr];
+    }
+    if (kIsEmptyString(self.descLab.text)) {
+        [self.descLab mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(0);
+        }];
+    } else {
+        [self.descLab mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(20);
+        }];
+    }
+    self.timeLab.text = timeStr;
+}
+
 #pragma mark show
 - (void)show {
     [[QWAlertView sharedMask] show:self withType:QWAlertViewStyleAlert];
@@ -112,15 +142,23 @@
         make.top.mas_equalTo(20);
         make.centerX.mas_equalTo(self.mas_centerX);
         make.width.mas_greaterThanOrEqualTo(60);
-        make.height.mas_equalTo(25);
+        make.height.mas_equalTo(30);
+    }];
+    
+    [self addSubview:self.stateLab];
+    [self.stateLab mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self.titleLab.mas_bottom);
+        make.left.mas_equalTo(25);
+        make.right.mas_equalTo(-25);
+        make.height.mas_equalTo(0);
     }];
     
     [self addSubview:self.descLab];
     [self.descLab mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self.titleLab.mas_bottom).offset(10);
+        make.top.mas_equalTo(self.stateLab.mas_bottom);
         make.left.mas_equalTo(25);
         make.right.mas_equalTo(-25);
-        make.height.mas_greaterThanOrEqualTo(17);
+        make.height.mas_equalTo(0);
     }];
     
     [self addSubview:self.timeTitleLab];
@@ -160,11 +198,12 @@
         make.size.mas_equalTo(CGSizeMake(54, 18));
     }];
     
-    [self addSubview:self.photoBtn];
-    [self.photoBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self addSubview:self.photoView];
+    [self.photoView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.photoTitleLab.mas_bottom).offset(10);
         make.left.mas_equalTo(self.descLab.mas_left);
-        make.size.mas_equalTo(CGSizeMake(60, 60));
+        make.right.mas_equalTo(-10);
+        make.height.mas_equalTo(70);
     }];
     
     [self addSubview:self.confirmBtn];
@@ -198,12 +237,21 @@
 }
 
 #pragma mark 错误描述
+- (UILabel *)stateLab {
+    if (!_stateLab) {
+        _stateLab = [[UILabel alloc] init];
+        _stateLab.textColor = [UIColor colorWithHexString:@"#666666"];
+        _stateLab.font = [UIFont regularFontWithSize:14];
+    }
+    return _stateLab;
+}
+
+#pragma mark 错误描述
 - (UILabel *)descLab {
     if (!_descLab) {
         _descLab = [[UILabel alloc] init];
         _descLab.textColor = [UIColor colorWithHexString:@"#666666"];
         _descLab.font = [UIFont regularFontWithSize:14];
-        _descLab.numberOfLines = 0 ;
     }
     return _descLab;
 }
@@ -275,18 +323,13 @@
 }
 
 #pragma mark 上传照片
-- (UIButton *)photoBtn {
-    if (!_photoBtn) {
-        _photoBtn = [[UIButton alloc] init];
-        [_photoBtn setTitle:@"+" forState:UIControlStateNormal];
-        [_photoBtn setTitleColor:[UIColor colorWithHexString:@"#666666"] forState:UIControlStateNormal];
-        _photoBtn.titleLabel.font = [UIFont mediumFontWithSize:28];
-        _photoBtn.layer.cornerRadius = 5;
-        _photoBtn.layer.borderColor = [UIColor textBlackColor].CGColor;
-        _photoBtn.layer.borderWidth = 1.0;
-        _photoBtn.clipsToBounds = YES;
+- (FMPhotoCollectionView *)photoView {
+    if (!_photoView) {
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        _photoView = [[FMPhotoCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+        _photoView.maxImagesCount = 4;
     }
-    return _photoBtn;
+    return _photoView;
 }
 
 #pragma mark 确认
@@ -295,6 +338,13 @@
         _confirmBtn = [UIButton submitButtonWithFrame:CGRectZero title:@"确认打卡" target:self selector:@selector(confirmClockInAction:)];
     }
     return _confirmBtn;
+}
+
+- (FMClockInViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMClockInViewModel alloc] init];
+    }
+    return _adapter;
 }
 
 @end

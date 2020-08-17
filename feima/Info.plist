@@ -38,6 +38,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>APP需要您的同意，才能在使用期间访问位置</string>
+	<key>NSCameraUsageDescription</key>
+	<string>APP需要您的同意，才能访问您的相机权限</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

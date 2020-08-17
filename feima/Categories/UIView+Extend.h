@@ -52,5 +52,8 @@
 */
 - (void)addTapPressed:(SEL)tapViewPressed target:(id)target;
 
+
+- (UIViewController *)findViewController;
+
 @end
 

@@ -115,7 +115,7 @@
     NSArray * arrWeek=[NSArray arrayWithObjects:@"星期日",@"星期一",@"星期二",@"星期三",@"星期四",@"星期五",@"星期六", nil];
  
     NSString *week = [arrWeek objectAtIndex:weekday - 1];
-    NSString *timeStr = [NSString stringWithFormat:@"%2ld:%2ld:%2ld %@",hour,minute,second,week];
+    NSString *timeStr = [NSString stringWithFormat:@"%02ld:%02ld:%02ld %@",hour,minute,second,week];
     return timeStr;
 }
 

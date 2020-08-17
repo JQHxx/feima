@@ -22,10 +22,9 @@
     [[HttpRequest sharedInstance] postWithUrl:api_login parameters:paraDict complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
         if (isSuccess) {
-            NSDictionary *data = [json safe_objectForKey:@"data"];
-            FMUserBeanModel *userBean = [FMUserBeanModel  yy_modelWithJSON:data[@"userBean"]];
+//            NSDictionary *data = [json safe_objectForKey:@"data"];
+//            FMUserBeanModel *userBean = [FMUserBeanModel  yy_modelWithJSON:data[@"userBean"]];
             [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:YES]];
-            [NSUserDefaultsInfos putKey:kUserTypeKey andValue:@(userBean.type)];
             if (complete) complete(YES);
         } else {
             if (complete) complete(NO);

@@ -9,8 +9,11 @@
 #ifndef API_h
 #define API_h
 
-//*********************用户相关**********************/
 
+//*********************上传相关**********************/
+static NSString * const api_file_upload = @"/rest/file/upload";  //上传图片
+
+//*********************用户相关**********************/
 static NSString * const api_login = @"/rest/login";  //登录
 static NSString * const api_logout = @"/rest/logout";  //退出登录
 static NSString * const api_menu_list = @"/rest/menu/list"; //菜单权限
@@ -19,11 +22,17 @@ static NSString * const api_menu_list = @"/rest/menu/list"; //菜单权限
 static NSString * const api_employee_phone = @"/rest/employee/phone";  //员工通讯录
 static NSString * const api_employee_list = @"/rest/employee/list";  //员工列表
 
+//*********************打卡相关**********************/
+static NSString * const api_punchrecord_time = @"/rest/punchrecord/time";  //打卡时间
+static NSString * const api_punchrecord_check_punch = @"/rest/punchrecord/check/punch";  //上班重复打卡验证
+static NSString * const api_punchrecord_add_punch = @"/rest/punchrecord/add/punch";  //上班打卡
+static NSString * const api_punchrecord_check_punchafter = @"/rest/punchrecord/check/punchafter";  //下班重复打卡验证
+static NSString * const api_punchrecord_add_punchafter = @"/rest/punchrecord/add/punchafter";  //下班打卡
+static NSString * const api_punchrecord_list = @"rest/punchrecord/list";   //打卡记录
 
 //********************客户相关*************************/
 static NSString * const api_customer_phone = @"/rest/customer/phone";  //客户通讯录
 static NSString * const api_customer_list = @"/rest/customer/list";  //客户列表
-
 
 
 //********************组织结构相关*************************/

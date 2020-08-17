@@ -79,10 +79,8 @@ singleton_implementation(FeimaManager)
     return @[firstString, lastString];
 }
 
-
 #pragma mark 退出登录
 - (void)logout {
-    [NSUserDefaultsInfos removeObjectForKey:kUserTypeKey];
     [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:NO]];
     dispatch_async(dispatch_get_main_queue(), ^{
         [kKeyWindow makeToast:@"帐号已在他处登录" duration:1.0 position:CSToastPositionCenter];

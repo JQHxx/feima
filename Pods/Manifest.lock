@@ -25,6 +25,14 @@ PODS:
     - SDWebImage/Core (= 5.7.1)
   - SDWebImage/Core (5.7.1)
   - SVProgressHUD (2.2.5)
+  - YBImageBrowser (3.0.9):
+    - YBImageBrowser/Core (= 3.0.9)
+  - YBImageBrowser/Core (3.0.9):
+    - SDWebImage (>= 5.0.0)
+    - YYImage
+  - YYImage (1.0.4):
+    - YYImage/Core (= 1.0.4)
+  - YYImage/Core (1.0.4)
   - YYModel (1.0.4)
 
 DEPENDENCIES:
@@ -36,6 +44,7 @@ DEPENDENCIES:
   - MJRefresh
   - SDCycleScrollView
   - SVProgressHUD
+  - YBImageBrowser
   - YYModel
 
 SPEC REPOS:
@@ -49,6 +58,8 @@ SPEC REPOS:
     - SDCycleScrollView
     - SDWebImage
     - SVProgressHUD
+    - YBImageBrowser
+    - YYImage
     - YYModel
 
 SPEC CHECKSUMS:
@@ -61,8 +72,10 @@ SPEC CHECKSUMS:
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
   SDWebImage: 5d4cf6afccd9ac1d2ee701ed0c4917cbb1b80536
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  YBImageBrowser: 7ecc8bf33ffa5f3b94c397c29b4f3638dd37f527
+  YYImage: 1e1b62a9997399593e4b9c4ecfbbabbf1d3f3b54
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: d0e59c1b5160895de864b101e9814e1070269fc9
+PODFILE CHECKSUM: ddf9b0cca115c18b1efb65f1b6d12482ce894da9
 
 COCOAPODS: 1.9.1

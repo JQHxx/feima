@@ -39,4 +39,19 @@ typedef void (^RequstCompleteBlock)(BOOL isSuccess,id json, NSError* error);
                parameters:(id)parameters
                  complete:(RequstCompleteBlock)complete;
 
+/**
+ *  上传图片
+ *
+ *  @param url  请求的网址字符串
+ *  @param parameters 请求的参数
+ *  @param image  图片
+ *  @param complete    请求完成的回调
+
+*/
+- (void)uploadFileRequestWithUrl:(NSString *)url
+                           image:(UIImage *)image
+                      parameters:(id)parameters
+                        complete:(RequstCompleteBlock)complete;
+
+
 @end

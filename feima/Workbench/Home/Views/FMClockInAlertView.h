@@ -7,25 +7,26 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FMClockInViewModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-typedef enum : NSUInteger {
-    FMClockInAlertViewTypeToWork, //上班
-    FMClockInAlertViewTypeOffWork, //下班
-} FMClockInAlertViewType;
-
-typedef void(^ConfirmBlock)(void);
+typedef void(^ConfirmBlock)(NSArray *images);
 
 @interface FMClockInAlertView : UIView
 
-/* 显示
- *
+/**
+ * 显示
+ *  @param frame  frame
+ *  @param type  打卡类型
+ *  @param startTime  开始时间
+ *  @param endTime  结束时间
+ *  @param addr  地址
+ *  @param confrim  确定
  */
 + (void)showClockInAlertWithFrame:(CGRect)frame
-                             type:(FMClockInAlertViewType)type
+                             type:(FMClockInType)type
+                          address:(NSString *)addr
+                        startTime:(NSString *)startTime
+                          endTime:(NSString *)endTime
                     confirmAction:(ConfirmBlock)confrim;
 
 @end
-
-NS_ASSUME_NONNULL_END
