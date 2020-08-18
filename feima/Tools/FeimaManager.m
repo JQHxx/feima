@@ -79,6 +79,32 @@ singleton_implementation(FeimaManager)
     return @[firstString, lastString];
 }
 
+#pragma mark 获取年月数据
+- (NSMutableArray *)getYearMonthDataWithMinDate:(NSString *)minDate {
+    NSMutableArray *data = [[NSMutableArray alloc] init];
+    //当前日期时间
+    NSDate *currentDate = [NSDate date];
+    //设定数据格式为xxxx-mm
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM"];
+    //通过日历可以直接获取前几个月的日期，所以这里直接用该类的方法进行循环获取数据
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *lastMonthComps = [[NSDateComponents alloc] init];
+    NSString *dateStr = [formatter stringFromDate:currentDate];
+    NSInteger lastIndex = 0;
+    NSDate *newdate;
+    //循环获取可选月份，从当前月份到最小月份，直接用字符串的比较来判断是否大于设定的最小日期
+    while (!([dateStr compare:minDate] == NSOrderedAscending)) {
+        [data addObject:dateStr];
+        lastIndex--;
+        //获取之前n个月, setMonth的参数为正则向后，为负则表示之前
+        [lastMonthComps setMonth:lastIndex];
+        newdate = [calendar dateByAddingComponents:lastMonthComps toDate:currentDate options:0];
+        dateStr = [formatter stringFromDate:newdate];
+    }
+    return data;
+}
+
 #pragma mark 退出登录
 - (void)logout {
     [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:NO]];

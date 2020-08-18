@@ -43,6 +43,11 @@ singleton_interface(FeimaManager)
  */
 - (NSArray *)getMonthFirstAndLastDayWithDate:(NSString *)dateStr format:(NSString *)format;
 
+/**
+ * 获取年月数据
+*/
+- (NSMutableArray *)getYearMonthDataWithMinDate:(NSString *)minDate;
+
 
 //退出登录
 - (void)logout;

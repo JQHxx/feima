@@ -7,6 +7,10 @@
 //
 
 #import "FMAddCustomerViewController.h"
+#import "FMImageCollectionView.h"
+#import "FMPublicViewModel.h"
+#import "FMCustomerViewModel.h"
+#import "BRStringPickerView.h"
 
 @interface FMAddCustomerViewController ()<UITableViewDelegate,UITableViewDataSource>{
     NSArray *titlesArr;
@@ -18,14 +22,17 @@
 @property (nonatomic, strong) UITextField    *contactTextField; //联系人
 @property (nonatomic, strong) UITextField    *phoneTextField;  //手机号
 @property (nonatomic, strong) UILabel        *addressLabel;   //位置
+@property (nonatomic, strong) FMImageCollectionView *photoView;
 @property (nonatomic, strong) UILabel        *photoTitleLab;  //
 @property (nonatomic, strong) UILabel        *industryLab;   //行业类型
 @property (nonatomic, strong) UILabel        *levelLab;      //客户等级
 @property (nonatomic, strong) UITextField    *areaTextField; //陈列面积
 @property (nonatomic, strong) UILabel        *followPressLab; //跟进进度
 @property (nonatomic, strong) UILabel        *followLab;    //跟进人
-
 @property (nonatomic, strong) UIView         *bottomView;
+
+@property (nonatomic, strong) FMPublicViewModel *publicAdapter;
+@property (nonatomic, strong) FMCustomerViewModel *adapter;
 
 @end
 
@@ -38,6 +45,7 @@
     titlesArr = @[@{@"title":@"基本信息",@"subtitles":@[@"名称*",@"简称",@"联系人*",@"手机号*",@"位置*",@"门头照(0/5)"]},@{@"title":@"详细信息",@"subtitles":@[@"行业类型*",@"客户等级*",@"陈列面积*",@"跟进进度*",@"跟进人"]}];
     
     [self setupUI];
+    [self loadPreGroupData];
 }
 
 #pragma mark UITableViewDelegate and UITableViewDataSource
@@ -109,6 +117,11 @@
             descLab.textColor = [UIColor colorWithHexString:@"#F34F1F"];
             descLab.text = @"*必须为现场拍照";
             [cell.contentView addSubview:descLab];
+            
+            UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+            FMImageCollectionView *photoView = [[FMImageCollectionView alloc] initWithFrame:CGRectMake(lab.left, lab.bottom+10, kScreen_Width-40, 68) collectionViewLayout:layout];
+            [cell.contentView addSubview:photoView];
+            self.photoView = photoView;
         }
     } else {
         if (indexPath.row == 2) { //陈列面积
@@ -133,8 +146,11 @@
         self.nameTextField.text = self.customerModel.businessName;
         self.shortNameTextField.text = self.customerModel.nickName;
         self.contactTextField.text = self.customerModel.contactName;
-        self.phoneTextField.text = [NSString stringWithFormat:@"%ld",self.customerModel.telephone];
+        self.phoneTextField.text = self.customerModel.telephone;
         self.addressLabel.text = self.customerModel.address;
+        if (!kIsEmptyString(self.customerModel.doorPhoto)) {
+            self.photoView.images = [self.customerModel.doorPhoto componentsSeparatedByString:@","];
+        }
         
         self.industryLab.textColor = [UIColor colorWithHexString:@"#666666"];
         self.industryLab.text = self.customerModel.industryName;
@@ -163,7 +179,7 @@
     if (indexPath.section == 0 && indexPath.row == 4) {
         return 80;
     } else if (indexPath.section == 0 && indexPath.row == 5) {
-        return 120;
+        return 140;
     } else {
         return 60;
     }
@@ -187,13 +203,62 @@
     
 }
 
-#pragma mark
+#pragma mark 选择
 - (void)selectedInfoAction:(UITapGestureRecognizer *)gesture {
     NSInteger tag = gesture.view.tag;
     MyLog(@"tag:%ld",tag);
+    NSString *title = nil;
+    NSArray *data;
+    if (tag == 100) {
+        title = @"行业类型";
+        data = self.publicAdapter.industryTypesArray;
+    } else if (tag == 101) {
+        title = @"客户等级";
+        data = self.publicAdapter.levelArray;
+    } else if (tag == 103) {
+        title = @"跟进进度";
+        data = self.publicAdapter.progressArray;
+    }
+    NSMutableArray *tempArr = [[NSMutableArray alloc] init];
+    for (FMGroupModel *model in data) {
+        [tempArr addObject:model.dictValue];
+    }
+    
+    [BRStringPickerView showStringPickerWithTitle:title dataSource:tempArr defaultSelValue:nil isAutoSelect:NO resultBlock:^(id selectValue) {
+        
+    }];
 }
 
 #pragma mark -- Private methods
+#pragma mark 预加载数据
+- (void)loadPreGroupData {
+    [self loadIndustryTypeData];
+    [self loadCustomerLeveData];
+    [self loadFollowUpProgressData];
+}
+
+#pragma mark 加载行业类型数据
+- (void)loadIndustryTypeData {
+    [self loadGroupDataWithGroupStr:kIndustryTypeKey];
+}
+
+#pragma mark 加载客户等级数据
+- (void)loadCustomerLeveData {
+    [self loadGroupDataWithGroupStr:kCustomerLevelKey];
+}
+
+#pragma mark 加载跟进进度数据
+- (void)loadFollowUpProgressData {
+    [self loadGroupDataWithGroupStr:kFollowUpProgressKey];
+}
+
+#pragma mark 加载下拉数据
+- (void)loadGroupDataWithGroupStr:(NSString *)groupStr {
+    [self.publicAdapter loadGroupDataWithGroupStr:groupStr complete:^(BOOL isSuccess) {
+        
+    }];
+}
+
 #pragma mark UI
 - (void)setupUI {
     [self.view addSubview:self.myTableView];
@@ -207,7 +272,7 @@
 #pragma mark setup title label
 - (UILabel *)setupTitlelabelWithTitleStr:(NSString *)titleStr {
     UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 80, 30)];
-    lab.font = [UIFont mediumFontWithSize:14];
+    lab.font = [UIFont mediumFontWithSize:16];
     lab.textColor = [UIColor colorWithHexString:@"#333333"];
     //必填*处理
     if ([titleStr containsString:@"*"]) {
@@ -224,7 +289,7 @@
 #pragma mark setup Label
 - (UILabel *)setupLabelWithTitleStr:(NSString *)titleStr tag:(NSInteger)tag{
     UILabel *valueLab = [[UILabel alloc] initWithFrame:CGRectMake(105, 15,kScreen_Width-115, 30)];
-    valueLab.font = [UIFont regularFontWithSize:14];
+    valueLab.font = [UIFont regularFontWithSize:16];
     valueLab.textColor = [UIColor colorWithHexString:@"#999999"];
     NSString *placeholder = titleStr;
     if ([titleStr containsString:@"*"]) {
@@ -239,7 +304,7 @@
 #pragma mark setup textfield
 - (UITextField *)setupTextFieldWithPlaceholder:(NSString *)titleStr {
     UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(105, 15, kScreen_Width-115, 30)];
-    textField.font = [UIFont regularFontWithSize:14];
+    textField.font = [UIFont regularFontWithSize:16];
     textField.textColor = [UIColor colorWithHexString:@"#666666"];
     NSString *placeholder = nil;
     if ([titleStr containsString:@"*"]) {
@@ -295,6 +360,20 @@
         _areaTextField = [self setupTextFieldWithPlaceholder:@"陈列面积"];
     }
     return _areaTextField;
+}
+
+- (FMPublicViewModel *)publicAdapter {
+    if (!_publicAdapter) {
+        _publicAdapter = [[FMPublicViewModel alloc] init];
+    }
+    return _publicAdapter;
+}
+
+- (FMCustomerViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMCustomerViewModel alloc] init];
+    }
+    return _adapter;
 }
 
 

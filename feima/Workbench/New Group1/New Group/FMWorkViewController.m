@@ -191,7 +191,7 @@
         _titleLab = [[UILabel alloc] init];
         _titleLab.font = [UIFont mediumFontWithSize:24];
         _titleLab.textColor = [UIColor textBlackColor];
-        _titleLab.text = @"王俊凯的工作台";
+        _titleLab.text = [NSString stringWithFormat:@"%@的工作台",[NSUserDefaultsInfos getValueforKey:kUserNameKey]];
     }
     return _titleLab;
 }

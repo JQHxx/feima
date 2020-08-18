@@ -9,6 +9,7 @@
 #import "FMCustomerDetailsViewController.h"
 #import "FMAddCustomerViewController.h"
 #import "FMCustomerHeadView.h"
+#import "FMImageCollectionView.h"
 
 @interface FMCustomerDetailsViewController ()<UITableViewDelegate,UITableViewDataSource>{
     NSArray *titlesArr;
@@ -74,13 +75,18 @@
     NSArray *titles = dict[@"subtitles"];
     NSString *titleStr = titles[indexPath.row];
     UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 80, 30)];
-    lab.font = [UIFont mediumFontWithSize:14];
+    lab.font = [UIFont mediumFontWithSize:16];
     lab.textColor = [UIColor colorWithHexString:@"#333333"];
     lab.text = titleStr;
     [cell.contentView addSubview:lab];
     
     if (indexPath.section==0&&indexPath.row==5) { //门头照
-        
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        FMImageCollectionView *photoView = [[FMImageCollectionView alloc] initWithFrame:CGRectMake(20, lab.bottom+10, kScreen_Width-40, 68) collectionViewLayout:layout];
+        [cell.contentView addSubview:photoView];
+        if (!kIsEmptyString(self.customer.doorPhoto)) {
+            photoView.images = [self.customer.doorPhoto componentsSeparatedByString:@","];
+        }
     } else {
         UILabel *valueLab = [self fillDataForSection:indexPath.section row:indexPath.row];
         [cell.contentView addSubview:valueLab];
@@ -101,7 +107,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0 && indexPath.row == 5) {
-        return 120;
+        return 140;
     } else {
         return 60;
     }
@@ -150,7 +156,7 @@
 #pragma mark 填充数据
 - (UILabel *)fillDataForSection:(NSInteger)section row:(NSInteger)row {
     UILabel *valueLab = [[UILabel alloc] initWithFrame:CGRectMake(105, 10,kScreen_Width-115, 40)];
-    valueLab.font = [UIFont regularFontWithSize:14];
+    valueLab.font = [UIFont regularFontWithSize:16];
     valueLab.textColor = [UIColor colorWithHexString:@"#666666"];
     valueLab.numberOfLines = 0;
     if (section == 0) {
@@ -165,7 +171,7 @@
                 valueLab.text = self.customer.contactName;
                 break;
             case 3:
-                valueLab.text = [NSString stringWithFormat:@"%ld", self.customer.telephone];
+                valueLab.text = self.customer.telephone;
                 break;
             case 4:
                 valueLab.text = self.customer.address;
@@ -203,6 +209,7 @@
     if (!_rightBtn) {
         _rightBtn = [[UIButton alloc] init];
         [_rightBtn setImage:ImageNamed(@"edit") forState:UIControlStateNormal];
+        _rightBtn.adjustsImageWhenHighlighted = NO;
         [_rightBtn addTarget:self action:@selector(editCostomerAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _rightBtn;;

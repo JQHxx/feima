@@ -30,11 +30,7 @@
 }
 
 #pragma mark -- Public methods
-#pragma mark 标示符
-+ (NSString *)identifier {
-     return NSStringFromClass(self);
-}
-
+#pragma mark 大小
 + (CGSize)itemSize {
     return CGSizeMake(60, 60);
 }

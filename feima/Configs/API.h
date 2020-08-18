@@ -13,6 +13,9 @@
 //*********************上传相关**********************/
 static NSString * const api_file_upload = @"/rest/file/upload";  //上传图片
 
+//*********************其他**********************/
+static NSString * const api_dict_selectgroup = @"/rest/dict/selectgroup";  //字典下拉框
+
 //*********************用户相关**********************/
 static NSString * const api_login = @"/rest/login";  //登录
 static NSString * const api_logout = @"/rest/logout";  //退出登录
@@ -28,11 +31,13 @@ static NSString * const api_punchrecord_check_punch = @"/rest/punchrecord/check/
 static NSString * const api_punchrecord_add_punch = @"/rest/punchrecord/add/punch";  //上班打卡
 static NSString * const api_punchrecord_check_punchafter = @"/rest/punchrecord/check/punchafter";  //下班重复打卡验证
 static NSString * const api_punchrecord_add_punchafter = @"/rest/punchrecord/add/punchafter";  //下班打卡
-static NSString * const api_punchrecord_list = @"rest/punchrecord/list";   //打卡记录
+static NSString * const api_punchrecord_list = @"/rest/punchrecord/list";   //打卡记录
 
 //********************客户相关*************************/
 static NSString * const api_customer_phone = @"/rest/customer/phone";  //客户通讯录
 static NSString * const api_customer_list = @"/rest/customer/list";  //客户列表
+static NSString * const api_customer_add = @"/rest/customer/add";  //添加客户
+static NSString * const api_customer_update = @"/rest/customer/update";  //修改客户
 
 
 //********************组织结构相关*************************/

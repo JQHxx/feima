@@ -10,6 +10,64 @@
 
 @implementation UIButton (Extend)
 
+#pragma mark 设置button的titleLabel和imageView的布局样式
+- (void)ctfLayoutButtonWithEdgeInsetsStyle:(CTFButtonEdgeInsetsType)style
+                           imageTitleSpace:(CGFloat)space {
+        self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        // 1. 得到imageView和titleLabel的宽、高
+        CGFloat imageWith = self.imageView.frame.size.width;
+        CGFloat imageHeight = self.imageView.frame.size.height;
+        CGFloat labelWidth = 0.0;
+        CGFloat labelHeight = 0.0;
+        labelWidth = self.titleLabel.intrinsicContentSize.width;
+        labelHeight = self.titleLabel.intrinsicContentSize.height;
+        
+        // 2. 声明全局的imageEdgeInsets和labelEdgeInsets
+        UIEdgeInsets imageEdgeInsets = UIEdgeInsetsZero;
+        UIEdgeInsets labelEdgeInsets = UIEdgeInsetsZero;
+        
+        // 3. 根据style和space得到imageEdgeInsets和labelEdgeInsets的值
+        switch (style) {
+            case CTFButtonEdgeInsetsType_ImageTop: {
+                imageWith = self.imageView.intrinsicContentSize.width;
+                imageHeight = self.imageView.intrinsicContentSize.height;
+                
+                imageEdgeInsets = UIEdgeInsetsMake(-labelHeight-space/2.0, -labelHeight, 0, -labelWidth);
+                labelEdgeInsets = UIEdgeInsetsMake(0, -imageWith, -imageHeight-space/2.0, 0);
+            }
+                break;
+                
+            case CTFButtonEdgeInsetsType_ImageLeft: {
+                imageEdgeInsets = UIEdgeInsetsMake(0, -space/2.0, 0, space/2.0);
+                labelEdgeInsets = UIEdgeInsetsMake(0, space/2.0, 0, -space/2.0);
+            }
+                break;
+                
+            case CTFButtonEdgeInsetsType_ImageBottom: {
+                imageEdgeInsets = UIEdgeInsetsMake(0, 0, -labelHeight-space/2.0, -labelWidth);
+                labelEdgeInsets = UIEdgeInsetsMake(-imageHeight-space/2.0, -imageWith, 0, 0);
+            }
+                break;
+                
+            case CTFButtonEdgeInsetsType_ImageRight: {
+                imageWith = self.imageView.intrinsicContentSize.width;
+                imageHeight = self.imageView.intrinsicContentSize.height;
+                
+                imageEdgeInsets = UIEdgeInsetsMake(0, labelWidth+space/2.0, 0, -labelWidth-space/2.0);
+                labelEdgeInsets = UIEdgeInsetsMake(0, -imageWith-space/2.0, 0, imageWith+space/2.0);
+            }
+                break;
+                
+            default:
+                break;
+                
+        }
+        
+        // 4. 赋值
+        self.titleEdgeInsets = labelEdgeInsets;
+        self.imageEdgeInsets = imageEdgeInsets;
+}
+
 #pragma mark 创建提交按钮
 + (UIButton *)submitButtonWithFrame:(CGRect)frame
                               title:(NSString *)title

@@ -10,15 +10,23 @@
 #import "FMAddCustomerViewController.h"
 #import "FMCustomerDetailsViewController.h"
 #import "FMStatisticsViewController.h"
+#import "FMSearchViewController.h"
 #import "FMCustomerTableViewCell.h"
 #import "FMCustomerModel.h"
+#import "FMCustomerViewModel.h"
+#import "BRStringPickerView.h"
 
 @interface FMCustomerViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic, strong) UIButton        *filterBtn;
+@property (nonatomic, strong) UIButton        *searchBtn;
 @property (nonatomic, strong) UITableView     *customerTableView;
 @property (nonatomic, strong) UIButton        *addBtn;
-@property (nonatomic, strong) NSMutableArray  *customerArray;
+@property (nonatomic, strong) FMCustomerViewModel  *adapter;
+@property (nonatomic, strong) FMPageModel    *pageModel;
+
+@property (nonatomic, assign) NSInteger      visitCode;
+@property (nonatomic,  copy ) NSString       *contactName;
 
 @end
 
@@ -34,23 +42,19 @@
  
 #pragma mark -- UITableViewDataSource and UITableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.customerArray.count;
+    return [self.adapter numberOfCustomerList];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FMCustomerTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMCustomerTableViewCell identifier] forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    FMCustomerModel *model = self.customerArray[indexPath.row];
+    FMCustomerModel *model = [self.adapter getCustomerModelWithIndex:indexPath.row];
     [cell fillContentWithData:model];
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 120;
-}
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    FMCustomerModel *model = self.customerArray[indexPath.row];
+    FMCustomerModel *model = [self.adapter getCustomerModelWithIndex:indexPath.row];
     if (self.isShowList) {
         FMStatisticsViewController *statisticsVC = [[FMStatisticsViewController alloc] init];
         statisticsVC.customer = model;
@@ -60,7 +64,6 @@
         customerVC.customer = model;
         [self.navigationController pushViewController:customerVC animated:YES];
     }
-    
 }
 
 #pragma mark -- Events response
@@ -70,37 +73,82 @@
     [self.navigationController pushViewController:addCustomerVC animated:YES];
 }
 
+#pragma mark 筛选
+- (void)filterAction:(UIButton *)sender {
+    NSArray *titles = @[@"未拜访",@"已拜访"];
+    kSelfWeak;
+    [BRStringPickerView showStringPickerWithTitle:@"筛选" dataSource:titles defaultSelValue:nil isAutoSelect:NO resultBlock:^(id selectValue) {
+        weakSelf.visitCode = [titles indexOfObject:selectValue] + 1;
+        [weakSelf loadNewCustomersData];
+    }];
+}
+
+#pragma mark 搜索
+- (void)searchCustomerAction:(UIButton *)sender {
+    FMSearchViewController *searchVC = [[FMSearchViewController alloc] init];
+    kSelfWeak;
+    searchVC.didClickSearch = ^(NSString *keyword) {
+        weakSelf.contactName = keyword;
+        [weakSelf loadNewCustomersData];
+    };
+    [self.navigationController pushViewController:searchVC animated:YES];
+}
+
 #pragma mark -- Private methods
 #pragma mark 加载数据
 - (void)loadCustomerData {
-    NSMutableArray *tempArr = [[NSMutableArray alloc] init];
-    for (NSInteger i=0; i<10; i++) {
-        FMCustomerModel *model = [[FMCustomerModel alloc] init];
-        model.businessName = @"俊哥铺子";
-        model.contactName = @"俊哥";
-        model.telephone = @"18974022637";
-        model.employeeName = @"业务员";
-        model.address = @"湖南省长沙市岳麓区文轩路185号靠近成城工业园文轩路185号靠近成城工业园";
-        model.statusName = @"未拜访";
-        model.nickName = @"铺子";
-        model.industryName =  @"商超";
-        model.gradeName = @"C";
-        model.displayArea = 3;
-        model.progressName = @"签约";
-        model.employeeName = @"李氏";
-        [tempArr addObject:model];
+    kSelfWeak;
+    [SVProgressHUD show];
+    [self.adapter loadCustomerListWithPage:self.pageModel contactName:self.contactName visitCode:self.visitCode complete:^(BOOL isSuccess) {
+        [SVProgressHUD dismiss];
+        if (isSuccess) {
+            [weakSelf.customerTableView.mj_header endRefreshing];
+            [weakSelf.customerTableView.mj_footer endRefreshing];
+            [weakSelf.customerTableView reloadData];
+            [weakSelf createLoadMoreView];
+        } else {
+            [weakSelf.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
+        }
+    }];
+}
+
+#pragma mark
+- (void)loadNewCustomersData {
+    self.pageModel.pageNum = 1;
+    [self loadCustomerData];
+}
+
+#pragma mark 加载更多
+- (void)loadMoreCustomersData {
+    self.pageModel.pageNum ++ ;
+    [self loadCustomerData];
+}
+
+#pragma mark 更多底部视图
+- (void)createLoadMoreView {
+    if ([self.adapter hasMoreData]) {
+        MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreCustomersData)];
+        footer.automaticallyRefresh = NO;
+        self.customerTableView.mj_footer = footer;
+    } else {
+        self.customerTableView.mj_footer = nil;
     }
-    self.customerArray = tempArr;
-    [self.customerTableView reloadData];
 }
 
 #pragma mark 界面初始化
 - (void)setupUI {
-    [self.view addSubview:self.filterBtn];
-    [self.filterBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.view addSubview:self.searchBtn];
+    [self.searchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.mas_equalTo(self.view.mas_right).offset(-10);
         make.top.mas_equalTo(kStatusBar_Height+6);
-        make.size.mas_equalTo(CGSizeMake(40, 30));
+        make.size.mas_equalTo(CGSizeMake(30, 30));
+    }];
+    
+    [self.view addSubview:self.filterBtn];
+    [self.filterBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(self.searchBtn.mas_left).offset(-10);
+        make.top.mas_equalTo(kStatusBar_Height+6);
+        make.size.mas_equalTo(CGSizeMake(30, 30));
     }];
     
     [self.view addSubview:self.customerTableView];
@@ -128,8 +176,19 @@
         [_filterBtn setTitle:@"筛选" forState:UIControlStateNormal];
         [_filterBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         _filterBtn.titleLabel.font = [UIFont mediumFontWithSize:14];
+        [_filterBtn addTarget:self action:@selector(filterAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _filterBtn;
+}
+
+#pragma mark 搜索
+- (UIButton *)searchBtn {
+    if (!_searchBtn) {
+        _searchBtn = [[UIButton alloc] init];
+        [_searchBtn setImage:ImageNamed(@"search_white") forState:UIControlStateNormal];
+        [_searchBtn addTarget:self action:@selector(searchCustomerAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _searchBtn;
 }
 
 #pragma mark 客户列表
@@ -140,9 +199,16 @@
         _customerTableView.dataSource = self;
         _customerTableView.delegate = self;
         _customerTableView.tableFooterView = [[UIView alloc] init];
+        _customerTableView.estimatedRowHeight = 100;
+        _customerTableView.rowHeight = UITableViewAutomaticDimension;
         [_customerTableView registerClass:[FMCustomerTableViewCell class] forCellReuseIdentifier:[FMCustomerTableViewCell identifier]];
         _customerTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _customerTableView.backgroundColor = [UIColor colorWithHexString:@"#F8F8F8"];
+        
+        MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewCustomersData)];
+        header.automaticallyChangeAlpha = YES;
+        header.lastUpdatedTimeLabel.hidden = YES;
+        _customerTableView.mj_header = header;
     }
     return _customerTableView;
 }
@@ -155,11 +221,20 @@
     return _addBtn;
 }
 
-- (NSMutableArray *)customerArray {
-    if (!_customerArray) {
-        _customerArray = [[NSMutableArray alloc] init];
+- (FMCustomerViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMCustomerViewModel alloc] init];
     }
-    return _customerArray;
+    return _adapter;
+}
+
+- (FMPageModel *)pageModel {
+    if (!_pageModel) {
+        _pageModel = [[FMPageModel alloc] init];
+        _pageModel.pageNum = 1;
+        _pageModel.pageSize = 15;
+    }
+    return _pageModel;
 }
 
 @end

@@ -8,6 +8,7 @@
 
 #import "BaseViewModel.h"
 #import "FMPunchTimeModel.h"
+#import "FMPunchRecordModel.h"
 
 typedef enum : NSUInteger {
     FMClockInTypeToWork, //上班
@@ -15,6 +16,12 @@ typedef enum : NSUInteger {
 } FMClockInType;
 
 @interface FMClockInViewModel : BaseViewModel
+
+@property (nonatomic, copy ) NSString *punchStartTime;
+@property (nonatomic, copy ) NSString *punchEndTime;
+@property (nonatomic, copy ) NSString *punchAfterStartTime;
+@property (nonatomic, copy ) NSString *punchAfterEndTime;
+@property (nonatomic,strong) NSArray  *statusArray; //打卡状态
 
 /**
  * 获取打卡时间
@@ -46,28 +53,24 @@ typedef enum : NSUInteger {
                       complete:(AdpaterComplete)complete;
 
 /**
- *  上班打卡开始时间
+ * 打卡记录   
+ *  @param month  按月查询
+ *  @param status 打卡状态
  *
  */
-- (NSString *)getOnWorkPunchStartTime;
+- (void)loadPunchRecordsDataWithMonth:(NSString *)month
+                              status:(NSString *)status
+                            complete:(AdpaterComplete)complete;
 
 /**
- *  上班打卡结束时间
- *
+ * 返回打卡记录数量
 */
-- (NSString *)getOnWorkPunchEndTime;
+- (NSInteger)numberOfPunchRecordsData;
 
 /**
- *  下班打卡开始时间
- *
+ * 返回打卡记录
 */
-- (NSString *)getOffWorkPunchStartTime;
-
-/**
- *  下班打卡结束时间
- *
-*/
-- (NSString *)getOffWorkPunchEndTime;
+- (FMPunchRecordModel *)getRecordModelWithIndex:(NSInteger)index;
 
 
 @end

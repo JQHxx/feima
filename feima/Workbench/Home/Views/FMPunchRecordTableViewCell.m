@@ -7,6 +7,7 @@
 //
 
 #import "FMPunchRecordTableViewCell.h"
+#import "FMPunchRecordModel.h"
 
 @interface FMPunchRecordTableViewCell ()
 
@@ -29,14 +30,27 @@
     return self;
 }
 
-#pragma mark -- UI
+#pragma mark -- Public methods
+#pragma mark 填充数据
+- (void)fillContentWithData:(id)obj {
+    FMPunchRecordModel *model = (FMPunchRecordModel *)obj;
+    self.timeLab.text = [model.time substringFromIndex:model.time.length-2];
+    NSString *onTime = [[FeimaManager sharedFeimaManager] timeWithTimeInterval:model.recordType.createTime format:@"HH:mm"];
+    self.onWorkLab.text = [NSString stringWithFormat:@"%@\n%@",onTime,model.recordType.statusName];
+    
+    NSString *offTime = [[FeimaManager sharedFeimaManager] timeWithTimeInterval:model.recordAfterType.createTime format:@"HH:mm"];
+    self.offWorkLab.text = [NSString stringWithFormat:@"%@\n%@",offTime,model.recordAfterType.statusName];
+}
+
+#pragma mark -- Private methods
+#pragma mark UI
 - (void)setupUI {
     [self.contentView addSubview:self.timeLab];
     [self.timeLab mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(0);
         make.centerY.mas_equalTo(self.contentView.mas_centerY);
         make.width.mas_equalTo(kScreen_Width/3.0);
-        make.height.mas_equalTo(40);
+        make.height.mas_equalTo(50);
     }];
     
     [self.contentView addSubview:self.line1];
@@ -52,12 +66,12 @@
         make.left.mas_equalTo(self.line1.mas_right);
         make.centerY.mas_equalTo(self.contentView.mas_centerY);
         make.width.mas_equalTo(kScreen_Width/3.0);
-        make.height.mas_equalTo(40);
+        make.height.mas_equalTo(50);
     }];
     
     [self.contentView addSubview:self.line2];
     [self.line2 mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.offWorkLab.mas_right).offset(-1);
+        make.left.mas_equalTo(self.onWorkLab.mas_right).offset(-1);
         make.top.mas_equalTo(0);
         make.width.mas_equalTo(1);
         make.height.mas_equalTo(self.contentView.mas_height);
@@ -68,7 +82,7 @@
         make.left.mas_equalTo(self.line2.mas_right);
         make.centerY.mas_equalTo(self.contentView.mas_centerY);
         make.width.mas_equalTo(kScreen_Width/3.0);
-        make.height.mas_equalTo(40);
+        make.height.mas_equalTo(50);
     }];
 }
 

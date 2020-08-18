@@ -63,3 +63,8 @@
 
 #define kReportWidth (kScreen_Width-16)/4.0
 
+///自定义数据
+#define kMinMonth @"2019-08"
+#define kIndustryTypeKey       @"IndustryType"   //行业类型
+#define kCustomerLevelKey      @"CustomerLevel"     //客户等级
+#define kFollowUpProgressKey   @"FollowUpProgress"   //跟进进度

@@ -7,13 +7,11 @@
 //
 
 #import "FMClockInViewModel.h"
+#import "FMPunchStatusModel.h"
 
 @interface FMClockInViewModel ()
 
-@property (nonatomic, copy ) NSString *punchStartTime;
-@property (nonatomic, copy ) NSString *punchEndTime;
-@property (nonatomic, copy ) NSString *punchAfterStartTime;
-@property (nonatomic, copy ) NSString *punchAfterEndTime;
+@property (nonatomic,strong) NSArray  *recordsArray;
 
 @end
 
@@ -56,7 +54,10 @@
 - (void)verifyRepeatedPunchWithType:(FMClockInType)type complete:(AdpaterComplete)complete {
     NSString *url = type == FMClockInTypeToWork ? api_punchrecord_check_punch : api_punchrecord_check_punchafter;
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"account"] = @"administrator";
+    NSString *account = [NSUserDefaultsInfos getValueforKey:kLoginAccountKey];
+    if (!kIsEmptyString(account)) {
+        parameters[@"account"] = account;
+    }
     [[HttpRequest sharedInstance] getRequestWithUrl:url parameters:parameters complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
         if (isSuccess) {
@@ -90,24 +91,42 @@
     }];
 }
 
-#pragma mark
-- (NSString *)getOnWorkPunchStartTime {
-    return self.punchStartTime;
+#pragma mark 获取打卡记录
+- (void)loadPunchRecordsDataWithMonth:(NSString *)month
+                               status:(NSString *)status
+                             complete:(AdpaterComplete)complete {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"yyyyMM"] = month;
+    if (!kIsEmptyString(status)) {
+        parameters[@"status"] = status;
+    }
+    [[HttpRequest sharedInstance] getRequestWithUrl:api_punchrecord_list parameters:parameters complete:^(BOOL isSuccess, id json, NSError *error) {
+        [self handlerError:error];
+        if (isSuccess) {
+            NSDictionary *data = [json safe_objectForKey:@"data"];
+            NSDictionary *punchRecordDict = [data safe_objectForKey:@"punchRecordListReq"];
+            //打卡状态
+            NSArray *statusList = [punchRecordDict safe_objectForKey:@"punchRecordStatusReqs"];
+            self.statusArray = [NSArray yy_modelArrayWithClass:[FMPunchStatusModel class] json:statusList];
+            //打卡记录
+            NSArray *recordList = [punchRecordDict safe_objectForKey:@"punchRecordTypeReqs"];
+            self.recordsArray = [NSArray yy_modelArrayWithClass:[FMPunchRecordModel class] json:recordList];
+            if (complete) complete(YES);
+        } else {
+            if (complete) complete(NO);
+        }
+    }];
 }
 
-#pragma mark
-- (NSString *)getOnWorkPunchEndTime {
-    return self.punchEndTime;
+#pragma mark 返回打卡记录数量
+- (NSInteger)numberOfPunchRecordsData {
+    return self.recordsArray.count;
 }
 
-#pragma mark
-- (NSString *)getOffWorkPunchStartTime {
-    return self.punchAfterStartTime;
-}
-
-#pragma mark
-- (NSString *)getOffWorkPunchEndTime {
-    return self.punchAfterEndTime;
+#pragma mark 返回打卡记录
+- (FMPunchRecordModel *)getRecordModelWithIndex:(NSInteger)index {
+    FMPunchRecordModel *model = [self.recordsArray safe_objectAtIndex:index];
+    return model;
 }
 
 

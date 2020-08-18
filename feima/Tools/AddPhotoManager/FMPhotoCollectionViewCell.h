@@ -7,15 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseCollectionViewCell.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FMPhotoCollectionViewCell : UICollectionViewCell
+@interface FMPhotoCollectionViewCell : BaseCollectionViewCell
 
 @property(nonatomic, copy) void (^ _Nonnull deleteSeletedImage)(NSString *imageUrl);
-
-//标识符
-+ (NSString*)identifier;
 
 //大小
 + (CGSize)itemSize;

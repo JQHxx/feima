@@ -95,32 +95,40 @@
 
 #pragma mark 解析时间
 - (void)showDescWithType:(FMClockInType)type startTime:(NSString *)startTime endTime:(NSString *)endTime {
-    NSString *currentDay = [NSDate todayDateWithFormat:@"yyyy-MM-dd"];
-    NSString *timeStr = [NSDate currentDateTimeWithFormat:@"yyyy-MM-dd HH:mm"];
-    NSInteger currentTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:timeStr format:@"yyyy-MM-dd HH:mm"];
-    
-    NSString *startTimeStr = [startTime substringToIndex:startTime.length-3];
-    NSInteger sTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:[NSString stringWithFormat:@"%@ %@",currentDay,startTimeStr] format:@"yyyy-MM-dd HH:mm"];
-    
-    NSString *endTimeStr = [endTime substringToIndex:endTime.length-3];
-    NSInteger eTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:[NSString stringWithFormat:@"%@ %@",currentDay,endTimeStr] format:@"yyyy-MM-dd HH:mm"];
-    if (sTime < currentTime && eTime > currentTime) {
+    if (!kIsEmptyString(startTime)&&!kIsEmptyString(endTime)) {
+        NSString *currentDay = [NSDate todayDateWithFormat:@"yyyy-MM-dd"];
+        NSString *timeStr = [NSDate currentDateTimeWithFormat:@"yyyy-MM-dd HH:mm"];
+        NSInteger currentTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:timeStr format:@"yyyy-MM-dd HH:mm"];
+        
+        NSString *startTimeStr = [startTime substringToIndex:startTime.length-3];
+        NSInteger sTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:[NSString stringWithFormat:@"%@ %@",currentDay,startTimeStr] format:@"yyyy-MM-dd HH:mm"];
+        
+        NSString *endTimeStr = [endTime substringToIndex:endTime.length-3];
+        NSInteger eTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:[NSString stringWithFormat:@"%@ %@",currentDay,endTimeStr] format:@"yyyy-MM-dd HH:mm"];
+        if (sTime < currentTime && eTime > currentTime) {
+            self.titleLab.text = @"打卡状态正常";
+            self.descLab.text = @"";
+        } else {
+            self.titleLab.text = @"打卡状态异常";
+            self.descLab.text = [NSString stringWithFormat:@"当前不在打卡时间(%@-%@)",startTimeStr,endTimeStr];
+        }
+        if (kIsEmptyString(self.descLab.text)) {
+            [self.descLab mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.height.mas_equalTo(0);
+            }];
+        } else {
+            [self.descLab mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.height.mas_equalTo(20);
+            }];
+        }
+        self.timeLab.text = timeStr;
+    } else {
         self.titleLab.text = @"打卡状态正常";
         self.descLab.text = @"";
-    } else {
-        self.titleLab.text = @"打卡状态异常";
-        self.descLab.text = [NSString stringWithFormat:@"当前不在打卡时间(%@-%@)",startTimeStr,endTimeStr];
-    }
-    if (kIsEmptyString(self.descLab.text)) {
         [self.descLab mas_updateConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(0);
         }];
-    } else {
-        [self.descLab mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(20);
-        }];
     }
-    self.timeLab.text = timeStr;
 }
 
 #pragma mark show

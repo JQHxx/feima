@@ -78,12 +78,12 @@
     NSString *endTime;
     if ([sender.currentTitle isEqualToString:@"上班打卡"]) {
         type = FMClockInTypeToWork;
-        startTime = [self.adapter getOnWorkPunchStartTime];
-        endTime = [self.adapter getOnWorkPunchEndTime];
+        startTime = self.adapter.punchStartTime;
+        endTime = self.adapter.punchEndTime;
     } else {
         type = FMClockInTypeOffWork;
-        startTime = [self.adapter getOffWorkPunchStartTime];
-        endTime = [self.adapter getOffWorkPunchEndTime];
+        startTime = self.adapter.punchAfterStartTime;
+        endTime = self.adapter.punchAfterEndTime;
     }
     kSelfWeak;
     [FMClockInAlertView showClockInAlertWithFrame:CGRectMake(0, 0, kScreen_Width-30, 400) type:type address:self.userAddress.detailAddress startTime:startTime endTime:endTime confirmAction:^(NSArray *images) {

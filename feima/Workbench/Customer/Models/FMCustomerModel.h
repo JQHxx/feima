@@ -45,8 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,  copy ) NSString  *statusName;
 @property (nonatomic,  copy ) NSString  *telephone;  //手机号码
 @property (nonatomic,  copy ) NSString  *threeDayVisit;
-@property (nonatomic,  copy ) NSString  *visit;
-@property (nonatomic,  copy ) NSString  *visitCode;
+@property (nonatomic, assign) NSInteger visit;
+@property (nonatomic, assign) NSInteger visitCode;
 @property (nonatomic,  copy ) NSString  *website;  //网址
 @property (nonatomic,  copy ) NSString  *weekVisit;
 

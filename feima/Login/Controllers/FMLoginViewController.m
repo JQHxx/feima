@@ -204,6 +204,8 @@
         _phoneTextField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
         _phoneTextField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 50, 0)];
         _phoneTextField.leftViewMode = UITextFieldViewModeAlways;
+        NSString *account = [NSUserDefaultsInfos getValueforKey:kLoginAccountKey];
+        _phoneTextField.text = kIsEmptyString(account)?@"":account;
         [_phoneTextField addTarget:self action:@selector(changedTextField:) forControlEvents:UIControlEventEditingChanged];
     }
     return _phoneTextField;
