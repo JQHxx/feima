@@ -17,7 +17,7 @@ typedef enum : NSUInteger {
 @interface FMDistributedBottomView : UIView
 
 @property (nonatomic,assign) FMDistributedBottomViewType type;
-@property (nonatomic,assign) NSInteger customerCount;  //客户数
+@property (nonatomic,assign) long customerCount;  //客户数
 
 @end
 

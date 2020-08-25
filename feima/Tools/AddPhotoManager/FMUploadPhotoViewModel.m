@@ -54,6 +54,12 @@
     [self.photosArray removeObject:imageUrl];
 }
 
+#pragma mark 添加图片
+- (void)insertImages:(NSArray *)images {
+    [self.photosArray removeAllObjects];
+    [self.photosArray addObjectsFromArray:images];
+}
+
 #pragma mark 所有图片
 - (NSArray *)allImages {
     return self.photosArray;

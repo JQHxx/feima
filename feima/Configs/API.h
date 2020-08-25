@@ -15,6 +15,8 @@ static NSString * const api_file_upload = @"/rest/file/upload";  //上传图片
 
 //*********************其他**********************/
 static NSString * const api_dict_selectgroup = @"/rest/dict/selectgroup";  //字典下拉框
+static NSString * const api_select_organization = @"/rest/select/organization";  //组织机构下拉框
+static NSString * const api_select_position = @"/rest/select/position";  //职位下拉框
 
 //*********************用户相关**********************/
 static NSString * const api_login = @"/rest/login";  //登录
@@ -24,6 +26,10 @@ static NSString * const api_menu_list = @"/rest/menu/list"; //菜单权限
 //********************员工相关*************************/
 static NSString * const api_employee_phone = @"/rest/employee/phone";  //员工通讯录
 static NSString * const api_employee_list = @"/rest/employee/list";  //员工列表
+static NSString * const api_employee_add = @"/rest/employee/add";  //添加员工
+static NSString * const api_employee_update = @"/rest/employee/update";  //修改员工
+static NSString * const api_employee_enable = @"/rest/employee/enable";  //启用员工
+static NSString * const api_employee_disable = @"/rest/employee/disable";  //禁用员工
 
 //*********************打卡相关**********************/
 static NSString * const api_punchrecord_time = @"/rest/punchrecord/time";  //打卡时间
@@ -38,6 +44,7 @@ static NSString * const api_customer_phone = @"/rest/customer/phone";  //客户�
 static NSString * const api_customer_list = @"/rest/customer/list";  //客户列表
 static NSString * const api_customer_add = @"/rest/customer/add";  //添加客户
 static NSString * const api_customer_update = @"/rest/customer/update";  //修改客户
+static NSString * const api_customer_transfer = @"/rest/customer/transfer";  //客户移动
 
 
 //********************组织结构相关*************************/
@@ -53,6 +60,7 @@ static NSString * const api_instruction_release_list = @"/rest/instruction/instr
 static NSString * const api_instruction_accept_list = @"/rest/instruction/instructionrecordlist"; //接受指令列表
 static NSString * const api_instruction_add = @"/rest/instruction/add"; //下达指令
 static NSString * const api_instruction_update = @"/rest/instruction/update"; //修改指令
+static NSString * const api_instruction_complete = @"/rest/instruction/summary"; //指令完成 （去总结）
 
 //********************进销存相关*************************/
 static NSString * const api_orderGoods_distribution_list = @"/rest/ordergoods/distribution/list"; //查询配货列表
@@ -60,11 +68,23 @@ static NSString * const api_orderGoods_distribution_list = @"/rest/ordergoods/di
 
 //********************商品相关*************************/
 static NSString * const api_goods_list = @"/rest/goods/list"; //商品列表
+static NSString * const api_goods_add = @"/rest/goods/add"; //商品注册
+static NSString * const api_goods_update = @"/rest/goods/update"; //修改商品
+static NSString * const api_goods_remove = @"/rest/goods/remove"; //删除商品
+static NSString * const api_goods_enable = @"/rest/goods/enable"; //商品上架
+static NSString * const api_goods_disable = @"/rest/goods/disable"; //商品下架
 
 //********************公司相关*************************/
 static NSString * const api_company_list = @"/rest/company/list"; //公司列表
+static NSString * const api_company_add = @"/rest/company/add"; //公司注册
+static NSString * const api_company_update = @"/rest/company/update"; //修改公司
+static NSString * const api_company_delete = @"/rest/company/delete"; //删除公司
 
 //********************报表相关*************************/
 static NSString * const api_report_employee_sales = @"/rest/report/employee/sales"; //员工销售报表
+
+//********************拜访计划相关*************************/
+static NSString * const api_visit_add = @"/rest/visitrecord/add"; //离店，添加拜访记录
+static NSString * const api_visit_get = @"/rest/visitrecord/get"; //获取拜访记录
 
 #endif /* API_h */

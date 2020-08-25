@@ -53,8 +53,9 @@
 }
 
 #pragma mark 客户数
-- (void)setCustomerCount:(NSInteger)customerCount {
+- (void)setCustomerCount:(long)customerCount {
     _customerCount = customerCount;
+    MyLog(@"customerCount:%ld",customerCount);
     self.numLabel.text = [NSString stringWithFormat:@"当前区域客户共%ld个",customerCount];
 }
 

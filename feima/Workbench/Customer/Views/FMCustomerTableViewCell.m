@@ -96,19 +96,23 @@
 }
 
 #pragma mark 填充数据
-- (void)fillContentWithData:(id)obj {
-    FMCustomerModel *model = (FMCustomerModel *)obj;
+- (void)fillContentWithData:(FMCustomerModel *)model showDistance:(BOOL)showDistance {
     [self.myImgView sd_setImageWithURL:[NSURL URLWithString:model.doorPhoto] placeholderImage:[UIImage ctPlaceholderImage]];
     self.nameLabel.text = model.businessName;
     self.contactsLabel.text = [NSString stringWithFormat:@"%@：%@",model.contactName,model.telephone];
     self.followLabel.text = [NSString stringWithFormat:@"跟进人：%@",model.employeeName];
     self.addressLabel.text = model.address;
-    if (model.visitCode == 2) {
-        self.stateLabel.text = @"已拜访";
-        self.stateLabel.textColor = RGB(115, 194, 125);
+    if (showDistance) {
+        self.stateLabel.text = [NSString stringWithFormat:@"%.1fkm",model.distance];
+        self.stateLabel.textColor = [UIColor colorWithHexString:@"#66666"];
     } else {
-        self.stateLabel.text = @"未拜访";
-        self.stateLabel.textColor = [UIColor colorWithHexString:@"#9F9F9F"];
+        if (model.visitCode == 2) {
+            self.stateLabel.text = @"已拜访";
+            self.stateLabel.textColor = RGB(115, 194, 125);
+        } else {
+            self.stateLabel.text = @"未拜访";
+            self.stateLabel.textColor = [UIColor colorWithHexString:@"#9F9F9F"];
+        }
     }
 }
 

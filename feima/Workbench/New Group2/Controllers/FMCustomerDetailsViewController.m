@@ -130,6 +130,12 @@
 - (void)editCostomerAction:(UIButton *)sender {
     FMAddCustomerViewController *addCustomerVC = [[FMAddCustomerViewController alloc] init];
     addCustomerVC.customerModel = self.customer;
+    kSelfWeak;
+    addCustomerVC.updateSuccess = ^(FMCustomerModel *model) {
+        weakSelf.customer = model;
+        [weakSelf.myTableView reloadData];
+        [weakSelf.headView displayViewWithData:self.customer];
+    };
     [self.navigationController pushViewController:addCustomerVC animated:YES];
 }
 
@@ -188,7 +194,7 @@
                 valueLab.text = self.customer.gradeName;
                 break;
             case 2:
-                valueLab.text =  [NSString stringWithFormat:@"%ld", self.customer.displayArea];
+                valueLab.text =  self.customer.displayArea;
                 break;
             case 3:
                 valueLab.text = self.customer.progressName;;

@@ -16,6 +16,8 @@ target 'feima' do
   pod 'SDCycleScrollView'
   pod 'BMKLocationKit'
   pod 'BaiduMapKit'
+  pod 'BaiduTraceKit-Lite'
   pod 'YBImageBrowser'
+  pod 'YBPopupMenu'
 
 end

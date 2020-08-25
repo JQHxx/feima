@@ -9,12 +9,15 @@
 #import "BaseViewController.h"
 #import "FMCompanyModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+
+typedef void(^UpdateCompanySuccess)(FMCompanyModel *company);
+typedef void(^AddCompanySuccess)(FMCompanyModel *company);
 
 @interface FMAddCompanyViewController : BaseViewController
 
 @property (nonatomic, strong) FMCompanyModel *company;
+@property (nonatomic,  copy ) UpdateCompanySuccess updateSuccess;
+@property (nonatomic,  copy ) AddCompanySuccess addSuccess;
 
 @end
 
-NS_ASSUME_NONNULL_END

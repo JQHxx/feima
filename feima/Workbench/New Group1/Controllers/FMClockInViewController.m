@@ -13,6 +13,7 @@
 #import "UIView+Extend.h"
 #import "FMLocationManager.h"
 #import "FMClockInViewModel.h"
+#import "FMYYServiceManager.h"
 #import <BaiduMapAPI_Base/BMKBaseComponent.h> //引入base相关所有的头文件
 #import <BaiduMapAPI_Map/BMKMapComponent.h> //引入地图功能所有的头文件
  
@@ -120,6 +121,22 @@
     kSelfWeak;
     [self.adapter addPunchRequetWithType:type address:self.userAddress.detailAddress images:images longtude:self.userAddress.longitude latitude:self.userAddress.latitude complete:^(BOOL isSuccess) {
         if (isSuccess) {
+            if (type == FMClockInTypeToWork) { //上班打卡
+                if (![FMYYServiceManager defaultManager].isServiceStarted) {
+                    // 开启服务之间先配置轨迹服务的基础信息
+                    BTKServiceOption *basicInfoOption = [[BTKServiceOption alloc] initWithAK:key_baidu_ak mcode:key_budle_identifier serviceID:key_baidu_service_id keepAlive:YES];
+                    [[BTKAction sharedInstance] initInfo:basicInfoOption];
+                    
+                    // 开启服务
+                    NSString *account = [FeimaManager sharedFeimaManager].userBean.account;
+                    BTKStartServiceOption *startServiceOption = [[BTKStartServiceOption alloc] initWithEntityName:account];
+                    [[FMYYServiceManager defaultManager] startServiceWithOption:startServiceOption];
+                }
+            } else {
+                if ([FMYYServiceManager defaultManager].isServiceStarted) {
+                    [[FMYYServiceManager defaultManager] stopGather];
+                }
+            }
             [weakSelf.view makeToast:@"打卡成功" duration:2.0 position:CSToastPositionCenter];
         }
     }];

@@ -8,16 +8,19 @@
 
 #import "FMInvoicingViewController.h"
 #import "FMDistributionViewController.h"
-#import "FMInvoicingTableViewCell.h"
+#import "FMInvoicingTableView.h"
 #import "SlideMenuView.h"
 #import "FMOrderModel.h"
 
-@interface FMInvoicingViewController ()<UISearchBarDelegate,UITableViewDelegate,UITableViewDataSource,SlideMenuViewDelegate>
+@interface FMInvoicingViewController ()<UISearchBarDelegate,SlideMenuViewDelegate>
 
-@property (nonatomic, strong) UISearchBar        *searchBar;
-@property (nonatomic, strong) SlideMenuView      *menuView;
-@property (nonatomic, strong) UITableView        *myTableView;
-@property (nonatomic, strong) NSMutableArray     *ordersArray;
+@property (nonatomic, strong) SlideMenuView         *menuView;
+@property (nonatomic, strong) UISearchBar           *searchBar;
+@property (nonatomic, strong) UIScrollView          *rootScrollView;
+@property (nonatomic, strong) FMInvoicingTableView  *distributionTableView; //配货
+@property (nonatomic, strong) FMInvoicingTableView  *returnTableView; //退换货
+
+@property (nonatomic, assign) NSInteger  selectedIndex;
 
 @end
 
@@ -27,60 +30,29 @@
     [super viewDidLoad];
     self.baseTitle = @"货物进销存";
     
+    self.selectedIndex = 0;
+    
     [self setupUI];
-    [self loadInvoicingData];
-}
-
-
-#pragma mark UITableViewDelegate and UITableViewDataSource
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.ordersArray.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    FMInvoicingTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMInvoicingTableViewCell identifier] forIndexPath:indexPath];
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    FMOrderModel *model = self.ordersArray[indexPath.row];
-    [cell fillContentWithData:model];
-    return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 96;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    FMDistributionViewController *distributionVC = [[FMDistributionViewController alloc] init];
-    [self.navigationController pushViewController:distributionVC animated:YES];
 }
 
 #pragma mark SlideMenuViewDelegate
 - (void)slideMenuView:(SlideMenuView *)menuView didSelectedWithIndex:(NSInteger)index {
-    
-}
-
-#pragma mark -- Private emthods
-#pragma mark load data
-- (void)loadInvoicingData {
-    NSMutableArray *tempArr = [[NSMutableArray alloc] init];
-    for (NSInteger i=0; i<15; i++) {
-        FMOrderModel *model = [[FMOrderModel alloc] init];
-        model.toEmployeeName = @"钟雄";
-        FMEmployeeModel *eModel = [[FMEmployeeModel alloc] init];
-        eModel.name = @"张卫良";
-        model.employee = eModel;
-        [tempArr addObject:model];
+    self.selectedIndex = index;
+    if (index == 1) {
+        if (!_returnTableView) {
+            _returnTableView = [[FMInvoicingTableView alloc] initWithFrame:CGRectMake(kScreen_Width, 0, kScreen_Width, self.rootScrollView.height) style:UITableViewStylePlain type:1];
+            [self.rootScrollView addSubview:_returnTableView];
+        }
     }
-    self.ordersArray = tempArr;
-    [self.myTableView reloadData];
+    [self.rootScrollView setContentOffset:CGPointMake(kScreen_Width*index, 0)];
 }
-
 
 #pragma mark UI
 - (void)setupUI {
     [self.view addSubview:self.searchBar];
     [self.view addSubview:self.menuView];
-    [self.view addSubview:self.myTableView];
+    [self.view addSubview:self.rootScrollView];
+    [self.rootScrollView addSubview:self.distributionTableView];
 }
 
 #pragma mark -- Getters
@@ -109,27 +81,23 @@
     return _menuView;
 }
 
-#pragma mark 
-- (UITableView *)myTableView {
-    if (!_myTableView) {
-        _myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.menuView.bottom, kScreen_Width, kScreen_Height-self.menuView.bottom) style:UITableViewStylePlain];
-        _myTableView.delegate = self;
-        _myTableView.dataSource = self;
-        _myTableView.showsVerticalScrollIndicator = NO;
-        _myTableView.tableFooterView = [[UIView alloc] init];
-        _myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        _myTableView.backgroundColor = [UIColor colorWithHexString:@"#F8F8F8"];
-        [_myTableView registerClass:[FMInvoicingTableViewCell class] forCellReuseIdentifier:[FMInvoicingTableViewCell identifier]];
+#pragma mark 滚动视图
+- (UIScrollView *)rootScrollView {
+    if (!_rootScrollView) {
+        _rootScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, self.menuView.bottom, kScreen_Width, kScreen_Height-self.menuView.bottom)];
+        _rootScrollView.showsHorizontalScrollIndicator = NO;
+        _rootScrollView.pagingEnabled = YES;
+        _rootScrollView.contentSize = CGSizeMake(kScreen_Width*2, kScreen_Height-self.menuView.bottom);
     }
-    return _myTableView;
+    return _rootScrollView;
 }
 
-- (NSMutableArray *)ordersArray {
-    if (!_ordersArray) {
-        _ordersArray = [[NSMutableArray alloc] init];
+#pragma mark 配货
+- (FMInvoicingTableView *)distributionTableView {
+    if (!_distributionTableView) {
+        _distributionTableView = [[FMInvoicingTableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, self.rootScrollView.height) style:UITableViewStylePlain type:0];
     }
-    return _ordersArray;
+    return _distributionTableView;
 }
-
 
 @end

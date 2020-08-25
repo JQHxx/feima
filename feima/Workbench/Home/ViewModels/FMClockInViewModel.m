@@ -54,7 +54,7 @@
 - (void)verifyRepeatedPunchWithType:(FMClockInType)type complete:(AdpaterComplete)complete {
     NSString *url = type == FMClockInTypeToWork ? api_punchrecord_check_punch : api_punchrecord_check_punchafter;
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    NSString *account = [NSUserDefaultsInfos getValueforKey:kLoginAccountKey];
+    NSString *account = [FeimaManager sharedFeimaManager].userBean.account;
     if (!kIsEmptyString(account)) {
         parameters[@"account"] = account;
     }

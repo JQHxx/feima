@@ -88,17 +88,13 @@
 #pragma mark -- Private methods
 #pragma mark 获取菜单列表
 - (void)loadMenuListData {
-    [SVProgressHUD show];
     [self.adapter loadMenuListComplete:^(BOOL isSuccess) {
-        [SVProgressHUD dismiss];
         if (isSuccess) {
             [self.workCollectionView reloadData];
             [self.workCollectionView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.height.mas_equalTo(([self.adapter numberOfWorkbenchList]/4+1)*80+([self.adapter numberOfWorkbenchList]/4)*25);
             }];
-        } else {
-            [self.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
-        }
+        } 
     }];
 }
 
@@ -191,7 +187,7 @@
         _titleLab = [[UILabel alloc] init];
         _titleLab.font = [UIFont mediumFontWithSize:24];
         _titleLab.textColor = [UIColor textBlackColor];
-        _titleLab.text = [NSString stringWithFormat:@"%@的工作台",[NSUserDefaultsInfos getValueforKey:kUserNameKey]];
+        _titleLab.text = [NSString stringWithFormat:@"%@的工作台",[FeimaManager sharedFeimaManager].userBean.users.name];
     }
     return _titleLab;
 }

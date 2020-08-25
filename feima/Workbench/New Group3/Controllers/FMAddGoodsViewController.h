@@ -9,12 +9,14 @@
 #import "BaseViewController.h"
 #import "FMGoodsModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+typedef void(^UpdateGoodsSuccess)(FMGoodsModel *goods);
+typedef void(^AddGoodsSuccess)(FMGoodsModel *goods);
 
 @interface FMAddGoodsViewController : BaseViewController
 
 @property (nonatomic ,strong) FMGoodsModel *goods;
+@property (nonatomic,  copy ) UpdateGoodsSuccess updateSuccess;
+@property (nonatomic,  copy ) AddGoodsSuccess addSuccess;
 
 @end
 
-NS_ASSUME_NONNULL_END

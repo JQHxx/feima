@@ -100,7 +100,7 @@
 #pragma mark - 弹出视图方法
 - (void)showWithAnimation:(BOOL)animation {
     //1. 获取当前应用的主窗口
-    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+    UIWindow *keyWindow = kKeyWindow;
     [keyWindow addSubview:self];
     if (animation) {
         // 动画前初始位置
@@ -182,7 +182,7 @@
             [dateFormatter setDateFormat:@"HH:mm"];
             break;
         case UIDatePickerModeDate:
-            [dateFormatter setDateFormat:@"yyyy年MM月dd日"];
+            [dateFormatter setDateFormat:@"yyyy.MM.dd"];
             break;
         case UIDatePickerModeDateAndTime:
             [dateFormatter setDateFormat:@"yyyy年MM月dd HH:mm"];
@@ -206,7 +206,7 @@
             [dateFormatter setDateFormat:@"HH:mm"];
             break;
         case UIDatePickerModeDate:
-            [dateFormatter setDateFormat:@"yyyy年MM月dd日"];
+            [dateFormatter setDateFormat:@"yyyy.MM.dd"];
             break;
         case UIDatePickerModeDateAndTime:
             [dateFormatter setDateFormat:@"yyyy年MM月dd日 HH:mm"];

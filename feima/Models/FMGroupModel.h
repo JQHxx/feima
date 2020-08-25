@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy ) NSString  *dictDesc;
 @property(nonatomic, copy ) NSString  *dictGroup;
 @property(nonatomic,assign) NSInteger dictId;
-@property(nonatomic, copy ) NSString  *dictKey;
+@property(nonatomic,assign) NSInteger dictKey;
 @property(nonatomic,assign) NSInteger dictSort;
 @property(nonatomic,assign) NSInteger dictStatus;
 @property(nonatomic, copy ) NSString  *dictValue;

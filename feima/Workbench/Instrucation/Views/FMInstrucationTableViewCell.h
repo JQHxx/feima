@@ -7,12 +7,14 @@
 //
 
 #import "BaseTableViewCell.h"
-
+#import "FMInstrucationModel.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FMInstrucationTableViewCell : BaseTableViewCell
+
+- (void)fillContentWithData:(FMInstrucationModel *)model type:(NSInteger)type;
 
 @end
 

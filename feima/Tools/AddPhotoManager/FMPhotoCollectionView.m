@@ -11,6 +11,7 @@
 #import "FMUploadPhotoViewModel.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <YBImageBrowser/YBImageBrowser.h>
+#import "MXActionSheet.h"
 
 @interface FMPhotoCollectionView ()<UICollectionViewDelegate,UICollectionViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 
@@ -61,6 +62,9 @@
     cell.deleteSeletedImage = ^(NSString * _Nonnull imageUrl) {
         [weakSelf.adapter deleteImage:imgUrl];
         [weakSelf reloadData];
+        if (weakSelf.handleComplete) {
+            weakSelf.handleComplete();
+        }
     };
     return cell;
 }
@@ -100,8 +104,15 @@
 }
 
 #pragma mark -- Public methods
+#pragma mark 获取所有图片
 - (NSArray *)getAllImages {
     return [self.adapter allImages];
+}
+
+#pragma mark 添加图片
+- (void)addPickedImages:(NSArray *)images {
+    [self.adapter insertImages:images];
+    [self reloadData];
 }
 
 #pragma mark -- Delegate
@@ -115,9 +126,13 @@
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     [self.imgPicker dismissViewControllerAnimated:YES completion:nil];
     UIImage* curImage=[info objectForKey:UIImagePickerControllerOriginalImage];
+    kSelfWeak;
     [self.adapter uploadPhotoRequestWithImage:curImage complete:^(BOOL isSuccess) {
         if (isSuccess) {
             [self reloadData];
+            if (weakSelf.handleComplete) {
+                weakSelf.handleComplete();
+            }
         } else {
             [kKeyWindow makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
         }
@@ -130,15 +145,38 @@
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (granted) {
-                self.imgPicker=[[UIImagePickerController alloc]init];
-                self.imgPicker.delegate=self;
-                self.findViewController.modalPresentationStyle=UIModalPresentationOverCurrentContext;
-                if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){  //判断设备相机是否可用
-                    self.imgPicker.sourceType=UIImagePickerControllerSourceTypeCamera;
-                    [kKeyWindow.rootViewController presentViewController:self.imgPicker animated:YES completion:nil];
-                }else{
-                    [kKeyWindow makeToast:@"您的相机不可用" duration:1.0 position:CSToastPositionCenter];
-                    return ;
+                if (self.canSelectedAlbum) {
+                    NSArray *buttonTitles = @[@"拍照",@"从手机相册选择",];
+                    [MXActionSheet showWithTitle:nil cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:buttonTitles selectedBlock:^(NSInteger index) {
+                         self.imgPicker=[[UIImagePickerController alloc]init];
+                         self.imgPicker.delegate=self;
+                        self.findViewController.modalPresentationStyle=UIModalPresentationOverCurrentContext;
+                        if (index==1) {
+                           if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) //判断设备相机是否可用
+                           {
+                               self.imgPicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+                               [self.findViewController presentViewController:self.imgPicker animated:YES completion:nil];
+                           }else{
+                               [kKeyWindow makeToast:@"您的相机不可用" duration:1.0 position:CSToastPositionCenter];
+                               return ;
+                           }
+                        }else if (index==2){
+                            self.imgPicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+                            [self.findViewController presentViewController:self.imgPicker animated:YES completion:nil];
+                        }
+                        
+                    }];
+                } else {
+                    self.imgPicker=[[UIImagePickerController alloc]init];
+                    self.imgPicker.delegate=self;
+                    self.findViewController.modalPresentationStyle=UIModalPresentationOverCurrentContext;
+                    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){  //判断设备相机是否可用
+                        self.imgPicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+                        [kKeyWindow.rootViewController presentViewController:self.imgPicker animated:YES completion:nil];
+                    }else{
+                        [kKeyWindow makeToast:@"您的相机不可用" duration:1.0 position:CSToastPositionCenter];
+                        return ;
+                    }
                 }
             }
         });

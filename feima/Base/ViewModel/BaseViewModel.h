@@ -53,7 +53,6 @@ NS_ASSUME_NONNULL_BEGIN
  * 错误码
  */
 - (FMErrorType)errorType;
-
 /**
  * 错误提示
  */

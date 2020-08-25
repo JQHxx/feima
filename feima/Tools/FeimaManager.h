@@ -8,12 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import "Singleton.h"
+#import "FMUserModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FeimaManager : NSObject
 
 singleton_interface(FeimaManager)
+
+@property (nonatomic,strong) FMUserBeanModel *userBean;
+@property (nonatomic,assign) BOOL   isAdministrator;
+@property (nonatomic,assign) BOOL   employeeListReload;
 
 /**
  *   时间戳转化为时间
@@ -54,6 +59,10 @@ singleton_interface(FeimaManager)
 
 //打电话
 - (void)callPhoneWithNumber:(NSString *)telephone;
+
+
+//权限判断
+- (BOOL)hasPermissionWithApiStr:(NSString *)apiStr;
 
 @end
 

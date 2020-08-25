@@ -57,6 +57,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [SVProgressHUD dismiss];
             if (isSuccess) {
+                [NSUserDefaultsInfos putKey:kLoginAccountKey andValue:self.phoneTextField.text];
                 AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
                 appDelegate.window.rootViewController = [[MyTabBarController alloc] init];
             } else {

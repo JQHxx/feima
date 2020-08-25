@@ -14,7 +14,8 @@
 }
 
 @property (nonatomic,strong) UITableView *userTableView;
-@property (nonatomic,strong) NSMutableArray *userInfo;
+
+@property (nonatomic,strong) FMUserModel *user;
 
 @end
 
@@ -25,8 +26,7 @@
     self.baseTitle = @"个人信息";
     
     titlesArr = @[@"头像",@"姓名",@"性别",@"部门",@"职务",@"手机号"];
-    NSArray *arr = @[@"11",@"亦于涛",@"男",@"市场一部",@"主管",@"18229729653"];
-    [self.userInfo addObjectsFromArray:arr];
+    self.user = [FeimaManager sharedFeimaManager].userBean.users;
     
     [self.view addSubview:self.userTableView];
 }
@@ -42,7 +42,9 @@
     cell.textLabel.text = titlesArr[indexPath.row];
     if (indexPath.row == 0) {
         headImgView = [[UIImageView alloc] init];
-        headImgView.backgroundColor = [UIColor lightGrayColor];
+        [headImgView sd_setImageWithURL:[NSURL URLWithString:self.user.logo] placeholderImage:[UIImage ctPlaceholderImage]];
+        headImgView.layer.cornerRadius = 30;
+        headImgView.layer.masksToBounds = YES;
         [cell.contentView addSubview:headImgView];
         [headImgView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.centerY.mas_equalTo(cell.contentView.mas_centerY);
@@ -50,16 +52,26 @@
             make.size.mas_equalTo(CGSizeMake(60, 60));
         }];
     } else {
-        cell.detailTextLabel.text = self.userInfo[indexPath.row];
+        if (indexPath.row == 1) {
+            cell.detailTextLabel.text = kIsEmptyString(self.user.name)?@"":self.user.name;
+        } else if (indexPath.row == 2) {
+            cell.detailTextLabel.text = kIsEmptyString(self.user.sexName)?@"":self.user.sexName;
+        } else if (indexPath.row == 3) {
+            cell.detailTextLabel.text = kIsEmptyString(self.user.organizationName)?@"":self.user.organizationName;
+        } else if (indexPath.row == 4) {
+            cell.detailTextLabel.text = kIsEmptyString(self.user.postName)?@"":self.user.postName;
+        } else if (indexPath.row == 5) {
+            cell.detailTextLabel.text = kIsEmptyString(self.user.telephone)?@"":self.user.telephone;
+        }
     }
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
-        return 72;
+        return 82;
     } else {
-        return 50;
+        return 60;
     }
 }
 
@@ -75,14 +87,6 @@
         _userTableView.backgroundColor = [UIColor whiteColor];
     }
     return _userTableView;
-}
-
-#pragma mark 用户信息
-- (NSMutableArray *)userInfo {
-    if (!_userInfo) {
-        _userInfo = [[NSMutableArray alloc] init];
-    }
-    return _userInfo;
 }
 
 @end

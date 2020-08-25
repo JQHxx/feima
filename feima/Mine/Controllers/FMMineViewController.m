@@ -28,7 +28,7 @@
     [super viewDidLoad];
     self.isHiddenNavBar = YES;
     
-    imagesArr = @[@"company_manager",@"company_manager",@"company_manager",@"company_manager"];
+    imagesArr = @[@"mine_message",@"mine_contact",@"mine_company",@"mine_install"];
     titlesArr = @[@"我的消息",@"通讯录",@"公司组织结构",@"设置"];
     classes = @[@"Message",@"Address",@"InContacts",@"Install"];
     
@@ -56,7 +56,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 62;
+    return 68;
 }
 
 #pragma mark -- Event response

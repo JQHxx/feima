@@ -11,8 +11,12 @@
 #import "FMAddressViewController.h"
 #import "FMWorkViewController.h"
 #import "FMMineViewController.h"
+#import "FMClockInViewModel.h"
+#import "FMYYServiceManager.h"
 
 @interface MyTabBarController ()<UITabBarControllerDelegate>
+
+@property (nonatomic, strong) FMClockInViewModel *adapter;
 
 @end
 
@@ -31,6 +35,7 @@
     self.delegate = self;
     
     [self setupMyTabBar];
+    [self verifyClockIn];
 }
 
 
@@ -65,6 +70,43 @@
 }
 
 #pragma mark -- Private Methods
+#pragma mark 验证打卡
+- (void)verifyClockIn {
+    //上班打卡验证
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    NSString *account = [FeimaManager sharedFeimaManager].userBean.account;
+    if (!kIsEmptyString(account)) {
+        parameters[@"account"] = account;
+    }
+    dispatch_async(GLOBAL_QUEUE, ^{
+        [[HttpRequest sharedInstance] getRequestWithUrl:api_punchrecord_check_punch parameters:parameters complete:^(BOOL isSuccess, id json, NSError *error) {
+            NSInteger code = [json safe_integerForKey:@"code"];
+            if (code == -1601) { //已打上班卡
+                //下班打卡验证
+                [[HttpRequest sharedInstance] getRequestWithUrl:api_punchrecord_check_punchafter parameters:parameters complete:^(BOOL isSuccess, id json, NSError *error) {
+                    NSInteger errorCode = [json safe_integerForKey:@"code"];
+                    if (errorCode == -1601) { //已打下班卡
+                        if ([FMYYServiceManager defaultManager].isServiceStarted) {
+                            [[FMYYServiceManager defaultManager] stopGather];
+                        }
+                    } else {
+                        if (![FMYYServiceManager defaultManager].isServiceStarted) {
+                            // 开启服务之间先配置轨迹服务的基础信息
+                            BTKServiceOption *basicInfoOption = [[BTKServiceOption alloc] initWithAK:key_baidu_ak mcode:key_budle_identifier serviceID:key_baidu_service_id keepAlive:YES];
+                            [[BTKAction sharedInstance] initInfo:basicInfoOption];
+                            
+                            // 开启服务
+                            BTKStartServiceOption *startServiceOption = [[BTKStartServiceOption alloc] initWithEntityName:account];
+                            [[FMYYServiceManager defaultManager] startServiceWithOption:startServiceOption];
+                        }
+                    }
+                }];
+            }
+        }];
+    });
+}
+
+
 #pragma mark 初始化
 - (void)setupMyTabBar {
     FMAddressViewController *addressVC = [[FMAddressViewController alloc] init];
@@ -90,6 +132,13 @@
     UITabBarItem * item = [[UITabBarItem alloc] initWithTitle:title image:[[UIImage imageNamed:image] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] selectedImage:[[UIImage imageNamed:selImage] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     [nav setTabBarItem:item];
     return nav;
+}
+
+- (FMClockInViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMClockInViewModel alloc] init];
+    }
+    return _adapter;
 }
 
 @end

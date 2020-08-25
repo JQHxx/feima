@@ -67,7 +67,7 @@ static FMLocationManager * _instance = nil;
             if (error) {
                 MyLog(@"%@", [NSString stringWithFormat:@"error:%@",[error.userInfo valueForKey:@"NSLocalizedDescription"]]);
             }else{
-                MyLog(@"location --- %@%@%@%@%@%@",location.rgcData.province,location.rgcData.city,location.rgcData.district,location.rgcData.street,location.rgcData.town,location.rgcData.locationDescribe);
+                MyLog(@"location ---longitude:%.6f,latitude:%.6f, %@%@%@%@%@%@",location.location.coordinate.longitude,location.location.coordinate.latitude,location.rgcData.province,location.rgcData.city,location.rgcData.district,location.rgcData.street,location.rgcData.town,location.rgcData.locationDescribe);
                 moel.latitude = location.location.coordinate.latitude;
                 moel.longitude = location.location.coordinate.longitude;
                 moel.province = location.rgcData.province;
@@ -84,12 +84,28 @@ static FMLocationManager * _instance = nil;
 }
 
 #pragma mark --BMKLocationAuthDelegate
-//定位授权
+#pragma mark 定位授权
 - (void)onCheckPermissionState:(BMKLocationAuthErrorCode)iError{
     if(iError == BMKLocationAuthErrorSuccess){
         MyLog(@"定位授权成功");
     }else{
         MyLog(@"定位授权失败");
+    }
+}
+
+#pragma mark -- BMKLocationManagerDelegate
+#pragma mark 请求后台定位权限的回调方法
+//为了适配app store关于新的后台定位的审核机制（app store要求如果开发者只配置了使用期间定位，则代码中不能出现申请后台定位的逻辑），当开发者在plist配置NSLocationAlwaysUsageDescription或者NSLocationAlwaysAndWhenInUseUsageDescription时，需要在该delegate中调用后台定位api：[locationManager requestAlwaysAuthorization]。开发者如果只配置了NSLocationWhenInUseUsageDescription，且只有使用期间的定位需求，则无需在delegate中实现逻辑。
+- (void)BMKLocationManager:(BMKLocationManager *)manager doRequestAlwaysAuthorization:(CLLocationManager *)locationManager {
+    [locationManager requestAlwaysAuthorization];
+}
+
+#pragma mark 移动定位
+- (void)BMKLocationManager:(BMKLocationManager *)manager didUpdateLocation:(BMKLocation *)location orError:(NSError *)error {
+    if (error) {
+        MyLog(@"%@", [NSString stringWithFormat:@"error:%@",[error.userInfo valueForKey:@"NSLocalizedDescription"]]);
+    }else{
+        MyLog(@"didUpdateLocation ---location --- %@%@%@%@%@%@",location.rgcData.province,location.rgcData.city,location.rgcData.district,location.rgcData.street,location.rgcData.town,location.rgcData.locationDescribe);
     }
 }
 

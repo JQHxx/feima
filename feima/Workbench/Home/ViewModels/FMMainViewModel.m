@@ -27,10 +27,25 @@
 
 #pragma mark 获取菜单权限
 - (void)loadMenuListComplete:(AdpaterComplete)complete {
+    //获取缓存数据
+    NSArray *menuList = [NSUserDefaultsInfos getValueforKey:kMenuListDataKey];
+    if (kIsArray(menuList) && menuList.count > 0) {
+        NSArray *list = [NSArray yy_modelArrayWithClass:[FMWorkbenchModel class] json:menuList];
+        [self getWorkbenchInfoWithMenuData:list];
+        if (complete) complete(YES);
+    }
+    
     [[HttpRequest sharedInstance] getRequestWithUrl:api_menu_list parameters:nil complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
         if (isSuccess) {
             NSArray *data = [json safe_objectForKey:@"data"];
+            //缓存数据
+            NSMutableArray *tempArr = [[NSMutableArray alloc] init];
+            for (NSDictionary *dict in data) {
+                [tempArr addObject:[dict mutableDeepCopy]];
+            }
+            [NSUserDefaultsInfos putKey:kMenuListDataKey andValue:tempArr];
+            
             NSArray *list = [NSArray yy_modelArrayWithClass:[FMWorkbenchModel class] json:data];
             [self getWorkbenchInfoWithMenuData:list];
             if (complete) complete(YES);

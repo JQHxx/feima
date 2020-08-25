@@ -9,8 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @interface NSArray (Safety)
--(id)safe_objectAtIndex:(NSInteger)index;
--(id)safe_objectForKey:(NSString*)key;
+
+- (id)safe_objectAtIndex:(NSInteger)index;
+- (id)safe_objectForKey:(NSString*)key;
+
 @end
 
 @interface NSMutableArray (Safety)
@@ -21,4 +23,5 @@
 -(void)safe_addObjectsFromArray:(id)anObjects;
 
 -(NSArray *)safe_subarrayWithRange:(NSRange)range;
+
 @end

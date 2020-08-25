@@ -42,6 +42,8 @@
 #define kIsArray(objArray)      (objArray != nil && [objArray isKindOfClass:[NSArray class]])
 
 
+#define GLOBAL_QUEUE dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+
 // keyWindow
 #define kKeyWindow [[UIApplication sharedApplication] delegate].window
 

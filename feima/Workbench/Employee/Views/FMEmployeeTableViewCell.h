@@ -7,11 +7,15 @@
 //
 
 #import "BaseTableViewCell.h"
+#import "FMEmployeeModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+typedef void(^MoreHandleBlock)(FMEmployeeModel *employee, NSInteger index);
 
 @interface FMEmployeeTableViewCell : BaseTableViewCell
 
+@property (nonatomic, copy ) MoreHandleBlock moreBlock;
+
+- (void)fillContentWithData:(FMEmployeeModel *)model status:(NSInteger)status;
+
 @end
 
-NS_ASSUME_NONNULL_END

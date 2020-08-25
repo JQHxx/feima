@@ -9,10 +9,28 @@
 #import "FeimaManager.h"
 #import "AppDelegate.h"
 #import "FMLoginViewController.h"
+#import "FMWorkbenchModel.h"
 
 @implementation FeimaManager
 
 singleton_implementation(FeimaManager)
+
+#pragma mark 用户信息
+- (FMUserBeanModel *)userBean {
+    NSDictionary *result = [NSUserDefaultsInfos getValueforKey:kUserBeanKey];
+    FMUserBeanModel *model = [FMUserBeanModel yy_modelWithJSON:result];
+    return model;
+}
+
+#pragma mark 是否超级管理员
+- (BOOL)isAdministrator {
+    NSString *account = self.userBean.account;
+    if (!kIsEmptyString(account)) {
+        return [account isEqualToString:@"administrator"];
+    } else {
+        return NO;
+    }
+}
 
 #pragma mark 时间戳转化为时间
 - (NSString *)timeWithTimeInterval:(NSInteger)timeSp format:(NSString *)format {
@@ -122,6 +140,21 @@ singleton_implementation(FeimaManager)
     }
     NSString *callPhone = [NSString stringWithFormat:@"telprompt://%@", telephone];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:callPhone] options:@{} completionHandler:nil];
+}
+
+#pragma mark 权限判断
+- (BOOL)hasPermissionWithApiStr:(NSString *)apiStr {
+    NSArray *menuList = [NSUserDefaultsInfos getValueforKey:kMenuListDataKey];
+    BOOL hasPermission = NO;
+    if (kIsArray(menuList) && menuList.count > 0) {
+        NSArray *list = [NSArray yy_modelArrayWithClass:[FMWorkbenchModel class] json:menuList];
+        NSMutableArray *urlsArr = [[NSMutableArray alloc] init];
+        for (FMWorkbenchModel *model in list) {
+            [urlsArr addObject:model.url];
+        }
+        hasPermission = [urlsArr containsObject:apiStr];
+    }
+    return hasPermission;
 }
 
 @end

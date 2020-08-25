@@ -198,6 +198,7 @@ fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
+  install_framework "${PODS_ROOT}/BaiduTraceKit-Lite/BaiduTraceKit-Lite/BaiduTraceSDK.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/IQKeyboardManager/IQKeyboardManager.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework"
@@ -205,11 +206,13 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YBImageBrowser/YBImageBrowser.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/YBPopupMenu/YBPopupMenu.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYModel/YYModel.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
+  install_framework "${PODS_ROOT}/BaiduTraceKit-Lite/BaiduTraceKit-Lite/BaiduTraceSDK.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/IQKeyboardManager/IQKeyboardManager.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework"
@@ -217,6 +220,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YBImageBrowser/YBImageBrowser.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/YBPopupMenu/YBPopupMenu.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYModel/YYModel.framework"
 fi

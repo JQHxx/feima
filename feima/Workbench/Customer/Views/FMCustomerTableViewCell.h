@@ -8,11 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseTableViewCell.h"
+#import "FMCustomerModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FMCustomerTableViewCell : BaseTableViewCell
 
+- (void)fillContentWithData:(FMCustomerModel *)model showDistance:(BOOL)showDistance;
+
 @end
+
 
 NS_ASSUME_NONNULL_END

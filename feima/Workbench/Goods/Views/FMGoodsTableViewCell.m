@@ -44,8 +44,10 @@
 - (void)fillContentWithData:(id)obj {
     FMGoodsModel *model = (FMGoodsModel *)obj;
     self.goods = model;
+    [self.goodsImgView sd_setImageWithURL:[NSURL URLWithString:model.images] placeholderImage:[UIImage ctPlaceholderImage]];
     self.nameLabel.text = model.name;
     self.typeLabel.text = [NSString stringWithFormat:@"品名：%@",model.categoryName];
+    [self.offShelfBtn setTitle:model.status == 0 ? @"上架" : @"下架" forState:UIControlStateNormal];
 }
 
 #pragma mark -- Private methods
@@ -81,19 +83,22 @@
         make.width.mas_greaterThanOrEqualTo(40);
     }];
     
-    [self.rootView addSubview:self.editBtn];
-    [self.editBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(self.rootView.mas_right).offset(-6);
-        make.bottom.mas_equalTo(self.rootView.mas_bottom).offset(-9);
-        make.size.mas_equalTo(CGSizeMake(50, 24));
-    }];
-    
-    [self.rootView addSubview:self.offShelfBtn];
-    [self.offShelfBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(self.editBtn.mas_left).offset(-6);
-        make.bottom.mas_equalTo(self.editBtn.mas_bottom);
-        make.size.mas_equalTo(CGSizeMake(50, 24));
-    }];
+    BOOL hasPermission = [[FeimaManager sharedFeimaManager] hasPermissionWithApiStr:api_goods_update];
+    if (hasPermission) {
+        [self.rootView addSubview:self.editBtn];
+        [self.editBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(self.rootView.mas_right).offset(-6);
+            make.bottom.mas_equalTo(self.rootView.mas_bottom).offset(-9);
+            make.size.mas_equalTo(CGSizeMake(50, 24));
+        }];
+        
+        [self.rootView addSubview:self.offShelfBtn];
+        [self.offShelfBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(self.editBtn.mas_left).offset(-6);
+            make.bottom.mas_equalTo(self.editBtn.mas_bottom);
+            make.size.mas_equalTo(CGSizeMake(50, 24));
+        }];
+    }
     
 }
 
@@ -112,7 +117,6 @@
 -(UIImageView *)goodsImgView{
     if (!_goodsImgView) {
         _goodsImgView = [[UIImageView alloc] init];
-        _goodsImgView.backgroundColor = [UIColor lightGrayColor];
     }
     return _goodsImgView;
 }

@@ -19,8 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger contractTerminationTime;
 @property (nonatomic,  copy ) NSString  *contractor;
 @property (nonatomic,  copy ) NSString  *name;
-@property (nonatomic, assign) NSInteger phone;
+@property (nonatomic,  copy ) NSString  *phone;
 @property (nonatomic, assign) NSInteger signingTime;
+
+@property (nonatomic, assign) NSInteger isSelected;
 
 @end
 

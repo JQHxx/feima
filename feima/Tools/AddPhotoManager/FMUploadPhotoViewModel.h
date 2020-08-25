@@ -40,6 +40,13 @@
 */
 - (void)deleteImage:(NSString *)imageUrl;
 
+/**
+ *  添加图片
+ *
+ *  @param images 图片数组
+*/
+- (void)insertImages:(NSArray *)images;
+
 - (NSArray *)allImages;
 
 @end

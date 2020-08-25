@@ -9,6 +9,7 @@
 #import "NSArray+Safety.h"
 
 @implementation NSArray (Safety)
+
 -(id)safe_objectAtIndex:(NSInteger)index{
     NSInteger count = [self count];
     if (count > index) {
@@ -19,6 +20,8 @@
 -(id)safe_objectForKey:(NSString*)key{
     return self;
 }
+
+
 @end
 
 @implementation NSMutableArray (Safety)

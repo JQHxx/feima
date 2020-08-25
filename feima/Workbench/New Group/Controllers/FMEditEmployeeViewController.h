@@ -9,12 +9,13 @@
 #import "BaseViewController.h"
 #import "FMEmployeeModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+typedef void(^UpdateEmployeeSuccess)(FMEmployeeModel *employee);
+typedef void(^AddEmployeeSuccess)(FMEmployeeModel *employee);
 
 @interface FMEditEmployeeViewController : BaseViewController
 
 @property (nonatomic,strong) FMEmployeeModel *employee;
+@property (nonatomic,  copy ) UpdateEmployeeSuccess updateSuccess;
+@property (nonatomic,  copy ) AddEmployeeSuccess addSuccess;
 
 @end
-
-NS_ASSUME_NONNULL_END

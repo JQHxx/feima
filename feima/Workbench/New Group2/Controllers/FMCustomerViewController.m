@@ -15,11 +15,13 @@
 #import "FMCustomerModel.h"
 #import "FMCustomerViewModel.h"
 #import "BRStringPickerView.h"
+#import "FMLocationManager.h"
 
 @interface FMCustomerViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic, strong) UIButton        *filterBtn;
 @property (nonatomic, strong) UIButton        *searchBtn;
+@property (nonatomic, strong) UIButton        *refreshBtn;
 @property (nonatomic, strong) UITableView     *customerTableView;
 @property (nonatomic, strong) UIButton        *addBtn;
 @property (nonatomic, strong) FMCustomerViewModel  *adapter;
@@ -27,6 +29,8 @@
 
 @property (nonatomic, assign) NSInteger      visitCode;
 @property (nonatomic,  copy ) NSString       *contactName;
+@property (nonatomic, assign) double  longitude;
+@property (nonatomic, assign) double  latitude;
 
 @end
 
@@ -37,7 +41,7 @@
     self.baseTitle = self.isShowList ? @"客户分布" : @"客户管理";
     
     [self setupUI];
-    [self loadCustomerData];
+    [self loadData];
 }
  
 #pragma mark -- UITableViewDataSource and UITableViewDelegate
@@ -49,7 +53,7 @@
     FMCustomerTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMCustomerTableViewCell identifier] forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     FMCustomerModel *model = [self.adapter getCustomerModelWithIndex:indexPath.row];
-    [cell fillContentWithData:model];
+    [cell fillContentWithData:model showDistance:self.isShowList];
     return cell;
 }
 
@@ -79,7 +83,12 @@
     kSelfWeak;
     [BRStringPickerView showStringPickerWithTitle:@"筛选" dataSource:titles defaultSelValue:nil isAutoSelect:NO resultBlock:^(id selectValue) {
         weakSelf.visitCode = [titles indexOfObject:selectValue] + 1;
-        [weakSelf loadNewCustomersData];
+        if (weakSelf.customersArray.count > 0) {
+            [weakSelf.adapter filterCustomersWithVisitCode:weakSelf.visitCode];
+            [weakSelf.customerTableView reloadData];
+        } else {
+            [weakSelf loadNewCustomersData];
+        }
     }];
 }
 
@@ -89,18 +98,45 @@
     kSelfWeak;
     searchVC.didClickSearch = ^(NSString *keyword) {
         weakSelf.contactName = keyword;
-        [weakSelf loadNewCustomersData];
+        if (weakSelf.customersArray.count > 0) {
+            [weakSelf.adapter seachCustomersWithKeyword:keyword];
+            [weakSelf.customerTableView reloadData];
+        } else {
+            [weakSelf loadNewCustomersData];
+        }
     };
     [self.navigationController pushViewController:searchVC animated:YES];
 }
 
 #pragma mark -- Private methods
+#pragma mark load data
+- (void)loadData {
+    if (self.isShowList) {
+        [self refreshLcation];
+    } else {
+        if (self.customersArray.count > 0) {
+            [self.adapter insertCustomersList:self.customersArray];
+            [self.customerTableView reloadData];
+        } else {
+            [self.customerTableView.mj_header beginRefreshing];
+        }
+    }
+}
+
+#pragma mark 定位
+- (void)refreshLcation {
+    kSelfWeak;
+    [[FMLocationManager sharedInstance] getAddressDetail:^(FMAddressModel *addressModel) {
+        weakSelf.latitude = addressModel.latitude;
+        weakSelf.longitude = addressModel.longitude;
+        [weakSelf loadCustomerData];
+    }];
+}
+
 #pragma mark 加载数据
 - (void)loadCustomerData {
     kSelfWeak;
-    [SVProgressHUD show];
-    [self.adapter loadCustomerListWithPage:self.pageModel contactName:self.contactName visitCode:self.visitCode complete:^(BOOL isSuccess) {
-        [SVProgressHUD dismiss];
+    [self.adapter loadCustomerListWithPage:self.pageModel latitude:self.latitude longitude:self.longitude  contactName:self.contactName visitCode:self.visitCode complete:^(BOOL isSuccess) {
         if (isSuccess) {
             [weakSelf.customerTableView.mj_header endRefreshing];
             [weakSelf.customerTableView.mj_footer endRefreshing];
@@ -137,19 +173,29 @@
 
 #pragma mark 界面初始化
 - (void)setupUI {
-    [self.view addSubview:self.searchBtn];
-    [self.searchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(self.view.mas_right).offset(-10);
-        make.top.mas_equalTo(kStatusBar_Height+6);
-        make.size.mas_equalTo(CGSizeMake(30, 30));
-    }];
+    if (self.isShowList) {
+        [self.view addSubview:self.refreshBtn];
+        [self.refreshBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(self.view.mas_right).offset(-10);
+            make.top.mas_equalTo(kStatusBar_Height+6);
+            make.size.mas_equalTo(CGSizeMake(30, 30));
+        }];
+    } else {
+        [self.view addSubview:self.searchBtn];
+        [self.searchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(self.view.mas_right).offset(-10);
+            make.top.mas_equalTo(kStatusBar_Height+6);
+            make.size.mas_equalTo(CGSizeMake(30, 30));
+        }];
+        
+        [self.view addSubview:self.filterBtn];
+        [self.filterBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(self.searchBtn.mas_left).offset(-10);
+            make.top.mas_equalTo(kStatusBar_Height+6);
+            make.size.mas_equalTo(CGSizeMake(30, 30));
+        }];
+    }
     
-    [self.view addSubview:self.filterBtn];
-    [self.filterBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(self.searchBtn.mas_left).offset(-10);
-        make.top.mas_equalTo(kStatusBar_Height+6);
-        make.size.mas_equalTo(CGSizeMake(30, 30));
-    }];
     
     [self.view addSubview:self.customerTableView];
     [self.customerTableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -157,8 +203,8 @@
         make.left.right.mas_equalTo(0);
         make.height.mas_equalTo(kScreen_Height-kNavBar_Height);
     }];
-    
-    if (!self.isShowList) {
+    NSString *account = [FeimaManager sharedFeimaManager].userBean.account;
+    if (!self.isShowList && ![account isEqualToString:@"administrator"]) {
         [self.view addSubview:self.addBtn];
         [self.addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.right.mas_equalTo(-20);
@@ -186,9 +232,21 @@
     if (!_searchBtn) {
         _searchBtn = [[UIButton alloc] init];
         [_searchBtn setImage:ImageNamed(@"search_white") forState:UIControlStateNormal];
+        _searchBtn.adjustsImageWhenHighlighted = NO;
         [_searchBtn addTarget:self action:@selector(searchCustomerAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _searchBtn;
+}
+
+#pragma mark 刷新
+- (UIButton *)refreshBtn {
+    if (!_refreshBtn) {
+        _refreshBtn = [[UIButton alloc] init];
+        [_refreshBtn setImage:ImageNamed(@"customer_refresh") forState:UIControlStateNormal];
+        _refreshBtn.adjustsImageWhenHighlighted = NO;
+        [_refreshBtn addTarget:self action:@selector(refreshLcation) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _refreshBtn;;
 }
 
 #pragma mark 客户列表

@@ -17,6 +17,8 @@
 @property (nonatomic,strong) UILabel     *departmentLabel;
 @property (nonatomic,strong) UIImageView *arrowImgView;
 
+@property (nonatomic,strong) FMUserModel *user;
+
 @end
 
 @implementation FMHeadView
@@ -24,6 +26,8 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        self.user = [FeimaManager sharedFeimaManager].userBean.users;
+        
         [self addSubview:self.bgView];
         [self addSubview:self.rootView];
         [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -81,7 +85,6 @@
         _rootView = [[UIView alloc] init];
         _rootView.backgroundColor = [UIColor whiteColor];
         _rootView.layer.cornerRadius = 4;
-//        _rootView.clipsToBounds = YES;
         [_rootView drawShadowColor:[UIColor blackColor] offset:CGSizeMake(0, 5) opacity:0.2 radius:5];
     }
     return _rootView;
@@ -91,7 +94,9 @@
 -(UIImageView *)headImgView{
     if (!_headImgView) {
         _headImgView = [[UIImageView alloc] init];
-        _headImgView.backgroundColor = [UIColor lightGrayColor];
+        _headImgView.layer.cornerRadius = 25;
+        _headImgView.clipsToBounds = YES;
+        [_headImgView sd_setImageWithURL:[NSURL URLWithString:self.user.logo] placeholderImage:[UIImage ctPlaceholderImage]];
     }
     return _headImgView;
 }
@@ -102,7 +107,7 @@
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.font = [UIFont mediumFontWithSize:20];
         _nameLabel.textColor = [UIColor textBlackColor];
-        _nameLabel.text = @"测试客户";
+        _nameLabel.text = self.user.name;
     }
     return _nameLabel;
 }
@@ -114,7 +119,7 @@
         _departmentLabel.backgroundColor = [UIColor colorWithHexString:@"#EFF4F9"];
         _departmentLabel.font = [UIFont regularFontWithSize:10];
         _departmentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-        _departmentLabel.text = @"部门:市场销售一部";
+        _departmentLabel.text = [NSString stringWithFormat:@"部门：%@",kIsEmptyString(self.user.organizationName)?@"":self.user.organizationName];
     }
     return _departmentLabel;
 }
@@ -123,7 +128,7 @@
 -(UIImageView *)arrowImgView{
     if (!_arrowImgView) {
         _arrowImgView = [[UIImageView alloc] init];
-        _arrowImgView.backgroundColor = [UIColor lightGrayColor];
+        _arrowImgView.image = ImageNamed(@"arrow_right");
     }
     return _arrowImgView;
 }

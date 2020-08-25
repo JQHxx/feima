@@ -34,13 +34,14 @@
 }
 
 #pragma mark 填充数据
-- (void)fillContentWithData:(id)obj {
-    FMInstrucationModel *model = (FMInstrucationModel *)obj;
-    self.nameLabel.text = model.employeeName;
-    self.timeLabel.text = [[FeimaManager sharedFeimaManager] timeWithTimeInterval:model.createTime format:@"yyyy.mm.dd HH:mm"];
+- (void)fillContentWithData:(FMInstrucationModel *)model type:(NSInteger)type {
+    [self.headImgView sd_setImageWithURL:[NSURL URLWithString:model.logo] placeholderImage:[UIImage ctPlaceholderImage]];
+    self.nameLabel.text = type == 0 ? model.fromEmployeeName : model.employeeName;
+    self.timeLabel.text = [[FeimaManager sharedFeimaManager] timeWithTimeInterval:model.createTime format:@"yyyy.MM.dd HH:mm"];
     self.contentLabel.text = [NSString stringWithFormat:@"指令内容：%@",model.content];
-    self.stateLabel.text = @"未接收";
-    NSString *expTime = [[FeimaManager sharedFeimaManager] timeWithTimeInterval:model.endTime format:@"yyyy.mm.dd HH:mm"];
+    self.stateLabel.text = model.statusName;
+    self.stateLabel.hidden = type == 1 ;
+    NSString *expTime = [[FeimaManager sharedFeimaManager] timeWithTimeInterval:model.endTime format:@"yyyy.MM.dd HH:mm"];
     self.expireTimeLabel.text = [NSString stringWithFormat:@"截止期限: %@",expTime];
     NSMutableArray *names = [[NSMutableArray alloc] init];
     for (FMEmployeeModel *eModel in model.employees) {
@@ -55,7 +56,9 @@
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.mas_equalTo(8);
         make.top.mas_equalTo(16);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-15, 110));
+        make.right.mas_equalTo(-7);
+        make.height.mas_greaterThanOrEqualTo(110);
+        make.bottom.mas_equalTo(self.contentView.mas_bottom);
     }];
     
     [self.rootView addSubview:self.headImgView];
@@ -64,13 +67,12 @@
         make.size.mas_equalTo(CGSizeMake(42, 42));
     }];
     
-    
     [self.rootView addSubview:self.nameLabel];
     [self.nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.headImgView.mas_right).offset(12);
         make.top.mas_equalTo(self.headImgView.mas_top);
         make.height.mas_equalTo(22);
-        make.width.mas_greaterThanOrEqualTo(50);
+        make.width.mas_greaterThanOrEqualTo(20);
     }];
     
     [self.rootView addSubview:self.timeLabel];
@@ -84,15 +86,15 @@
     [self.rootView addSubview:self.contentLabel];
     [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.nameLabel.mas_left);
+        make.right.mas_equalTo(-10);
         make.top.mas_equalTo(self.nameLabel.mas_bottom).offset(4);
-        make.height.mas_equalTo(22);
-        make.width.mas_greaterThanOrEqualTo(20);
+        make.height.mas_greaterThanOrEqualTo(22);
     }];
     
     [self.rootView addSubview:self.stateLabel];
     [self.stateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.contentLabel.mas_right).offset(7);
-        make.top.mas_equalTo(self.nameLabel.mas_bottom).offset(6);
+        make.right.mas_equalTo(-10);
+        make.top.mas_equalTo(self.nameLabel.mas_top);
         make.size.mas_equalTo(CGSizeMake(50, 20));
     }];
     
@@ -109,7 +111,8 @@
         make.left.mas_equalTo(self.nameLabel.mas_left);
         make.top.mas_equalTo(self.expireTimeLabel.mas_bottom).offset(4);
         make.right.mas_equalTo(self.rootView.mas_right).offset(-10);
-        make.height.mas_equalTo(17);
+        make.height.mas_greaterThanOrEqualTo(17);
+        make.bottom.mas_equalTo(self.rootView.mas_bottom).offset(-10);
     }];
     
 }
@@ -130,7 +133,8 @@
 -(UIImageView *)headImgView{
     if (!_headImgView) {
         _headImgView = [[UIImageView alloc] init];
-        _headImgView.backgroundColor = [UIColor lightGrayColor];
+        _headImgView.layer.cornerRadius = 21;
+        _headImgView.layer.masksToBounds = YES;
     }
     return _headImgView;
 }
@@ -161,6 +165,7 @@
         _contentLabel = [[UILabel alloc] init];
         _contentLabel.font = [UIFont mediumFontWithSize:12];
         _contentLabel.textColor = [UIColor textBlackColor];
+        _contentLabel.numberOfLines = 0;
     }
     return _contentLabel;
 }
@@ -170,8 +175,7 @@
     if (!_stateLabel) {
         _stateLabel = [[UILabel alloc] init];
         _stateLabel.font = [UIFont regularFontWithSize:12];
-        _stateLabel.textColor = [UIColor whiteColor];
-        _stateLabel.backgroundColor = [UIColor systemColor];
+        _stateLabel.textColor = [UIColor systemColor];
         _stateLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _stateLabel;
@@ -193,7 +197,7 @@
         _handleLabel = [[UILabel alloc] init];
         _handleLabel.font = [UIFont regularFontWithSize:12];
         _handleLabel.textColor = [UIColor colorWithHexString:@"#999999"];
-        _handleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        _handleLabel.numberOfLines = 0;
     }
     return _handleLabel;
 }

@@ -9,12 +9,12 @@
 #import "BaseViewController.h"
 #import "FMCustomerModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+typedef void(^UpdateCustomerSuccess)(FMCustomerModel *model);
 
 @interface FMAddCustomerViewController : BaseViewController
 
 @property (nonatomic, strong) FMCustomerModel *customerModel;
+@property (nonatomic,  copy ) UpdateCustomerSuccess updateSuccess;
 
 @end
 
-NS_ASSUME_NONNULL_END

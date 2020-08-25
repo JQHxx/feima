@@ -10,11 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void(^HandleComplte)(void);
+
 @interface FMPhotoCollectionView : UICollectionView
 
+@property (nonatomic,assign) BOOL     canSelectedAlbum;
 @property (nonatomic,assign) NSInteger maxImagesCount;
+@property (nonatomic, copy ) HandleComplte handleComplete;
 
 - (NSArray *)getAllImages;
+
+- (void)addPickedImages:(NSArray *)images;
 
 @end
 

@@ -9,6 +9,7 @@
 #import "NSDictionary+Safety.h"
 
 @implementation NSDictionary (Safety)
+
 -(id)safe_objectForKey:(id)aKey{
     id value = [self objectForKey:aKey];
     if (!value || [value isEqual:[NSNull null]]) {
@@ -55,15 +56,31 @@
     return [scan scanInt:&val] && [scan isAtEnd];
 }
 
-
 - (BOOL)isPureFloat:(NSString *)string{
     NSScanner* scan = [NSScanner scannerWithString:string];
     float val;
     return [scan scanFloat:&val] && [scan isAtEnd];
 }
+
+- (NSMutableDictionary *)mutableDeepCopy {
+    NSMutableDictionary *copyDict = [[NSMutableDictionary alloc] initWithCapacity:self.count];
+    for (id key in self.allKeys) {
+        id oneCopy = nil;
+        id oneValue = [self safe_objectForKey:key];
+        if ([oneValue respondsToSelector:@selector(mutableDeepCopy)]) {
+            oneCopy = [oneValue mutableDeepCopy];
+        } else if ([oneValue respondsToSelector:@selector(copy)]) {
+            oneCopy = [oneValue copy];
+        }
+        [copyDict setValue:oneCopy forKey:key];
+   }
+   return copyDict;
+}
+
 @end
 
 @implementation NSMutableDictionary (Safety)
+
 -(void)safe_setObject:(id)anObject forKey:(id<NSCopying>)aKey{
     if(anObject){
         [self setObject:anObject forKey:aKey];

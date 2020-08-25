@@ -10,7 +10,7 @@
 #import <AFNetworking/AFNetworking.h>
 #import "NSUserDefaultsInfos.h"
 
-#define isTrueEnvironment 1
+#define isTrueEnvironment 0
 
 #if isTrueEnvironment
 //正式环境
@@ -26,8 +26,6 @@
 
 @interface HttpRequest ()
 
-@property (nonatomic, strong) AFHTTPSessionManager *manager;
-@property (nonatomic,  copy ) RequstCompleteBlock complteBlock;
 
 @end
 
@@ -81,20 +79,7 @@ static id _instance = nil;
             }
         }];
         
-        self.manager =[AFHTTPSessionManager manager];
-        self.manager.responseSerializer = [AFHTTPResponseSerializer serializer]; // 响应
-        self.manager.requestSerializer.timeoutInterval = 30;
-        // 设置自动管理Cookies
-        self.manager.requestSerializer.HTTPShouldHandleCookies = NO;
-        self.manager.requestSerializer = [AFHTTPRequestSerializer serializer]; // 请求
-        self.manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html", @"text/plain", nil];
-        //无条件的信任服务器上的证书
-        AFSecurityPolicy *securityPolicy =  [AFSecurityPolicy defaultPolicy];
-        // 客户端是否信任非法证书
-        securityPolicy.allowInvalidCertificates = YES;
-        // 是否在证书域字段中验证域名
-        securityPolicy.validatesDomainName = NO;
-        self.manager.securityPolicy = securityPolicy;
+        
     
     });
     return _instance;
@@ -106,14 +91,27 @@ static id _instance = nil;
            complete:(RequstCompleteBlock)complete {
     NSString *urlStr = [NSString stringWithFormat:kHostTempURL,url];
     MyLog(@"url:%@,params:%@",urlStr,parameters);
+    AFHTTPSessionManager *manager =[AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer]; // 响应
+    manager.requestSerializer.timeoutInterval = 30;
+    // 设置自动管理Cookies
+    manager.requestSerializer.HTTPShouldHandleCookies = NO;
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer]; // 请求
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html", @"text/plain", nil];
+    //无条件的信任服务器上的证书
+    AFSecurityPolicy *securityPolicy =  [AFSecurityPolicy defaultPolicy];
+    // 客户端是否信任非法证书
+    securityPolicy.allowInvalidCertificates = YES;
+    // 是否在证书域字段中验证域名
+    securityPolicy.validatesDomainName = NO;
+    manager.securityPolicy = securityPolicy;
     // 如果已有Cookie, 则把你的cookie符
     NSString *cookie = [NSUserDefaultsInfos getValueforKey:@"Cookie"];
     NSDictionary *headers;
     if (cookie != nil) {
         headers = @{@"Cookie":cookie};
     }
-    self.complteBlock = complete;
-    [self.manager POST:urlStr parameters:parameters headers:headers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    [manager POST:urlStr parameters:parameters headers:headers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if ([url isEqualToString:api_login]) { //获取 Cookie
             NSHTTPURLResponse* response = (NSHTTPURLResponse* )task.response;
             NSDictionary *allHeaderFieldsDic = response.allHeaderFields;
@@ -123,9 +121,26 @@ static id _instance = nil;
                 [NSUserDefaultsInfos putKey:@"Cookie" andValue:cookie];
             }
         }
-        [self requestSuccessHandleWithResponseObject:responseObject];
+        id json=[NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
+        MyLog(@"json:%@",json);
+        NSInteger status = [json safe_integerForKey:@"code"];
+        BOOL isSuccess = status == 200;
+        NSError *error;
+        if (status==200) {
+            complete(isSuccess, json, error);
+        } else {
+            error = [NSError errorWithDomain:@"api_error_code" code:[json safe_integerForKey:@"code"] userInfo:@{ NSLocalizedDescriptionKey:[json safe_stringForKey:@"msg"]}];
+            MyLog(@"error:%@",error);
+            complete(NO, json, error);
+            if (status == -1379 || status == -1378) { //帐号被挤退
+                [[FeimaManager sharedFeimaManager] logout];
+            }
+        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         MyLog(@"postWithUrl:%@,error:%@",urlStr,error);
+        if (error.code == -1011) {
+            [[FeimaManager sharedFeimaManager] logout];
+        }
         complete(NO,nil,error);
     }];
 }
@@ -141,11 +156,41 @@ static id _instance = nil;
     if (cookie != nil) {
         headers = @{@"Cookie":cookie};
     }
-    self.complteBlock = complete;
-    [self.manager GET:urlStr parameters:parameters headers:headers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self requestSuccessHandleWithResponseObject:responseObject];
+    AFHTTPSessionManager *manager =[AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer]; // 响应
+    manager.requestSerializer.timeoutInterval = 30;
+    // 设置自动管理Cookies
+    manager.requestSerializer.HTTPShouldHandleCookies = NO;
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer]; // 请求
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html", @"text/plain", nil];
+    //无条件的信任服务器上的证书
+    AFSecurityPolicy *securityPolicy =  [AFSecurityPolicy defaultPolicy];
+    // 客户端是否信任非法证书
+    securityPolicy.allowInvalidCertificates = YES;
+    // 是否在证书域字段中验证域名
+    securityPolicy.validatesDomainName = NO;
+    manager.securityPolicy = securityPolicy;
+    [manager GET:urlStr parameters:parameters headers:headers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        id json=[NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
+        MyLog(@"json:%@",json);
+        NSInteger status = [json safe_integerForKey:@"code"];
+        BOOL isSuccess = status == 200;
+        NSError *error;
+        if (status==200) {
+            complete(isSuccess, json, error);
+        } else {
+            error = [NSError errorWithDomain:@"api_error_code" code:[json safe_integerForKey:@"code"] userInfo:@{ NSLocalizedDescriptionKey:[json safe_stringForKey:@"msg"]}];
+            MyLog(@"error:%@",error);
+            complete(NO, json, error);
+            if (status == -1379 || status == -1378) { //帐号被挤退
+                [[FeimaManager sharedFeimaManager] logout];
+            }
+        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         MyLog(@"postWithUrl:%@,error:%@",urlStr,error);
+        if (error.code == -1011) {
+            [[FeimaManager sharedFeimaManager] logout];
+        }
         complete(NO,nil,error);
     }];
 }
@@ -162,37 +207,43 @@ static id _instance = nil;
     if (cookie != nil) {
         headers = @{@"Cookie":cookie};
     }
-    self.complteBlock = complete;
-    [self.manager POST:urlStr parameters:parameters headers:headers constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+    AFHTTPSessionManager *manager =[AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer]; // 响应
+    manager.requestSerializer.timeoutInterval = 30;
+    // 设置自动管理Cookies
+    manager.requestSerializer.HTTPShouldHandleCookies = NO;
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer]; // 请求
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html", @"text/plain", nil];
+    //无条件的信任服务器上的证书
+    AFSecurityPolicy *securityPolicy =  [AFSecurityPolicy defaultPolicy];
+    // 客户端是否信任非法证书
+    securityPolicy.allowInvalidCertificates = YES;
+    // 是否在证书域字段中验证域名
+    securityPolicy.validatesDomainName = NO;
+    manager.securityPolicy = securityPolicy;
+    [manager POST:urlStr parameters:parameters headers:headers constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSData *data = UIImageJPEGRepresentation(image, 0.5);
         [formData appendPartWithFileData:data name:@"file" fileName:@"1.png" mimeType:@"image/png"];
     } progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self requestSuccessHandleWithResponseObject:responseObject];
+        id json=[NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
+        MyLog(@"json:%@",json);
+        NSInteger status = [json safe_integerForKey:@"code"];
+        BOOL isSuccess = status == 200;
+        NSError *error;
+        if (status==200) {
+            complete(isSuccess, json, error);
+        } else {
+            error = [NSError errorWithDomain:@"api_error_code" code:[json safe_integerForKey:@"code"] userInfo:@{ NSLocalizedDescriptionKey:[json safe_stringForKey:@"msg"]}];
+            MyLog(@"error:%@",error);
+            complete(NO, json, error);
+            if (status == -1379 || status == -1378) { //帐号被挤退
+                [[FeimaManager sharedFeimaManager] logout];
+            }
+        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         MyLog(@"postWithUrl:%@,error:%@",urlStr,error);
         complete(NO,nil,error);
     }];
-}
-
-#pragma mark -- Private methods
-#pragma mark 请求成功处理
-- (void)requestSuccessHandleWithResponseObject:(id)responseObject {
-//  MyLog(@"html:%@",[[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
-    id json=[NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
-    MyLog(@"json:%@",json);
-    NSInteger status = [json safe_integerForKey:@"code"];
-    BOOL isSuccess = status == 200;
-    NSError *error;
-    if (status==200) {
-        self.complteBlock(isSuccess, json, error);
-    } else {
-        error = [NSError errorWithDomain:@"api_error_code" code:[json safe_integerForKey:@"code"] userInfo:@{ NSLocalizedDescriptionKey:[json safe_stringForKey:@"msg"]}];
-        MyLog(@"error:%@",error);
-        self.complteBlock(NO, nil, error);
-        if (status == -1379 || status == -1378) { //帐号被挤退
-            [[FeimaManager sharedFeimaManager] logout];
-        }
-    }
 }
 
 @end

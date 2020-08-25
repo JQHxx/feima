@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,  copy ) NSString  *categoryName;
 @property (nonatomic, assign) NSInteger companyId;
+@property (nonatomic,  copy ) NSString  *companyName;
 @property (nonatomic,  copy ) NSString  *description;
 @property (nonatomic, assign) NSInteger goodsId;
 @property (nonatomic,  copy ) NSString  *images;

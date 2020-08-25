@@ -23,9 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,  copy ) NSString  *customerSourceName;
 @property (nonatomic, assign) NSInteger customerStatus;  //客户状态，0：禁用，1:启用
 @property (nonatomic,  copy ) NSString  *customerStatusName;
-@property (nonatomic, assign) NSInteger displayArea; //陈列面积
+@property (nonatomic,  copy ) NSString  *displayArea; //陈列面积
 @property (nonatomic,  copy ) NSString  *displayFee;  //陈列费
-@property (nonatomic,  copy ) NSString  *distance;
+@property (nonatomic, assign) double    distance;
 @property (nonatomic,  copy ) NSString  *doorPhoto; //门头照
 @property (nonatomic, assign) NSInteger employeeId;
 @property (nonatomic,  copy ) NSString  *employeeName;
@@ -34,8 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,  copy ) NSString  *gradeName;
 @property (nonatomic,  copy ) NSString  *industryName;
 @property (nonatomic, assign) NSInteger industryType; //行业类型
-@property (nonatomic,  copy ) NSString  *latitude;   //纬度
-@property (nonatomic,  copy ) NSString  *longitude;  //经度
+@property (nonatomic, assign) double    latitude;   //纬度
+@property (nonatomic, assign) double    longitude;  //经度
 @property (nonatomic,  copy ) NSString  *monthVisit;
 @property (nonatomic,  copy ) NSString  *nickName; //客户简称
 @property (nonatomic,  copy ) NSString  *pathName;

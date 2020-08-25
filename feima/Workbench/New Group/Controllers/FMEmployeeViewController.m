@@ -9,16 +9,17 @@
 #import "FMEmployeeViewController.h"
 #import "FMEditEmployeeViewController.h"
 #import "FMEmployeeInfoViewController.h"
-#import "FMEmployeeTableViewCell.h"
-#import "FMEmployeeModel.h"
+#import "FMRouteRecordsViewController.h"
+#import "FMTransferViewController.h"
+#import "FMEmployeeContentView.h"
 
-@interface FMEmployeeViewController ()<UISearchBarDelegate,UITableViewDelegate,UITableViewDataSource>
+@interface FMEmployeeViewController ()<FMEmployeeContentViewDelegate>
 
-@property (nonatomic, strong) UISegmentedControl *segmentedControl;
-@property (nonatomic, strong) UIButton           *addBtn;
-@property (nonatomic, strong) UISearchBar        *searchBar;
-@property (nonatomic, strong) UITableView        *employeeTableView;
-@property (nonatomic, strong) NSMutableArray     *employeeArray;
+@property (nonatomic, strong) UISegmentedControl    *segmentedControl;
+@property (nonatomic, strong) UIButton              *addBtn;
+@property (nonatomic, strong) UIScrollView          *rootScrollView;
+@property (nonatomic, strong) FMEmployeeContentView *employeeView;
+@property (nonatomic, strong) FMEmployeeContentView *disableEmployeeView;
 
 @end
 
@@ -28,56 +29,71 @@
     [super viewDidLoad];
     
     [self setupUI];
-    [self loadEmployeeData];
 }
 
-#pragma mark UITableViewDelegate and UITableViewDataSource
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.employeeArray.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    FMEmployeeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMEmployeeTableViewCell identifier] forIndexPath:indexPath];
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    FMEmployeeModel * model = self.employeeArray[indexPath.row];
-    [cell fillContentWithData:model];
-    return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 54;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    FMEmployeeModel * model = self.employeeArray[indexPath.row];
-    FMEmployeeInfoViewController *infoVC = [[FMEmployeeInfoViewController alloc] init];
-    infoVC.employeeModel = model;
-    [self.navigationController pushViewController:infoVC animated:YES];
+#pragma mark -- FMEmployeeContentViewDelegate
+#pragma mark 更多
+- (void)employeeContentView:(FMEmployeeContentView *)contentView didSlectedEmployee:(FMEmployeeModel *)employee index:(NSInteger)index {
+    switch (index) {
+        case 0:{ //轨迹路径
+            FMRouteRecordsViewController *recordsVC = [[FMRouteRecordsViewController alloc] init];
+            [self.navigationController pushViewController:recordsVC animated:YES];
+        }
+            break;
+        case 1:{ //基本信息
+            FMEmployeeInfoViewController *infoVC = [[FMEmployeeInfoViewController alloc] init];
+            infoVC.employeeModel = employee;
+            kSelfWeak;
+            infoVC.updateBlock = ^(FMEmployeeModel *employee) {
+                if (weakSelf.segmentedControl.selectedSegmentIndex == 0) {
+                    [weakSelf.employeeView updateEmployeeInfoWithModel:employee];
+                } else {
+                    [weakSelf.disableEmployeeView updateEmployeeInfoWithModel:employee];
+                }
+            };
+            [self.navigationController pushViewController:infoVC animated:YES];
+        }
+            break;
+        case 2:{ //转移客户
+            FMTransferViewController *transferVC = [[FMTransferViewController alloc] init];
+            transferVC.employeeId = employee.employeeId;
+            [self.navigationController pushViewController:transferVC animated:YES];
+        }
+        default: 
+            break;
+    }
 }
 
 #pragma mark -- Events
+#pragma mark segment value change
+- (void)chooseSegmentControlAction:(UISegmentedControl *)sender {
+    if (sender.selectedSegmentIndex == 1) {
+        if (!self.disableEmployeeView) {
+            self.disableEmployeeView = [[FMEmployeeContentView alloc] initWithFrame:CGRectMake(kScreen_Width, 0, kScreen_Width, kScreen_Height-kNavBar_Height) status:0];
+            self.disableEmployeeView.viewDelegate = self;
+        }
+        [self.rootScrollView addSubview:self.disableEmployeeView];
+        if ([FeimaManager sharedFeimaManager].employeeListReload) {
+            [self.disableEmployeeView loadNewEmployeeData];
+            [FeimaManager sharedFeimaManager].employeeListReload = NO;
+        }
+    } else {
+        if ([FeimaManager sharedFeimaManager].employeeListReload) {
+            [self.employeeView loadNewEmployeeData];
+            [FeimaManager sharedFeimaManager].employeeListReload = NO;
+        }
+    }
+    [self.rootScrollView setContentOffset:CGPointMake(kScreen_Width*sender.selectedSegmentIndex, 0)];
+}
+
 #pragma mark 添加员工
 - (void)addEmployeeAction:(UIButton *)sender {
     FMEditEmployeeViewController *addEmployeeVC = [[FMEditEmployeeViewController alloc] init];
+    kSelfWeak;
+    addEmployeeVC.addSuccess = ^(FMEmployeeModel *employee) {
+        [weakSelf.employeeView insertEmployeeWithModel:employee];
+    };
     [self.navigationController pushViewController:addEmployeeVC animated:YES];
-}
-
-#pragma mark -- Private methods
-#pragma mark Load Data
-- (void)loadEmployeeData {
-    NSMutableArray *tempArr = [[NSMutableArray alloc] init];
-    NSArray *arr = @[@"王大锤",@"马画藤",@"张京东",@"以于涛",@"鹏佳骏",@"洛瑶灰",@"周姐坤",@"鹏佳骏",@"洛瑶灰",@"周姐坤"];
-    for (NSInteger i=0; i<arr.count; i++) {
-        FMEmployeeModel * model = [[FMEmployeeModel alloc] init];
-        model.name = arr[i];
-        model.organizationName = @"飞马测试";
-        model.telephone = @"13548761594";
-        model.companyName = @"飞马总部";
-        model.postName = @"业务员";
-        [tempArr addObject:model];
-    }
-    self.employeeArray = tempArr;
-    [self.employeeTableView reloadData];
 }
 
 #pragma mark UI
@@ -89,25 +105,27 @@
         make.size.mas_equalTo(CGSizeMake(150, 40));
     }];
     
-    [self.view addSubview:self.addBtn];
-    [self.addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(self.view.mas_right).offset(-10);
-        make.top.mas_equalTo(kStatusBar_Height+6);
-        make.size.mas_equalTo(CGSizeMake(30, 30));
-    }];
+    if ([[FeimaManager sharedFeimaManager] hasPermissionWithApiStr:api_employee_list]) {
+        [self.view addSubview:self.addBtn];
+        [self.addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(self.view.mas_right).offset(-10);
+            make.top.mas_equalTo(kStatusBar_Height+6);
+            make.size.mas_equalTo(CGSizeMake(30, 30));
+        }];
+    }
     
-    [self.view addSubview:self.searchBar];
-    [self.searchBar mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.mas_equalTo(15);
+    [self.view addSubview:self.rootScrollView];
+    [self.rootScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(kNavBar_Height);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-30, 50));
+        make.left.right.mas_equalTo(0);
+        make.height.mas_equalTo(kScreen_Height-kNavBar_Height);
     }];
     
-    [self.view addSubview:self.employeeTableView];
-    [self.employeeTableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self.searchBar.mas_bottom);
-        make.left.right.mas_equalTo(0);
-        make.height.mas_equalTo(kScreen_Height-kNavBar_Height-50);
+    [self.rootScrollView addSubview:self.employeeView];
+    [self.employeeView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.mas_equalTo(0);
+        make.height.mas_equalTo(self.rootScrollView.mas_height);
+        make.width.mas_equalTo(kScreen_Width);
     }];
 }
 
@@ -119,6 +137,7 @@
         [_segmentedControl setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]} forState:UIControlStateNormal];
         [_segmentedControl setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor systemColor]} forState:UIControlStateSelected];
         _segmentedControl.selectedSegmentIndex = 0;
+        [_segmentedControl addTarget:self action:@selector(chooseSegmentControlAction:) forControlEvents:UIControlEventValueChanged];
     }
     return _segmentedControl;
 }
@@ -133,35 +152,25 @@
     return _addBtn;;
 }
 
-#pragma mark 搜索
-- (UISearchBar *)searchBar {
-    if (!_searchBar) {
-        _searchBar = [[UISearchBar alloc] init];
-        _searchBar.delegate = self;
-        _searchBar.searchBarStyle = UISearchBarStyleMinimal;
-        _searchBar.placeholder = @"输入姓名、手机号进行搜索";
+#pragma mark
+- (UIScrollView *)rootScrollView {
+    if (!_rootScrollView) {
+        _rootScrollView = [[UIScrollView alloc] init];
+        _rootScrollView.showsHorizontalScrollIndicator = NO;
+        _rootScrollView.scrollEnabled = NO;
+        [_rootScrollView setContentSize:CGSizeMake(kScreen_Width*2, kScreen_Height-kNavBar_Height)];
     }
-    return _searchBar;
+    return _rootScrollView;
 }
 
-#pragma mark 通讯录
-- (UITableView *)employeeTableView {
-    if (!_employeeTableView) {
-        _employeeTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-        _employeeTableView.delegate = self;
-        _employeeTableView.dataSource = self;
-        _employeeTableView.showsVerticalScrollIndicator = NO;
-        _employeeTableView.tableFooterView = [[UIView alloc] init];
-        [_employeeTableView registerClass:[FMEmployeeTableViewCell class] forCellReuseIdentifier:[FMEmployeeTableViewCell identifier]];
+#pragma mark 启用
+- (FMEmployeeContentView *)employeeView {
+    if (!_employeeView) {
+        _employeeView = [[FMEmployeeContentView alloc] initWithFrame:CGRectZero status:1];
+        _employeeView.viewDelegate = self;
     }
-    return _employeeTableView;
+    return _employeeView;
 }
 
-- (NSMutableArray *)employeeArray {
-    if (!_employeeArray) {
-        _employeeArray = [[NSMutableArray alloc] init];
-    }
-    return _employeeArray;
-}
 
 @end

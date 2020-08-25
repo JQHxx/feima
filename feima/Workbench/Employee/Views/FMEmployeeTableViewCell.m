@@ -7,14 +7,19 @@
 //
 
 #import "FMEmployeeTableViewCell.h"
-#import "FMEmployeeModel.h"
+#import <YBPopupMenu/YBPopupMenu.h>
 
-@interface FMEmployeeTableViewCell ()
+@interface FMEmployeeTableViewCell ()<YBPopupMenuDelegate>{
+    NSArray *titles;
+}
 
 @property (nonatomic,strong) UIImageView *myImgView;
 @property (nonatomic,strong) UILabel     *nameLabel;
 @property (nonatomic,strong) UILabel     *typeLabel;
 @property (nonatomic,strong) UIButton    *moreBtn;
+@property (nonatomic, strong) YBPopupMenu *popupMenu;
+
+@property (nonatomic,strong) FMEmployeeModel *model;
 
 @end
 
@@ -28,17 +33,36 @@
     return self;
 }
 
+#pragma mark YBPopupMenuDelegate
+#pragma mark 选择
+- (void)ybPopupMenu:(YBPopupMenu *)ybPopupMenu didSelectedAtIndex:(NSInteger)index {
+    MyLog(@"点击了 %ld 选项",index);
+    [_popupMenu dismiss];
+    if (self.moreBlock) {
+        self.moreBlock(self.model, index);
+    }
+}
+
 #pragma mark -- Event response
 #pragma mark 更多
-- (void)moreAction: (UIButton *)sender {
-    
+- (void)moreAction:(UIButton *)sender {
+   _popupMenu = [YBPopupMenu showRelyOnView:sender titles:titles icons:nil menuWidth:100 otherSettings:^(YBPopupMenu *popupMenu) {
+        popupMenu.dismissOnSelected = NO;
+        popupMenu.isShowShadow = YES;
+        popupMenu.delegate = self;
+        popupMenu.offset = 10;
+        popupMenu.type = YBPopupMenuTypeDefault;
+        popupMenu.rectCorner = UIRectCornerBottomLeft | UIRectCornerBottomRight;
+    }];
 }
 
 #pragma mark 填充数据
-- (void)fillContentWithData:(id)obj {
-    FMEmployeeModel *model = (FMEmployeeModel *)obj;
-    self.nameLabel.text = model.name;
-    self.typeLabel.text = [model.postName substringToIndex:1];
+- (void)fillContentWithData:(FMEmployeeModel *)model status:(NSInteger)status{
+    self.model = model;
+    titles = @[@"轨迹路径",@"基本信息",@"转移客户",status == 1 ? @"禁用" : @"启用"];
+    [self.myImgView sd_setImageWithURL:[NSURL URLWithString:self.model.logo] placeholderImage:[UIImage ctPlaceholderImage]];
+    self.nameLabel.text = self.model.name;
+    self.typeLabel.text = [self.model.postName substringToIndex:1];
 }
 
 #pragma mark -- Private methods
@@ -47,7 +71,7 @@
     [self.myImgView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.top.mas_equalTo(10);
         make.centerY.mas_equalTo(self.contentView.mas_centerY);
-        make.size.mas_equalTo(CGSizeMake(36, 36));
+        make.size.mas_equalTo(CGSizeMake(54, 54));
     }];
     
     [self.contentView addSubview:self.nameLabel];
@@ -77,7 +101,8 @@
 -(UIImageView *)myImgView{
     if (!_myImgView) {
         _myImgView = [[UIImageView alloc] init];
-        _myImgView.backgroundColor = [UIColor lightGrayColor];
+        _myImgView.layer.cornerRadius = 27;
+        _myImgView.layer.masksToBounds = YES;
     }
     return _myImgView;
 }
@@ -97,7 +122,7 @@
     if (!_typeLabel) {
         _typeLabel = [[UILabel alloc] init];
         _typeLabel.font = [UIFont regularFontWithSize:12];
-        _typeLabel.textColor = [UIColor textBlackColor];
+        _typeLabel.textColor = [UIColor whiteColor];
         _typeLabel.textAlignment = NSTextAlignmentCenter;
         _typeLabel.backgroundColor = [UIColor systemColor];
         _typeLabel.layer.cornerRadius = 15;

@@ -12,6 +12,7 @@
 #import <IQKeyboardManager.h>
 #import <BaiduMapAPI_Base/BMKBaseComponent.h>
 #import <BMKLocationKit/BMKLocationComponent.h>
+#import <BaiduTraceSDK/BaiduTraceSDK.h>
 
 @interface AppDelegate ()<BMKLocationAuthDelegate,BMKGeneralDelegate>
 
@@ -48,7 +49,7 @@
     keyboardManager.toolbarManageBehaviour = IQAutoToolbarBySubviews;
     keyboardManager.enableAutoToolbar = NO; //隐藏键盘上面的toolBar
     
-    //百度地图
+    // 初始化地图SDK
     BMKMapManager *mapManager = [[BMKMapManager alloc] init];
     [[BMKLocationAuth sharedInstance] checkPermisionWithKey:key_baidu_ak authDelegate:self];
     BOOL ret = [mapManager start:key_baidu_ak generalDelegate:self];

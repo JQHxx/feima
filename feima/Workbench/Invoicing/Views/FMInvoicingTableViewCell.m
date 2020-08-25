@@ -75,13 +75,54 @@
 #pragma mark 填充数据
 - (void)fillContentWithData:(id)obj {
     FMOrderModel *model = (FMOrderModel *)obj;
+    [self.myImgView sd_setImageWithURL:[NSURL URLWithString:model.employee.logo] placeholderImage:[UIImage ctPlaceholderImage]];
     self.nameLabel.text = model.employee.name;
-    self.typeLabel.text = @"申请配货";
+    self.typeLabel.text = [self getTypeWithStatus:model.orderGoods.status];
     CGFloat labW = [self.typeLabel.text boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, 24) withTextFont:self.typeLabel.font].width;
     [self.typeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(labW+20);
     }];
     self.handleLabel.text = [NSString stringWithFormat:@"操作人：%@",model.toEmployeeName];
+}
+
+#pragma mark
+- (NSString *)getTypeWithStatus:(NSInteger)status {
+    NSString *typeStr;
+    switch (status) {
+        case 1:
+            typeStr = @"申请配货";
+            break;
+        case 2:
+            typeStr = @"同意配货";
+            break;
+        case 3:
+            typeStr = @"拒绝配货";
+            break;
+        case 4:
+            typeStr = @"已发货";
+            break;
+        case 5:
+            typeStr = @"配货完成";
+            break;
+        case 21:
+            typeStr = @"申请退货";
+            break;
+        case 22:
+            typeStr = @"退货同意";
+            break;
+        case 23:
+            typeStr = @"退货拒绝";
+            break;
+        case 24:
+            typeStr = @"退货已发货";
+            break;
+        case 25:
+            typeStr = @"退货完成";
+            break;
+        default:
+            break;
+    }
+    return typeStr;
 }
 
 #pragma mark -- Getters

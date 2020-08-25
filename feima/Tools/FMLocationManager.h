@@ -11,7 +11,6 @@
 #import <BMKLocationkit/BMKLocationComponent.h>
 #import "FMAddressModel.h"
 
-
 @interface FMLocationManager : NSObject
 
 +(instancetype) sharedInstance;
@@ -21,7 +20,7 @@
 
  @param block 返回
  */
--(void)getAddressDetail:(void(^)(FMAddressModel *addressModel)) block;
+-(void)getAddressDetail:(void(^)(FMAddressModel *addressModel))block;
 
 @end
 

@@ -36,10 +36,10 @@
     FMPunchRecordModel *model = (FMPunchRecordModel *)obj;
     self.timeLab.text = [model.time substringFromIndex:model.time.length-2];
     NSString *onTime = [[FeimaManager sharedFeimaManager] timeWithTimeInterval:model.recordType.createTime format:@"HH:mm"];
-    self.onWorkLab.text = [NSString stringWithFormat:@"%@\n%@",onTime,model.recordType.statusName];
+    self.onWorkLab.text = [NSString stringWithFormat:@"%@\n%@",onTime,kIsEmptyString(model.recordType.statusName)?@"":model.recordType.statusName];
     
     NSString *offTime = [[FeimaManager sharedFeimaManager] timeWithTimeInterval:model.recordAfterType.createTime format:@"HH:mm"];
-    self.offWorkLab.text = [NSString stringWithFormat:@"%@\n%@",offTime,model.recordAfterType.statusName];
+    self.offWorkLab.text = [NSString stringWithFormat:@"%@\n%@",offTime,kIsEmptyString(model.recordAfterType.statusName)?@"": model.recordAfterType.statusName];
 }
 
 #pragma mark -- Private methods

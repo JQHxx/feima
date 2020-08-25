@@ -7,13 +7,18 @@
 //
 
 #import "FMAddCompanyViewController.h"
+#import "FMCompanyViewModel.h"
 
 @interface FMAddCompanyViewController ()<UITableViewDataSource,UITableViewDelegate>{
     NSArray  *titlesArr;
 }
 
 @property (nonatomic, strong) UITableView    *myTableView;
+@property (nonatomic, strong) UITextField    *nameTextField;
+@property (nonatomic, strong) UITextField    *phoneTextField;
+@property (nonatomic, strong) UITextField    *addessTextField;
 @property (nonatomic, strong) UIButton       *submitBtn;
+@property (nonatomic, strong) FMCompanyViewModel *adapter;
 
 @end
 
@@ -25,6 +30,9 @@
     self.baseTitle = self.company ? @"修改公司":@"添加公司";
     
     titlesArr = @[@"公司名称",@"公司电话",@"公司地址"];
+    if (!self.company) {
+        self.company = [[FMCompanyModel alloc] init];
+    }
     [self setupUI];
 }
 
@@ -47,16 +55,16 @@
     textField.placeholder = [NSString stringWithFormat:@"请输入%@",titlesArr[indexPath.row]];
     [cell.contentView addSubview:textField];
     
-    if (self.company) {
-        if (indexPath.row == 0) {
-            textField.text = kIsEmptyString(self.company.name) ? @"" : self.company.name;
-        } else if (indexPath.row == 1) {
-            textField.text = self.company.phone>0 ? [NSString stringWithFormat:@"%ld",self.company.phone] : @"";
-        } else {
-            textField.text = kIsEmptyString(self.company.address) ? @"" : self.company.address;
-        }
+    if (indexPath.row == 0) {
+        textField.text = kIsEmptyString(self.company.name) ? @"" : self.company.name;
+        self.nameTextField = textField;
+    } else if (indexPath.row == 1) {
+        textField.text = kIsEmptyString(self.company.phone) ? @"": self.company.phone;
+        self.phoneTextField = textField;
+    } else {
+        textField.text = kIsEmptyString(self.company.address) ? @"" : self.company.address;
+        self.addessTextField = textField;
     }
-    
     return cell;
 }
 
@@ -67,7 +75,28 @@
 #pragma mark -- Events
 #pragma mark 提交
 - (void)submitCompanyAction:(UIButton *)sender {
-    MyLog(@"submitCompanyAction");
+    NSInteger type = self.company.companyId > 0 ? 1:0;
+    kSelfWeak;
+    [self.adapter addOrUpdateCompanyWithType:type companyId:self.company.companyId name:self.nameTextField.text phone:self.phoneTextField.text address:self.addessTextField.text complete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            weakSelf.company.name = weakSelf.nameTextField.text;
+            weakSelf.company.phone = weakSelf.phoneTextField.text;
+            weakSelf.company.address = weakSelf.addessTextField.text;
+            if (weakSelf.company.companyId > 0) {
+                if (weakSelf.updateSuccess) {
+                    weakSelf.updateSuccess(weakSelf.company);
+                }
+            } else {
+                weakSelf.company.companyId = weakSelf.adapter.companyId;
+                if (weakSelf.addSuccess) {
+                    weakSelf.addSuccess(weakSelf.company);
+                }
+            }
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        } else {
+            [weakSelf.view makeToast:weakSelf.adapter.errorString duration:2.5 position:CSToastPositionCenter];
+        }
+    }];
 }
 
 #pragma mark UI
@@ -108,6 +137,13 @@
         _submitBtn = [UIButton submitButtonWithFrame:CGRectZero title:@"提交" target:self selector:@selector(submitCompanyAction:)];
     }
     return _submitBtn;
+}
+
+- (FMCompanyViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMCompanyViewModel alloc] init];
+    }
+    return _adapter;
 }
 
 @end

@@ -51,24 +51,21 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier]; //出列可重用的cell
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-    } else {
-        //删除cell的所有子视图
-        while ([cell.contentView.subviews lastObject] != nil) {
-            [(UIView*)[cell.contentView.subviews lastObject] removeFromSuperview];
-        }
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     //标题
     NSString *titleStr = titlesArr[indexPath.row];
     UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 80, 30)];
-    lab.font = [UIFont mediumFontWithSize:14];
+    lab.font = [UIFont mediumFontWithSize:16];
     lab.textColor = [UIColor colorWithHexString:@"#333333"];
     lab.text = titleStr;
     [cell.contentView addSubview:lab];
     
     if (indexPath.row==1) { //照片
-        
+        UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(105, 10, 80, 80)];
+        [imgView sd_setImageWithURL:[NSURL URLWithString:self.employeeModel.logo] placeholderImage:[UIImage ctPlaceholderImage]];
+        [cell.contentView addSubview:imgView];
     } else {
         UILabel *valueLab = [self fillDataForRow:indexPath.row];
         [cell.contentView addSubview:valueLab];
@@ -94,6 +91,14 @@
 - (void)editEmployeeAction:(UIButton *)sender {
     FMEditEmployeeViewController *editVC = [[FMEditEmployeeViewController alloc] init];
     editVC.employee = self.employeeModel;
+    kSelfWeak;
+    editVC.updateSuccess = ^(FMEmployeeModel *employee) {
+        weakSelf.employeeModel = employee;
+        [weakSelf.myTableView reloadData];
+        if (weakSelf.updateBlock) {
+            weakSelf.updateBlock(employee);
+        }
+    };
     [self.navigationController pushViewController:editVC animated:YES];
 }
 
@@ -118,14 +123,19 @@
 #pragma mark 填充数据
 - (UILabel *)fillDataForRow:(NSInteger)row {
     UILabel *valueLab = [[UILabel alloc] initWithFrame:CGRectMake(105, 10,kScreen_Width-115, 40)];
-    valueLab.font = [UIFont regularFontWithSize:14];
+    valueLab.font = [UIFont regularFontWithSize:16];
     valueLab.textColor = [UIColor colorWithHexString:@"#666666"];
     switch (row) {
         case 0:
             valueLab.text = self.employeeModel.name;
             break;
-        case 2:
-            valueLab.text = @"男";
+        case 2: {
+            if (self.employeeModel.sex > 0) {
+                valueLab.text = self.employeeModel.sex == 1 ? @"男" : @"女";
+            } else {
+                valueLab.text = @"未知";
+            }
+        }
             break;
         case 3:
             valueLab.text = self.employeeModel.companyName;
