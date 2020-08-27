@@ -64,6 +64,22 @@ static NSString * const api_instruction_complete = @"/rest/instruction/summary";
 
 //********************进销存相关*************************/
 static NSString * const api_orderGoods_distribution_list = @"/rest/ordergoods/distribution/list"; //查询配货列表
+static NSString * const api_orderGoods_detail_list = @"/rest/ordergoodsdetail/list";  // 查询配货详情
+static NSString * const api_orderGoods_distribution_apply = @"/rest/ordergoods/distribution/apply"; //申请配货
+static NSString * const api_orderGoods_return_apply = @"/rest/ordergoods/return/apply"; //申请退货
+static NSString * const api_orderGoods_exchange_apply = @"/rest/ordergoods/exchange/apply"; //申请换货
+static NSString * const api_orderGoods_distribution_agree = @"/rest/ordergoods/distribution/agree"; //同意配货
+static NSString * const api_orderGoods_distribution_refuse = @"/rest/ordergoods/distribution/refuse"; //拒绝配货
+static NSString * const api_orderGoods_distribution_delivery = @"/rest/ordergoods/distribution/delivery"; //发货
+static NSString * const api_orderGoods_distribution_confirm = @"/rest/ordergoods/distribution/delivery/confirm"; //配货完成
+static NSString * const api_orderGoods_return_agree = @"/rest/ordergoods/return/agree"; //同意退货
+static NSString * const api_orderGoods_return_refuse = @"/rest/ordergoods/return/refuse"; //拒绝退货
+static NSString * const api_orderGoods_return_delivery = @"/rest/ordergoods/return/delivery"; //退货发货
+static NSString * const api_orderGoods_return_confirm = @"/rest/ordergoods/return/delivery/confirm"; //退货完成
+static NSString * const api_orderGoods_exchange_agree = @"/rest/ordergoods/exchange/agree"; //同意换货
+static NSString * const api_orderGoods_exchange_refuse = @"/rest/ordergoods/exchange/refuse"; //拒绝换货
+static NSString * const api_orderGoods_exchange_delivery = @"/rest/ordergoods/exchange/delivery"; //换货发货
+static NSString * const api_orderGoods_exchange_confirm = @"/rest/ordergoods/exchange/delivery/confirm"; //换货完成
 
 
 //********************商品相关*************************/
@@ -73,6 +89,8 @@ static NSString * const api_goods_update = @"/rest/goods/update"; //修改商品
 static NSString * const api_goods_remove = @"/rest/goods/remove"; //删除商品
 static NSString * const api_goods_enable = @"/rest/goods/enable"; //商品上架
 static NSString * const api_goods_disable = @"/rest/goods/disable"; //商品下架
+static NSString * const api_goods_own_list = @"/rest/goods/own/list"; //本品在售商品列表
+static NSString * const api_goods_employee_list = @"/rest/goods/employee/list"; //商品列表(权限控制)
 
 //********************公司相关*************************/
 static NSString * const api_company_list = @"/rest/company/list"; //公司列表
@@ -82,6 +100,13 @@ static NSString * const api_company_delete = @"/rest/company/delete"; //删除�
 
 //********************报表相关*************************/
 static NSString * const api_report_employee_sales = @"/rest/report/employee/sales"; //员工销售报表
+static NSString * const api_report_organization_sales = @"/rest/report/organization/sales"; //部门销售报表
+static NSString * const api_report_employee_goods_sales = @"/rest/report/employee/goods/sales"; //员工产品销售报表
+static NSString * const api_report_organization_goods_sales = @"/rest/report/organization/goods/sales"; //员工产品销售报表
+static NSString * const api_report_daily_attendance = @"/rest/report/daily/attendance"; //考勤日报表
+static NSString * const api_report_monthly_attendance = @"/rest/report/monthly/attendance"; //考勤日报表
+static NSString * const api_report_customer_sales = @"/rest/report/customer/sales"; //客户销售报表
+static NSString * const api_report_compete_analysis = @"/rest/report/compete/analysis"; //竞品分析报表
 
 //********************拜访计划相关*************************/
 static NSString * const api_visit_add = @"/rest/visitrecord/add"; //离店，添加拜访记录

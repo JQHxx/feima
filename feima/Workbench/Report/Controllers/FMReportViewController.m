@@ -16,6 +16,7 @@
     NSArray  *titlesArr;
 }
 
+@property (nonatomic, assign) NSInteger      postId;
 @property (nonatomic, strong) UITableView    *myTableView;
 
 @end
@@ -26,7 +27,8 @@
     [super viewDidLoad];
     self.baseTitle = @"报表管理";
     
-    titlesArr = @[@"个人销售报表",@"部门销售报表",@"客户销售报表",@"员工产品销售报表",@"部门产品销售报表",@"竞品分析报表",@"考勤报表"];
+    self.postId = [FeimaManager sharedFeimaManager].userBean.users.postId;
+    titlesArr = self.postId == 5 ? @[@"个人销售报表",@"客户销售报表",@"员工产品销售报表",@"竞品分析报表"]: @[@"个人销售报表",@"部门销售报表",@"客户销售报表",@"员工产品销售报表",@"部门产品销售报表",@"竞品分析报表",@"考勤报表"];
     
     [self.view addSubview:self.myTableView];
 }
@@ -49,21 +51,37 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0 || indexPath.row == 1) {
-        FMSaleReportViewController *saleVC = [[FMSaleReportViewController alloc] init];
-        saleVC.type = indexPath.row;
-        [self.navigationController pushViewController:saleVC animated:YES];
-    } else if (indexPath.row == 2 || indexPath.row == 5) {
-        FMCustomerSalesViewController *salesVC = [[FMCustomerSalesViewController alloc] init];
-        salesVC.isCustomerSales = indexPath.row == 2;
-        [self.navigationController pushViewController:salesVC animated:YES];
-    } else if (indexPath.row == 3 || indexPath.row == 4) {
-        FMProductReportViewController *productVC = [[FMProductReportViewController alloc] init];
-        productVC.type = indexPath.row - 3;
-        [self.navigationController pushViewController:productVC animated:YES];
+    if (self.postId == 5) {
+        if (indexPath.row == 0) {
+            FMSaleReportViewController *saleVC = [[FMSaleReportViewController alloc] init];
+            saleVC.type = 0;
+            [self.navigationController pushViewController:saleVC animated:YES];
+        } else if (indexPath.row == 2) {
+            FMProductReportViewController *productVC = [[FMProductReportViewController alloc] init];
+            productVC.type = 0;
+            [self.navigationController pushViewController:productVC animated:YES];
+        } else {
+            FMCustomerSalesViewController *salesVC = [[FMCustomerSalesViewController alloc] init];
+            salesVC.isCustomerSales = indexPath.row == 1;
+            [self.navigationController pushViewController:salesVC animated:YES];
+        }
     } else {
-        FMAttendanceViewController *attendanceVC = [[FMAttendanceViewController alloc] init];
-        [self.navigationController pushViewController:attendanceVC animated:YES];
+        if (indexPath.row == 0 || indexPath.row == 1) {
+            FMSaleReportViewController *saleVC = [[FMSaleReportViewController alloc] init];
+            saleVC.type = indexPath.row;
+            [self.navigationController pushViewController:saleVC animated:YES];
+        } else if (indexPath.row == 2 || indexPath.row == 5) {
+            FMCustomerSalesViewController *salesVC = [[FMCustomerSalesViewController alloc] init];
+            salesVC.isCustomerSales = indexPath.row == 2;
+            [self.navigationController pushViewController:salesVC animated:YES];
+        } else if (indexPath.row == 3 || indexPath.row == 4) {
+            FMProductReportViewController *productVC = [[FMProductReportViewController alloc] init];
+            productVC.type = indexPath.row - 3;
+            [self.navigationController pushViewController:productVC animated:YES];
+        } else {
+            FMAttendanceViewController *attendanceVC = [[FMAttendanceViewController alloc] init];
+            [self.navigationController pushViewController:attendanceVC animated:YES];
+        }
     }
 }
 

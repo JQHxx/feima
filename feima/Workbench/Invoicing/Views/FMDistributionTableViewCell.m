@@ -7,6 +7,8 @@
 //
 
 #import "FMDistributionTableViewCell.h"
+#import "FMQuantityView.h"
+#import "FMOrderDetaiModel.h"
 #import "FMGoodsModel.h"
 
 @interface FMDistributionTableViewCell ()
@@ -17,6 +19,10 @@
 @property (nonatomic,strong) UILabel     *typeLabel;
 @property (nonatomic,strong) UILabel     *numLabel;
 @property (nonatomic,strong) UIView      *lineView;
+@property (nonatomic,strong) UIButton    *addBtn;
+@property (nonatomic,strong) FMQuantityView *quantityView;
+
+@property (nonatomic,strong) FMGoodsModel *goods;
 
 @end
 
@@ -31,12 +37,41 @@
     return self;
 }
 
+#pragma mark -- Event response
+#pragma mark
+- (void)addAction:(UIButton *)sender {
+    self.addBtn.hidden = YES;
+    self.quantityView.hidden = NO;
+    self.goods.quantity = 1;
+    kSelfWeak;
+    self.quantityView.myBlock = ^(NSInteger quantity) {
+        weakSelf.goods.quantity = quantity;
+        if ([weakSelf.cellDelegate respondsToSelector:@selector(distributionTableViewDidSelectedGoods:)]) {
+            [weakSelf.cellDelegate distributionTableViewDidSelectedGoods:weakSelf.goods];
+        }
+    };
+}
+
 #pragma mark 填充数据
-- (void)fillContentWithData:(id)obj {
-    FMGoodsModel *model = (FMGoodsModel *)obj;
+- (void)fillContentWithData:(FMGoodsModel *)model type:(NSInteger)type {
+    self.goods = model;
+    [self.goodsImgView sd_setImageWithURL:[NSURL URLWithString:model.images] placeholderImage:[UIImage ctPlaceholderImage]];
     self.nameLabel.text = model.name;
-    self.typeLabel.text = [NSString stringWithFormat:@"品名：%@",model.categoryName];
-    self.numLabel.text = [NSString stringWithFormat:@"%ld", model.stock];
+    
+    if (type == 0) {
+        self.typeLabel.text = [NSString stringWithFormat:@"品名：%@",model.categoryName];
+        self.numLabel.hidden = self.lineView.hidden = NO;
+        self.addBtn.hidden = YES;
+        self.numLabel.text = [NSString stringWithFormat:@"%ld", model.quantity];
+    } else {
+        self.numLabel.hidden = self.lineView.hidden = YES;
+        self.addBtn.hidden = NO;
+        if (type == 1) {
+            self.typeLabel.text = [NSString stringWithFormat:@"品名：%@",model.categoryName];
+        } else {
+            self.typeLabel.text = [NSString stringWithFormat:@"库存：%ld",model.stock];
+        }
+    }
 }
 
 #pragma mark -- Private methods
@@ -54,7 +89,6 @@
         make.left.top.mas_equalTo(10);
         make.size.mas_equalTo(CGSizeMake(80, 60));
     }];
-    
     
     [self.rootView addSubview:self.nameLabel];
     [self.nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -86,6 +120,22 @@
         make.left.mas_equalTo(self.numLabel.mas_left).offset(-10);
         make.height.mas_equalTo(1);
     }];
+    
+    [self.rootView addSubview:self.addBtn];
+    [self.addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(self.rootView.mas_right).offset(-20);
+        make.centerY.mas_equalTo(self.rootView.mas_centerY);
+        make.size.mas_equalTo(CGSizeMake(30, 30));
+    }];
+    self.addBtn.hidden = YES;
+    
+    [self.rootView addSubview:self.quantityView];
+    [self.quantityView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(self.rootView.mas_right).offset(-10);
+        make.centerY.mas_equalTo(self.rootView.mas_centerY);
+        make.size.mas_equalTo(CGSizeMake(120, 40));
+    }];
+    self.quantityView.hidden = YES;
 }
 
 #pragma mark -- Getters
@@ -103,7 +153,6 @@
 -(UIImageView *)goodsImgView{
     if (!_goodsImgView) {
         _goodsImgView = [[UIImageView alloc] init];
-        _goodsImgView.backgroundColor = [UIColor lightGrayColor];
     }
     return _goodsImgView;
 }
@@ -145,6 +194,26 @@
         _lineView.backgroundColor = [UIColor lineColor];
     }
     return _lineView;
+}
+
+#pragma mark 添加
+- (UIButton *)addBtn {
+    if (!_addBtn) {
+        _addBtn = [[UIButton alloc] init];
+        [_addBtn setTitle:@"+" forState:UIControlStateNormal];
+        [_addBtn setTitleColor:[UIColor textBlackColor] forState:UIControlStateNormal];
+        _addBtn.titleLabel.font = [UIFont mediumFontWithSize:20];
+        [_addBtn addTarget:self action:@selector(addAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _addBtn;
+}
+
+#pragma mark 数量选择
+- (FMQuantityView *)quantityView {
+    if (!_quantityView) {
+        _quantityView = [[FMQuantityView alloc] initWithFrame:CGRectZero];
+    }
+    return _quantityView;
 }
 
 

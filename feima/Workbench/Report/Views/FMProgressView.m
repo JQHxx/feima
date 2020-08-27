@@ -45,7 +45,7 @@
     [maskPath addArcWithCenter:CGPointMake(kCirleRadius/2.f,kCirleRadius/2.f) radius:(kCirleRadius - 16)/2.f startAngle:-M_PI_2 endAngle:M_PI_2*3 clockwise:YES];
     self.maskLayer.path = [path CGPath];
     self.maskLayer.strokeEnd = 0;
-    [self.maskLayer addAnimation:[self basicAnimationWithKey:@"strokeEnd"  toValue:@(self.progress)] forKey:@"strokeEnd"];
+    [self.maskLayer addAnimation:[self basicAnimationWithKey:@"strokeEnd"  toValue:@(self.progress/100.0)] forKey:@"strokeEnd"];
 }
 
 #pragma mark -- Private Methods
@@ -100,7 +100,7 @@
 #pragma mark 百分比进度
 - (UILabel *)progressLabel {
     if (!_progressLabel) {
-        _progressLabel = [[UILabel alloc] initWithFrame:CGRectMake(kCirleRadius+5, 10, 45, 20)];
+        _progressLabel = [[UILabel alloc] initWithFrame:CGRectMake(kCirleRadius+5, 10, 65, 20)];
         _progressLabel.textColor = self.type == FMProgressTypeTime ? [UIColor colorWithHexString:@"#3AA1FF"]: [UIColor colorWithHexString:@"#FBD437"];
         _progressLabel.font = [UIFont regularFontWithSize:13];
     }
@@ -144,8 +144,8 @@
 #pragma mark 进度
 - (void)setProgress:(CGFloat)progress {
     _progress = progress;
-    if(_progress > 1) _progress = 1.f;
-    self.progressLabel.text = [NSString stringWithFormat:@"%.1f%%",progress*100.0];
+    if(_progress > 100) _progress = 1.f;
+    self.progressLabel.text = [NSString stringWithFormat:@"%.2f%%",progress];
 }
 
 #pragma mark 

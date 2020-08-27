@@ -19,6 +19,7 @@ singleton_interface(FeimaManager)
 @property (nonatomic,strong) FMUserBeanModel *userBean;
 @property (nonatomic,assign) BOOL   isAdministrator;
 @property (nonatomic,assign) BOOL   employeeListReload;
+@property (nonatomic,assign) BOOL   distributionListReload;
 
 /**
  *   时间戳转化为时间
@@ -63,6 +64,9 @@ singleton_interface(FeimaManager)
 
 //权限判断
 - (BOOL)hasPermissionWithApiStr:(NSString *)apiStr;
+
+//转json
+- (NSString *)objectToJSONString:(id)object;
 
 @end
 

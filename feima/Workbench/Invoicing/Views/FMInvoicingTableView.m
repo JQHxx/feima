@@ -55,7 +55,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    FMOrderModel *model = [self.adapter getOrderModelWithIndex:indexPath.row];
+    if ([self.viewDelegate respondsToSelector:@selector(invoicingTableView:didSelectedRowWithModel:)]) {
+        [self.viewDelegate invoicingTableView:self didSelectedRowWithModel:model];
+    }
     
 }
 

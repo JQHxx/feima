@@ -12,9 +12,17 @@
 #import "FMGoodsSalesModel.h"
 #import "FMCustomerSalesModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@protocol FMReportHeadViewDelegate <NSObject>
+
+- (void)reportHeadViewDidSelectedMonthWithStartTime:(NSInteger)startTime endTime:(NSInteger)endTime;
+
+@end
 
 @interface FMReportHeadView : UIView
+
+@property (nonatomic, weak ) id<FMReportHeadViewDelegate>delegate;
+
+- (void)displayViewWithTimeData:(FMTimeDataModel *)timeData;
 
 - (void)displayViewWithTimeData:(FMTimeDataModel *)timeData salesData:(FMSalesDataModel *)salesData;
 
@@ -26,4 +34,3 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END

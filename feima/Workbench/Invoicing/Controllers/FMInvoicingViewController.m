@@ -8,17 +8,19 @@
 
 #import "FMInvoicingViewController.h"
 #import "FMDistributionViewController.h"
+#import "FMSelectGoodsViewController.h"
 #import "FMInvoicingTableView.h"
 #import "SlideMenuView.h"
 #import "FMOrderModel.h"
 
-@interface FMInvoicingViewController ()<UISearchBarDelegate,SlideMenuViewDelegate>
+@interface FMInvoicingViewController ()<UISearchBarDelegate,SlideMenuViewDelegate,FMInvoicingTableViewDelegate>
 
 @property (nonatomic, strong) SlideMenuView         *menuView;
 @property (nonatomic, strong) UISearchBar           *searchBar;
 @property (nonatomic, strong) UIScrollView          *rootScrollView;
 @property (nonatomic, strong) FMInvoicingTableView  *distributionTableView; //配货
 @property (nonatomic, strong) FMInvoicingTableView  *returnTableView; //退换货
+@property (nonatomic, strong) UIButton              *addBtn;
 
 @property (nonatomic, assign) NSInteger  selectedIndex;
 
@@ -35,24 +37,66 @@
     [self setupUI];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if ([FeimaManager sharedFeimaManager].distributionListReload) {
+        if (self.selectedIndex == 0) {
+            [self.distributionTableView loadInvoicingData];
+        } else {
+            [self.returnTableView loadInvoicingData];
+        }
+        [FeimaManager sharedFeimaManager].distributionListReload = NO;
+    }
+}
+
 #pragma mark SlideMenuViewDelegate
+#pragma mark 选择菜单
 - (void)slideMenuView:(SlideMenuView *)menuView didSelectedWithIndex:(NSInteger)index {
     self.selectedIndex = index;
     if (index == 1) {
+        self.baseTitle = @"退换货";
         if (!_returnTableView) {
             _returnTableView = [[FMInvoicingTableView alloc] initWithFrame:CGRectMake(kScreen_Width, 0, kScreen_Width, self.rootScrollView.height) style:UITableViewStylePlain type:1];
+            _returnTableView.viewDelegate = self;
             [self.rootScrollView addSubview:_returnTableView];
         }
+    } else {
+        self.baseTitle = @"货物进销存";
     }
     [self.rootScrollView setContentOffset:CGPointMake(kScreen_Width*index, 0)];
 }
 
+#pragma mark FMInvoicingTableViewDelegate
+#pragma mark 点击cell
+- (void)invoicingTableView:(FMInvoicingTableView *)tableView didSelectedRowWithModel:(FMOrderModel *)model {
+    FMDistributionViewController *distributionVC = [[FMDistributionViewController alloc] init];
+    distributionVC.type = self.selectedIndex;
+    distributionVC.status = model.orderGoods.status;
+    distributionVC.orderGoodsId = model.orderGoods.orderGoodsId;
+    distributionVC.orderType = model.orderGoods.orderType;
+    [self.navigationController pushViewController:distributionVC animated:YES];
+}
+
+#pragma mark -- Event resepone
+#pragma mark
+- (void)addDitributionAction:(UIButton *)sender {
+    FMSelectGoodsViewController *selGoodsVC = [[FMSelectGoodsViewController alloc] init];
+    selGoodsVC.type = self.selectedIndex;
+    [self.navigationController pushViewController:selGoodsVC animated:YES];
+}
+
+#pragma mark -- Private methods
 #pragma mark UI
 - (void)setupUI {
     [self.view addSubview:self.searchBar];
     [self.view addSubview:self.menuView];
     [self.view addSubview:self.rootScrollView];
     [self.rootScrollView addSubview:self.distributionTableView];
+    
+    NSInteger postId = [FeimaManager sharedFeimaManager].userBean.users.postId;
+    if (postId == 5) {
+        [self.view addSubview:self.addBtn];
+    }
 }
 
 #pragma mark -- Getters
@@ -96,8 +140,18 @@
 - (FMInvoicingTableView *)distributionTableView {
     if (!_distributionTableView) {
         _distributionTableView = [[FMInvoicingTableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, self.rootScrollView.height) style:UITableViewStylePlain type:0];
+        _distributionTableView.viewDelegate = self;
     }
     return _distributionTableView;
+}
+
+#pragma mark 申请配货或退换货
+- (UIButton *)addBtn {
+    if (!_addBtn) {
+        _addBtn = [UIButton addButtonWithTarget:self selector:@selector(addDitributionAction:)];
+        _addBtn.frame = CGRectMake(kScreen_Width-80, kScreen_Height-kTabBar_Height-30, 60, 60);
+    }
+    return _addBtn;
 }
 
 @end

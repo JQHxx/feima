@@ -126,6 +126,45 @@
     
 }
 
+#pragma mark  本品在售商品列表
+- (void)loadSalesGoodsListWithType:(NSInteger)type
+                              page:(FMPageModel *)pageModel
+                          complete:(AdpaterComplete)complete {
+    NSString *url = type == 0 ? api_goods_own_list : api_goods_employee_list;
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"pageNum"] = @(pageModel.pageNum);
+    parameters[@"pageSize"] = @(pageModel.pageSize);
+    [[HttpRequest sharedInstance] getRequestWithUrl:url parameters:parameters complete:^(BOOL isSuccess, id json, NSError *error) {
+        [self handlerError:error];
+        if (isSuccess) {
+            self.goodsPage.total = [json safe_integerForKey:@"total"];
+            NSArray *data = [json safe_objectForKey:@"data"];
+            if (type == 0) {
+                NSArray *arr = [NSArray yy_modelArrayWithClass:[FMGoodsModel class] json:data];
+                if (pageModel.pageNum == 1) {
+                    [self.goodsList removeAllObjects];
+                }
+                [self.goodsList addObjectsFromArray:arr];
+            } else {
+                NSArray *arr = [NSArray yy_modelArrayWithClass:[FMSelectGoodsModel class] json:data];
+                NSMutableArray *tempArr = [[NSMutableArray alloc] init];
+                for (FMSelectGoodsModel *model in arr) {
+                    [tempArr addObject:model.goods];
+                }
+                if (pageModel.pageNum == 1) {
+                    self.goodsList = tempArr;
+                } else {
+                    [self.goodsList addObjectsFromArray:tempArr];
+                }
+            }
+            
+            if (complete) complete(YES);
+        } else {
+            if (complete) complete(NO);
+        }
+    }];
+}
+
 #pragma mark 商品数
 - (NSInteger)numberOfGoodsList {
     return self.goodsList.count;
@@ -164,7 +203,5 @@
 - (void)insertGoods:(FMGoodsModel *)model {
     [self.goodsList insertObject:model atIndex:0];
 }
-
-
 
 @end

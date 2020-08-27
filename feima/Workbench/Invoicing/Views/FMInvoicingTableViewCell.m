@@ -77,20 +77,21 @@
     FMOrderModel *model = (FMOrderModel *)obj;
     [self.myImgView sd_setImageWithURL:[NSURL URLWithString:model.employee.logo] placeholderImage:[UIImage ctPlaceholderImage]];
     self.nameLabel.text = model.employee.name;
-    self.typeLabel.text = [self getTypeWithStatus:model.orderGoods.status];
+    self.typeLabel.text = [self getTypeWithStatus:model.orderGoods.status orderType:model.orderGoods.orderType];
+    self.typeLabel.backgroundColor = [self getTypeLabelColorWithStatus:model.orderGoods.status];
     CGFloat labW = [self.typeLabel.text boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, 24) withTextFont:self.typeLabel.font].width;
     [self.typeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(labW+20);
     }];
-    self.handleLabel.text = [NSString stringWithFormat:@"操作人：%@",model.toEmployeeName];
+    self.handleLabel.text = kIsEmptyString(model.toEmployeeName) ? @"" : [NSString stringWithFormat:@"操作人：%@",model.toEmployeeName];
 }
 
 #pragma mark
-- (NSString *)getTypeWithStatus:(NSInteger)status {
+- (NSString *)getTypeWithStatus:(NSInteger)status orderType:(NSString *)orderType{
     NSString *typeStr;
     switch (status) {
         case 1:
-            typeStr = @"申请配货";
+            typeStr = @"申请中";
             break;
         case 2:
             typeStr = @"同意配货";
@@ -105,24 +106,63 @@
             typeStr = @"配货完成";
             break;
         case 21:
-            typeStr = @"申请退货";
+            typeStr = [orderType isEqualToString:@"RETURN"] ? @"申请退货" : @"申请换货";
             break;
         case 22:
-            typeStr = @"退货同意";
+            typeStr = [orderType isEqualToString:@"RETURN"] ? @"退货同意" : @"换货同意";
             break;
         case 23:
-            typeStr = @"退货拒绝";
+            typeStr = [orderType isEqualToString:@"RETURN"] ? @"退货拒绝" : @"换货拒绝";
             break;
         case 24:
-            typeStr = @"退货已发货";
+            typeStr = @"已发货";
             break;
         case 25:
-            typeStr = @"退货完成";
+            typeStr = [orderType isEqualToString:@"RETURN"] ? @"退货完成" : @"换货完成";
             break;
         default:
             break;
     }
     return typeStr;
+}
+
+- (UIColor *)getTypeLabelColorWithStatus:(NSInteger)status {
+    UIColor *color;
+    switch (status) {
+        case 1:
+            color = [UIColor systemColor];
+            break;
+        case 2:
+            color = [UIColor colorWithHexString:@"#7AC1AA"];
+            break;
+        case 3:
+            color = [UIColor colorWithHexString:@"#FB767F"];
+            break;
+        case 4:
+            color = [UIColor colorWithHexString:@"#8690C1"];
+            break;
+        case 5:
+            color = [UIColor colorWithHexString:@"#7AC1AA"];
+            break;
+        case 21:
+            color = [UIColor systemColor];
+            break;
+        case 22:
+            color = [UIColor colorWithHexString:@"#7AC1AA"];
+            break;
+        case 23:
+            color = [UIColor colorWithHexString:@"#FB767F"];
+            break;
+        case 24:
+            color = [UIColor colorWithHexString:@"#8690C1"];
+            break;
+        case 25:
+            color = [UIColor colorWithHexString:@"#7AC1AA"];
+            break;
+        default:
+            break;
+    }
+    return color;
 }
 
 #pragma mark -- Getters
@@ -140,7 +180,6 @@
 -(UIImageView *)myImgView{
     if (!_myImgView) {
         _myImgView = [[UIImageView alloc] init];
-        _myImgView.backgroundColor = [UIColor lightGrayColor];
         _myImgView.layer.cornerRadius = 5;
         _myImgView.clipsToBounds = YES;
     }

@@ -10,12 +10,16 @@
 #import "FMProgressView.h"
 #import "FMStatisticsView.h"
 #import "FMCompetitorDataView.h"
+#import "CustomDatePickerView.h"
+#import "NSDate+Extend.h"
 
 @interface FMReportHeadView ()
 
 @property (nonatomic, strong) UIView     *rootView;
 @property (nonatomic, strong) UILabel    *timeTitleLab;
 @property (nonatomic, strong) UILabel    *timeLab;
+
+@property (nonatomic, copy ) NSString    *defaultMonth;
 
 @end
 
@@ -25,12 +29,34 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor colorWithHexString:@"#F6F7F8"];
+        
+        self.defaultMonth = [NSDate currentYearMonthWithFormat:@"yyyy-MM"];
+        
         [self setupUI];
     }
     return self;
 }
 
+#pragma mark -- Event response
+#pragma mark 选择时间
+- (void)chooseTimeAction {
+    [CustomDatePickerView showDatePickerWithTitle:@"选择月份" defauldValue:self.defaultMonth minDateStr:kMinMonth maxDateStr:nil resultBlock:^(NSString *selectValue) {
+        MyLog(@"selectValue:%@",selectValue);
+        [self converteTimeWithSelectDate:selectValue];
+    }];
+}
+
 #pragma mark 填充数据
+#pragma mark 个人销售报表
+- (void)displayViewWithTimeData:(FMTimeDataModel *)timeData {
+    FMProgressView *timeProgressView = [[FMProgressView alloc] initWithFrame:CGRectMake((kScreen_Width-16-134)/2.0, 45, 134, 140) type:FMProgressTypeTime];
+    timeProgressView.progress = timeData.progress;
+    timeProgressView.valueStr = [NSString stringWithFormat:@"%ld天",timeData.day];
+    timeProgressView.titleStr = @"时间进度";
+    [self.rootView addSubview:timeProgressView];
+    [timeProgressView startRendering];
+}
+
 #pragma mark 个人或部门销售报表
 - (void)displayViewWithTimeData:(FMTimeDataModel *)timeData salesData:(FMSalesDataModel *)salesData {
     FMProgressView *timeProgressView = [[FMProgressView alloc] initWithFrame:CGRectMake(36, 45, 134, 140) type:FMProgressTypeTime];
@@ -77,6 +103,37 @@
 }
 
 #pragma mark -- Private methods
+#pragma mark 时间转换
+- (void)converteTimeWithSelectDate:(NSString *)selectValue {
+    //任意选取月中某一天
+    NSString *dayStr = [NSString stringWithFormat:@"%@-03",selectValue];
+    //yyyy-MM-dd 转换成 yyyy.MM.dd
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy.MM.dd"];
+    NSDate *currentDate = [formatter dateFromString:dayStr];
+    NSString *selDate = [formatter stringFromDate:currentDate];
+    
+    //获取月份第一个和最后一天
+    NSArray *days = [[FeimaManager sharedFeimaManager] getMonthFirstAndLastDayWithDate:selDate format:@"yyyy.MM.dd"];
+    NSString *minDay = [days firstObject];
+    
+    NSString *currentMonth = [NSDate currentYearMonthWithFormat:@"yyyy-MM"];
+    NSString *maxDay = nil;
+    if ([currentMonth isEqualToString:selectValue]) {
+        maxDay = [days lastObject];
+    } else {
+        maxDay = [NSDate currentDateTimeWithFormat:@"yyyy.MM.dd"];
+    }
+    _timeLab.text = [NSString stringWithFormat:@"%@至%@",minDay,maxDay];
+    
+    NSInteger sTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:minDay format:@"yyyy.MM.dd"];
+    NSInteger eTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:maxDay format:@"yyyy.MM.dd"];
+    if ([self.delegate respondsToSelector:@selector(reportHeadViewDidSelectedMonthWithStartTime:endTime:)]) {
+        [self.delegate reportHeadViewDidSelectedMonthWithStartTime:sTime endTime:eTime];
+    }
+}
+
+#pragma mark UI
 - (void)setupUI {
     [self addSubview:self.rootView];
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -132,9 +189,12 @@
         _timeLab.textAlignment = NSTextAlignmentCenter;
         _timeLab.font = [UIFont regularFontWithSize:12];
         _timeLab.textColor = [UIColor colorWithHexString:@"#666666"];
-        _timeLab.text = @"2020.07.01 至 2020.07.31";
         _timeLab.layer.cornerRadius = 11;
         _timeLab.clipsToBounds = YES;
+        NSString *currentDate = [NSDate currentDateTimeWithFormat:@"yyyy.MM.dd"];
+        NSArray *days = [[FeimaManager sharedFeimaManager] getMonthFirstAndLastDayWithDate:currentDate format:@"yyyy.MM.dd"];
+        _timeLab.text = [NSString stringWithFormat:@"%@至%@",[days firstObject],currentDate];
+        [_timeLab addTapPressed:@selector(chooseTimeAction) target:self];
     }
     return _timeLab;
 }

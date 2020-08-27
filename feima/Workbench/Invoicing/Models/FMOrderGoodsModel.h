@@ -21,6 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger status;
 @property (nonatomic, assign) NSInteger toEmployeeId; //审批人id
 
+@property (nonatomic, assign) NSInteger applyNum;
+@property (nonatomic, assign) NSInteger approveNum;
+@property (nonatomic, assign) NSInteger goodsId;
+@property (nonatomic, assign) NSInteger orderDetailId;
+
 @end
 
 NS_ASSUME_NONNULL_END

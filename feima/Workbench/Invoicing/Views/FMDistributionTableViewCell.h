@@ -7,11 +7,19 @@
 //
 
 #import "BaseTableViewCell.h"
+#import "FMGoodsModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@protocol FMDistributionTableViewCellDelegate <NSObject>
 
-@interface FMDistributionTableViewCell : BaseTableViewCell
+- (void)distributionTableViewDidSelectedGoods:(FMGoodsModel *)goods;
 
 @end
 
-NS_ASSUME_NONNULL_END
+@interface FMDistributionTableViewCell : BaseTableViewCell
+
+@property (nonatomic, weak ) id<FMDistributionTableViewCellDelegate>cellDelegate;
+
+- (void)fillContentWithData:(FMGoodsModel *)model type:(NSInteger)type;
+
+@end
+

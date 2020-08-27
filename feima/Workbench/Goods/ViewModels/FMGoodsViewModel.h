@@ -8,7 +8,7 @@
 
 #import "BaseViewModel.h"
 #import "FMGoodsModel.h"
-
+#import "FMSelectGoodsModel.h"
 
 @interface FMGoodsViewModel : BaseViewModel
 
@@ -63,6 +63,16 @@
 - (void)setGoodsEnableWithGoodsId:(NSInteger)goodsId
                            enable:(BOOL)enable
                          complete:(AdpaterComplete)complete;
+
+/**
+ *  本品在售商品列表 或 商品列表(权限控制)
+ *
+ *  @param type   0 本品在售商品列表 1商品列表(权限控制)
+ *  @param pageModel 分页
+ *  @param complete  请求成功
+*/
+- (void)loadSalesGoodsListWithType:(NSInteger)type page:(FMPageModel *)pageModel complete:(AdpaterComplete)complete;
+
 
 /**
  * 商品总数

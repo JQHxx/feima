@@ -8,16 +8,21 @@
 
 #import "FMSaleReportViewController.h"
 #import "FMReportHeadView.h"
+#import "FMSalesReportTableViewCell.h"
+#import "FMSalesViewModel.h"
 #import "FMSalesModel.h"
 #import "FMTimeDataModel.h"
 #import "FMSalesDataModel.h"
+#import "NSDate+Extend.h"
 
-@interface FMSaleReportViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface FMSaleReportViewController ()<UITableViewDelegate,UITableViewDataSource,FMReportHeadViewDelegate>
 
 @property (nonatomic, strong) FMReportHeadView *headView;
 @property (nonatomic, strong) UITableView      *salesTableView;
+@property (nonatomic, strong) FMSalesViewModel *adapter;
 
-@property (nonatomic, strong) NSMutableArray *reportArray;
+@property (nonatomic, assign) NSInteger startTime;
+@property (nonatomic, assign) NSInteger endTime;
 
 @end
 
@@ -29,13 +34,20 @@
     
     self.view.backgroundColor = [UIColor colorWithHexString:@"#F6F7F8"];
     
+    //获取默认开始结束时间
+    NSString *currentDate = [NSDate currentDateTimeWithFormat:@"yyyy-MM-dd"];
+    NSArray *days = [[FeimaManager sharedFeimaManager] getMonthFirstAndLastDayWithDate:currentDate format:@"yyyy-MM-dd"];
+    NSString *firstDay = [days firstObject];
+    self.startTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:firstDay format:@"yyyy-MM-dd"];
+    self.endTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:currentDate format:@"yyyy-MM-dd"];
+    
     [self setupUI];
     [self loadSalesData];
 }
 
 #pragma mark UITableViewDelegate and UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.reportArray.count;
+    return [self.adapter numberOfSalesReportList];
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -68,18 +80,10 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UITableViewCell-identifer" forIndexPath:indexPath];
+    FMSalesReportTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMSalesReportTableViewCell identifier] forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    FMSalesModel *model = self.reportArray[indexPath.row];
-    NSArray *values = @[model.employeeName,[NSString stringWithFormat:@"%.3f", model.lastSales/10000.0],[NSString stringWithFormat:@"%.3f", model.thisSales/10000.0],[NSString stringWithFormat:@"%ld%%",model.progress]];
-    for (NSInteger i=0; i<values.count; i++) {
-        UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(kReportWidth*i, 10, kReportWidth, 24)];
-        lab.font = [UIFont mediumFontWithSize:14];
-        lab.textColor = [UIColor colorWithHexString:@"#666666"];
-        lab.textAlignment = NSTextAlignmentCenter;
-        lab.text = values[i];
-        [cell.contentView addSubview:lab];
-    }
+    FMSalesModel *model = [self.adapter getSalesReportWithIndex:indexPath.row];
+    [cell fillContentWithData:model type:self.type];
     return cell;
 }
 
@@ -91,34 +95,28 @@
     return 50;
 }
 
+#pragma mark -- Delegate
+#pragma mark FMReportHeadViewDelegate
+- (void)reportHeadViewDidSelectedMonthWithStartTime:(NSInteger)startTime endTime:(NSInteger)endTime {
+    self.startTime = startTime;
+    self.endTime = endTime;
+    [self loadSalesData];
+}
+
 #pragma mark -- Private methods
 #pragma mark load data
 - (void)loadSalesData {
-    NSArray *arr = @[@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟",@"张利兴",@"张利兴",@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟",@"张利兴",@"张利兴",@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟",@"张利兴",@"张利兴",@"黄稀薄",@"刘海涛",@"叶翠红",@"方伟",@"张利兴",@"张利兴"];
-    NSMutableArray *tempArr = [[NSMutableArray alloc] init];
-    for (NSInteger i=0; i<arr.count; i++) {
-        FMSalesModel *model = [[FMSalesModel alloc] init];
-        model.employeeName = arr[i];
-        model.lastSales = (i+1)*10445.0;
-        model.thisSales = (i+1)*24445.0;
-        model.progress = (i+1)*12;
-        [tempArr addObject:model];
-    }
-    self.reportArray = tempArr;
-    [self.salesTableView reloadData];
-    
-    FMTimeDataModel *timeData = [[FMTimeDataModel alloc] init];
-    timeData.day = 10;
-    timeData.daySum = 31;
-    timeData.progress = 10.0/31.0;
-    
-    FMSalesDataModel *salesData = [[FMSalesDataModel alloc] init];
-    salesData.lastSalesSum = 0.34;
-    salesData.thisSalesSum = 0.22;
-    salesData.progress = 0.22/0.34;
-    
-    [self.headView displayViewWithTimeData:timeData salesData:salesData];
-    
+    kSelfWeak;
+    [self.adapter loadSalesReportWithType:self.type startTime:self.startTime endTime:self.endTime complete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            [weakSelf.salesTableView reloadData];
+            if (weakSelf.type == 0) {
+                [weakSelf.headView displayViewWithTimeData:weakSelf.adapter.timeDataModel];
+            } else {
+                [weakSelf.headView displayViewWithTimeData:weakSelf.adapter.timeDataModel salesData:weakSelf.adapter.salesDataModel];
+            }
+        }
+    }];
 }
 
 #pragma mark UI
@@ -137,6 +135,7 @@
 - (FMReportHeadView *)headView {
     if (!_headView) {
         _headView = [[FMReportHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-16, 200)];
+        _headView.delegate = self;
     }
     return _headView;
 }
@@ -153,17 +152,17 @@
         _salesTableView.layer.cornerRadius = 4;
         _salesTableView.clipsToBounds = YES;
         _salesTableView.separatorInset = UIEdgeInsetsZero;
-        [_salesTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell-identifer"];
+        [_salesTableView registerClass:[FMSalesReportTableViewCell class] forCellReuseIdentifier:[FMSalesReportTableViewCell identifier]];
         _salesTableView.tableHeaderView = self.headView;
     }
     return _salesTableView;
 }
 
-- (NSMutableArray *)reportArray {
-    if (!_reportArray) {
-        _reportArray = [[NSMutableArray alloc] init];
+- (FMSalesViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMSalesViewModel alloc] init];
     }
-    return _reportArray;
+    return _adapter;
 }
 
 @end

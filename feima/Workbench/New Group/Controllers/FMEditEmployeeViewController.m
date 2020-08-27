@@ -422,7 +422,6 @@
         _myTableView.showsVerticalScrollIndicator = NO;
         _myTableView.backgroundColor = [UIColor whiteColor];
         _myTableView.tableFooterView = [[UIView alloc] init];
-        _myTableView.scrollEnabled = NO;
     }
     return _myTableView;
 }

@@ -18,6 +18,7 @@ singleton_implementation(FeimaManager)
 #pragma mark 用户信息
 - (FMUserBeanModel *)userBean {
     NSDictionary *result = [NSUserDefaultsInfos getValueforKey:kUserBeanKey];
+    MyLog(@"userBean:%@",result);
     FMUserBeanModel *model = [FMUserBeanModel yy_modelWithJSON:result];
     return model;
 }
@@ -155,6 +156,14 @@ singleton_implementation(FeimaManager)
         hasPermission = [urlsArr containsObject:apiStr];
     }
     return hasPermission;
+}
+
+#pragma mark 数组或字典转json
+- (NSString *)objectToJSONString:(id)object {
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:object options:0 error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    return jsonString;
 }
 
 @end

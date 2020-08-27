@@ -7,11 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FMOrderModel.h"
 
+@class FMInvoicingTableView;
+@protocol FMInvoicingTableViewDelegate <NSObject>
+
+- (void)invoicingTableView:(FMInvoicingTableView *)tableView didSelectedRowWithModel:(FMOrderModel *)model;
+
+@end
 
 @interface FMInvoicingTableView : UITableView
 
+@property (nonatomic, weak )id<FMInvoicingTableViewDelegate>viewDelegate;
+
 - (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style type:(NSInteger)type;
+
+- (void)loadInvoicingData ;
 
 @end
 
