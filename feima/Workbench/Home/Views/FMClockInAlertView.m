@@ -9,7 +9,6 @@
 #import "FMClockInAlertView.h"
 #import "FMPhotoCollectionView.h"
 #import "FMClockInViewModel.h"
-#import "NSDate+Extend.h"
 #import "QWAlertView.h"
 
 @interface FMClockInAlertView ()

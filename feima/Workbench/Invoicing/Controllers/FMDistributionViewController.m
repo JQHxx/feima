@@ -101,7 +101,7 @@
         }];
     } else { //同意
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        NSInteger count = [self.orderAdapter numberOfOrderList];
+        NSInteger count = [self.orderAdapter numberOfOrderGoodsList];
         for (NSInteger i=0; i<count; i++) {
             FMOrderDetaiModel  *model = [self.orderAdapter getOrderGoodsModelWithIndex:i];
             NSString *idKey = [NSString stringWithFormat:@"%ld",model.goods.goodsId];

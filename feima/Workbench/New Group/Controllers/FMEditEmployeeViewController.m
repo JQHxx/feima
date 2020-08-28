@@ -28,8 +28,6 @@
 @property (nonatomic, strong) UITextField    *phoneTextField;  //手机号
 
 @property (nonatomic,strong) FMEmployeeViewModel *adapter;
-@property (nonatomic, copy ) NSArray *organizationsArr;
-@property (nonatomic, copy ) NSArray *positionsArr;
 
 @end
 

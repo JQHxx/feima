@@ -7,11 +7,10 @@
 //
 
 #import "FMReportHeadView.h"
-#import "FMProgressView.h"
-#import "FMStatisticsView.h"
+#import "FMTimeProgressView.h"
+#import "FMSalesProgressView.h"
 #import "FMCompetitorDataView.h"
 #import "CustomDatePickerView.h"
-#import "NSDate+Extend.h"
 
 @interface FMReportHeadView ()
 
@@ -40,66 +39,52 @@
 #pragma mark -- Event response
 #pragma mark 选择时间
 - (void)chooseTimeAction {
+    kSelfWeak;
     [CustomDatePickerView showDatePickerWithTitle:@"选择月份" defauldValue:self.defaultMonth minDateStr:kMinMonth maxDateStr:nil resultBlock:^(NSString *selectValue) {
-        MyLog(@"selectValue:%@",selectValue);
-        [self converteTimeWithSelectDate:selectValue];
+        weakSelf.defaultMonth = selectValue;
+        [weakSelf converteTimeWithSelectDate:selectValue];
     }];
 }
 
 #pragma mark 填充数据
 #pragma mark 个人销售报表
 - (void)displayViewWithTimeData:(FMTimeDataModel *)timeData {
-    FMProgressView *timeProgressView = [[FMProgressView alloc] initWithFrame:CGRectMake((kScreen_Width-16-134)/2.0, 45, 134, 140) type:FMProgressTypeTime];
+    for (UIView *aView in self.rootView.subviews) {
+        if ([aView isKindOfClass:[FMTimeProgressView class]]) {
+            [aView removeFromSuperview];
+        }
+    }
+    
+    FMTimeProgressView *timeProgressView = [[FMTimeProgressView alloc] initWithFrame:CGRectMake((kScreen_Width-154)/2.0, 45, 154, 140)];
     timeProgressView.progress = timeData.progress;
     timeProgressView.valueStr = [NSString stringWithFormat:@"%ld天",timeData.day];
-    timeProgressView.titleStr = @"时间进度";
     [self.rootView addSubview:timeProgressView];
     [timeProgressView startRendering];
 }
 
-#pragma mark 个人或部门销售报表
+#pragma mark 部门销售报表
 - (void)displayViewWithTimeData:(FMTimeDataModel *)timeData salesData:(FMSalesDataModel *)salesData {
-    FMProgressView *timeProgressView = [[FMProgressView alloc] initWithFrame:CGRectMake(36, 45, 134, 140) type:FMProgressTypeTime];
+    for (UIView *aView in self.rootView.subviews) {
+        if ([aView isKindOfClass:[FMSalesProgressView class]]) {
+            [aView removeFromSuperview];
+        }
+        if ([aView isKindOfClass:[FMTimeProgressView class]]) {
+            [aView removeFromSuperview];
+        }
+    }
+    
+    FMTimeProgressView *timeProgressView = [[FMTimeProgressView alloc] initWithFrame:CGRectMake(36, 45, 154, 140)];
     timeProgressView.progress = timeData.progress;
     timeProgressView.valueStr = [NSString stringWithFormat:@"%ld天",timeData.day];
-    timeProgressView.titleStr = @"时间进度";
     [self.rootView addSubview:timeProgressView];
     [timeProgressView startRendering];
     
-    FMProgressView *saleProgressView = [[FMProgressView alloc] initWithFrame:CGRectMake(kScreen_Width/2.0+36, 45, 134, 140) type:FMProgressTypeSale];
-    saleProgressView.progress = salesData.progress;
-    saleProgressView.valueStr = @"20万包";
-    saleProgressView.titleStr = @"销售环比进度";
+    FMSalesProgressView *saleProgressView = [[FMSalesProgressView alloc] initWithFrame:CGRectMake(kScreen_Width/2.0+26, 45, 154, 140)];
+    saleProgressView.progress = (double)(salesData.thisSalesSum/(salesData.thisSalesSum+salesData.lastSalesSum));
+    saleProgressView.progressStr = [NSString stringWithFormat:@"%.2f%%",salesData.progress];
+    saleProgressView.valueStr = [NSString stringWithFormat:@"%.2f万包",salesData.thisSalesSum];
     [self.rootView addSubview:saleProgressView];
     [saleProgressView startRendering];
-}
-
-#pragma mark 个人或部门产品销售报表
-- (void)displayViewWithGoodsData:(NSArray *)goodsData salesData:(FMSalesDataModel *)salesData {
-    
-    
-    FMProgressView *saleProgressView = [[FMProgressView alloc] initWithFrame:CGRectMake(kScreen_Width/2.0+36, 45, 134, 140) type:FMProgressTypeSale];
-    saleProgressView.progress = salesData.progress;
-    saleProgressView.valueStr = @"20万包";
-    saleProgressView.titleStr = @"上月总销量";
-    [self.rootView addSubview:saleProgressView];
-    [saleProgressView startRendering];
-}
-
-#pragma mark 客户销售报表
-- (void)displayViewWithCustomerData:(FMCustomerDataModel *)customerData {
-    FMStatisticsView *view = [[FMStatisticsView alloc] initWithFrame:CGRectMake((kScreen_Width-165)/2.0, 35, 140, 140) type:FMStatisticsViewTypeCustomer];
-    view.valueStr = [NSString stringWithFormat:@"%ld/%ld",customerData.addCustomer,customerData.customerSum];
-    [self.rootView addSubview:view];
-}
-
-#pragma mark 竞品销售报表
-- (void)displayViewWithCompetitorData {
-    FMCompetitorDataView *dataView = [[FMCompetitorDataView alloc] initWithFrame:CGRectMake(30, 40, kScreen_Width-150, 140)];
-    [self.rootView addSubview:dataView];
-    
-    [dataView setDatas:@[@(75),@(15),@(10)] colors:@[[UIColor colorWithHexString:@"#3AA1FF"],[UIColor colorWithHexString:@"#FE304B"],[UIColor colorWithHexString:@"#FFCF4E"]]];
-    [dataView stroke];
 }
 
 #pragma mark -- Private methods
@@ -120,9 +105,9 @@
     NSString *currentMonth = [NSDate currentYearMonthWithFormat:@"yyyy-MM"];
     NSString *maxDay = nil;
     if ([currentMonth isEqualToString:selectValue]) {
-        maxDay = [days lastObject];
-    } else {
         maxDay = [NSDate currentDateTimeWithFormat:@"yyyy.MM.dd"];
+    } else {
+        maxDay = [days lastObject];
     }
     _timeLab.text = [NSString stringWithFormat:@"%@至%@",minDay,maxDay];
     

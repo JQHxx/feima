@@ -8,14 +8,13 @@
 
 #import "FMDailyHeadView.h"
 #import "FMDateToolView.h"
-#import "FMStatisticsView.h"
 
 @interface FMDailyHeadView ()
 
 @property (nonatomic, strong) UIView            *rootView;
 @property (nonatomic, strong) FMDateToolView    *dateView;
 @property (nonatomic, strong) UILabel           *departmentLabel;
-@property (nonatomic, strong) FMStatisticsView  *statisticsView;
+@property (nonatomic, strong) UIView            *statisticsView;
 @property (nonatomic, strong) UILabel           *notClockedInLabel; //未打卡
 @property (nonatomic, strong) UILabel           *clockedInLabel; //已打卡
 @property (nonatomic, strong) UILabel           *abnormalLabel; //异常
@@ -35,7 +34,7 @@
 
 #pragma mark 填充数据
 - (void)fillDataWithFigure:(FMDailyFigureModel *)figureModel statusModel:(FMDailyStatusModel *)statusModel {
-    self.statisticsView.valueStr = [NSString stringWithFormat:@"%ld/%ld",figureModel.punchNumber,figureModel.shouldBeToNumber];
+    
     self.notClockedInLabel.text = [NSString stringWithFormat:@"%ld",statusModel.notPunchNumber];
     self.clockedInLabel.text = [NSString stringWithFormat:@"%ld",statusModel.punchNumber];
     self.abnormalLabel.text = [NSString stringWithFormat:@"%ld",statusModel.abnormalNumber];
@@ -130,9 +129,9 @@
 }
 
 #pragma mark 统计
-- (FMStatisticsView *)statisticsView {
+- (UIView *)statisticsView {
     if (!_statisticsView) {
-        _statisticsView = [[FMStatisticsView alloc] initWithFrame:CGRectZero type:FMStatisticsViewTypeDaily];
+        _statisticsView = [[UIView alloc] init];
     }
     return _statisticsView;
 }

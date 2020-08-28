@@ -64,6 +64,7 @@
 #define RGB(r,g,b) [UIColor colorWithRed:r/255.f green:g/255.f blue:b/255.f alpha:1.0]
 
 #define kReportWidth (kScreen_Width-16)/4.0
+#define kCustomerSalesWidth (kScreen_Width-16)/5.0
 
 ///自定义数据
 #define kMinMonth @"2019-08"

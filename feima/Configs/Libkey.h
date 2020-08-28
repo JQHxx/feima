@@ -29,5 +29,7 @@ static NSString * const kMenuListDataKey = @"com.hegui.feima.menu.list.key";
 static NSString * const kIndustryGroupDataKey = @"com.hegui.feima.group.industry.key";
 static NSString * const kLevelGroupDataKey = @"com.hegui.feima.group.level.key";
 static NSString * const kProgressGroupDataKey = @"com.hegui.feima.group.progress.key";
+//部门
+static NSString * const kOrganizationGroupDataKey = @"com.hegui.feima.group.organization.key";
 
 #endif /* Libkey_h */

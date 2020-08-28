@@ -10,6 +10,7 @@
 #import "FMSaleReportViewController.h"
 #import "FMProductReportViewController.h"
 #import "FMCustomerSalesViewController.h"
+#import "FMCompetitorAnalysisViewController.h"
 #import "FMAttendanceViewController.h"
 
 @interface FMReportViewController ()<UITableViewDataSource,UITableViewDelegate>{
@@ -51,7 +52,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.postId == 5) {
+    if (self.postId == 5) { //业务员
         if (indexPath.row == 0) {
             FMSaleReportViewController *saleVC = [[FMSaleReportViewController alloc] init];
             saleVC.type = 0;
@@ -60,24 +61,28 @@
             FMProductReportViewController *productVC = [[FMProductReportViewController alloc] init];
             productVC.type = 0;
             [self.navigationController pushViewController:productVC animated:YES];
-        } else {
+        } else if (indexPath.row == 3) {
             FMCustomerSalesViewController *salesVC = [[FMCustomerSalesViewController alloc] init];
-            salesVC.isCustomerSales = indexPath.row == 1;
             [self.navigationController pushViewController:salesVC animated:YES];
+        } else {
+            FMCompetitorAnalysisViewController *competitorVC = [[FMCompetitorAnalysisViewController alloc] init];
+            [self.navigationController pushViewController:competitorVC animated:YES];
         }
     } else {
         if (indexPath.row == 0 || indexPath.row == 1) {
             FMSaleReportViewController *saleVC = [[FMSaleReportViewController alloc] init];
             saleVC.type = indexPath.row;
             [self.navigationController pushViewController:saleVC animated:YES];
-        } else if (indexPath.row == 2 || indexPath.row == 5) {
+        } else if (indexPath.row == 2) {
             FMCustomerSalesViewController *salesVC = [[FMCustomerSalesViewController alloc] init];
-            salesVC.isCustomerSales = indexPath.row == 2;
             [self.navigationController pushViewController:salesVC animated:YES];
         } else if (indexPath.row == 3 || indexPath.row == 4) {
             FMProductReportViewController *productVC = [[FMProductReportViewController alloc] init];
             productVC.type = indexPath.row - 3;
             [self.navigationController pushViewController:productVC animated:YES];
+        } else if (indexPath.row == 5) {
+            FMCompetitorAnalysisViewController *competitorVC = [[FMCompetitorAnalysisViewController alloc] init];
+            [self.navigationController pushViewController:competitorVC animated:YES];
         } else {
             FMAttendanceViewController *attendanceVC = [[FMAttendanceViewController alloc] init];
             [self.navigationController pushViewController:attendanceVC animated:YES];

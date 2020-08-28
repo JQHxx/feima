@@ -22,7 +22,8 @@
 
 #define kPieRandColor [UIColor colorWithRed:arc4random() % 255 / 255.0f green:arc4random() % 255 / 255.0f blue:arc4random() % 255 / 255.0f alpha:1.0f]
 
-#define KMargin 20 //边缘间距
+#define Hollow_Circle_Radius 30 //中间空心圆半径，默认为0实心
+#define KMargin 0 //边缘间距
 
 @interface FMCompetitorDataView (){
     CAShapeLayer *_maskLayer;
@@ -38,11 +39,11 @@
     self = [super initWithFrame:frame];
     if (self) {
         //线的半径为扇形半径的一半，线宽是扇形半径->半径+线宽的一半=真实半径，这样就能画出圆形了
-        _radius = (frame.size.height - KMargin*2)/4.f;
+        _radius = (frame.size.width - KMargin*2)/4.f;
         _center = CGPointMake(_radius*2 + KMargin, _radius*2 + KMargin);
         //通过mask来控制显示区域
         _maskLayer = [CAShapeLayer layer];
-        UIBezierPath *maskPath = [UIBezierPath bezierPathWithArcCenter:_center radius:self.height/4.f startAngle:-M_PI_2 endAngle:M_PI_2*3 clockwise:YES];
+        UIBezierPath *maskPath = [UIBezierPath bezierPathWithArcCenter:_center radius:self.bounds.size.width/4.f startAngle:-M_PI_2 endAngle:M_PI_2*3 clockwise:YES];
         //设置边框颜色为不透明，则可以通过边框的绘制来显示整个view
         _maskLayer.strokeColor = [UIColor greenColor].CGColor;
         _maskLayer.lineWidth = self.bounds.size.width/2.f;
@@ -58,36 +59,25 @@
 #pragma mark -- Publish Methods
 - (void)setDatas:(NSArray <NSNumber *>*)datas
           colors:(NSArray <UIColor *>*)colors{
-    
     NSArray *newDatas = [self getPersentArraysWithDataArray:datas];
-    //每个layer对应一个path，通过数据比例来计算起始角点跟结束角点；可以通过path来找到对应的layer，方便做后期操作
-    CGFloat start = -M_PI_2;
-    CGFloat end = start;
-    
-    while (newDatas.count > self.layer.sublayers.count) {
-        FMPieLayer *pieLayer = [FMPieLayer layer];
-        pieLayer.strokeColor = NULL;
+    UIBezierPath *piePath = [UIBezierPath bezierPathWithArcCenter:_center radius:_radius + Hollow_Circle_Radius startAngle:-M_PI_2 endAngle:M_PI_2*3 clockwise:YES];
+    CGFloat start = 0.f;
+    CGFloat end = 0.f;
+    for (NSInteger i=0; i<newDatas.count; i++) {
+        NSNumber *number = newDatas[i];
+        UIColor *aColor = colors[i];
+        end =  start + number.floatValue;
+        CAShapeLayer *pieLayer = [CAShapeLayer layer];
+        pieLayer.strokeStart = start;
+        pieLayer.strokeEnd = end;
+        pieLayer.lineWidth = _radius*2 - Hollow_Circle_Radius;
+        pieLayer.strokeColor = aColor.CGColor;
+        pieLayer.fillColor = [UIColor clearColor].CGColor;
+        pieLayer.path = piePath.CGPath;
         [self.layer addSublayer:pieLayer];
-    }
-
-    for (int i = 0; i < self.layer.sublayers.count; i ++) {
-        FMPieLayer *pieLayer = (FMPieLayer *)self.layer.sublayers[i];
-        if (i < newDatas.count) {
-            pieLayer.hidden = NO;
-            end =  start + M_PI*2 *[newDatas[i] floatValue];
-            
-            UIBezierPath *piePath = [UIBezierPath bezierPath];
-            [piePath moveToPoint:_center];
-            [piePath addArcWithCenter:_center radius:_radius*2 startAngle:start endAngle:end clockwise:YES];
-            pieLayer.fillColor = [colors.count > i?colors[i]:kPieRandColor CGColor];
-            pieLayer.startAngle = start;
-            pieLayer.endAngle = end;
-            pieLayer.path = piePath.CGPath;
-            
-            start = end;
-        }else{
-            pieLayer.hidden = YES;
-        }
+        MyLog(@"start:%.2f,end:%.2f",start,end);
+        
+        start = end;
     }
 }
 
@@ -124,6 +114,19 @@
         [persentArray addObject:@(number.floatValue/sum.floatValue)];
     }
     return persentArray;
+}
+
+#pragma mark 添加文字
+- (void)addTextLayerWithText:(NSString *)text frame:(CGRect)frame{
+    CATextLayer *textLayer = [CATextLayer layer];
+    textLayer.string = text;
+    textLayer.alignmentMode = kCAAlignmentCenter;
+    textLayer.fontSize = 10;
+    textLayer.foregroundColor = [UIColor lightGrayColor].CGColor;
+    textLayer.frame = frame;
+    textLayer.contentsScale = [UIScreen mainScreen].scale;
+    textLayer.wrapped = NO;
+    [self.layer addSublayer:textLayer];
 }
 
 @end

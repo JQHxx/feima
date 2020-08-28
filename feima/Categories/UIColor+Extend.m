@@ -133,5 +133,14 @@
     return [UIColor colorWithHexString:@"#333333"];
 }
 
+#pragma mark 随机颜色
++ (UIColor *)randomColor {
+    NSInteger aRedValue = arc4random() %255;
+    NSInteger aGreenValue = arc4random() %255;
+    NSInteger aBlueValue = arc4random() %255;
+    UIColor*randColor = RGB(aRedValue, aGreenValue, aBlueValue);
+    return randColor;
+}
+
 
 @end

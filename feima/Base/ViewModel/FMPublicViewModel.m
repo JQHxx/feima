@@ -32,6 +32,7 @@
         } else if ([groupStr isEqualToString:kFollowUpProgressKey]) {
             self.progressArray = tempArr;
         }
+        if (complete) complete(YES);
     }
     
     NSDictionary *parameters = @{@"groupStr":groupStr};

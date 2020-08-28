@@ -26,11 +26,5 @@
 
 - (void)displayViewWithTimeData:(FMTimeDataModel *)timeData salesData:(FMSalesDataModel *)salesData;
 
-- (void)displayViewWithGoodsData:(NSArray *)goodsData salesData:(FMSalesDataModel *)salesData;
-
-- (void)displayViewWithCustomerData:(FMCustomerDataModel *)customerData;
-
-- (void)displayViewWithCompetitorData;
-
 @end
 

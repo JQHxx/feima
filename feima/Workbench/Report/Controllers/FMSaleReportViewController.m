@@ -13,7 +13,6 @@
 #import "FMSalesModel.h"
 #import "FMTimeDataModel.h"
 #import "FMSalesDataModel.h"
-#import "NSDate+Extend.h"
 
 @interface FMSaleReportViewController ()<UITableViewDelegate,UITableViewDataSource,FMReportHeadViewDelegate>
 

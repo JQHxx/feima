@@ -116,10 +116,24 @@
 
 #pragma mark 组织机构
 - (void)loadOrganizationDataComplete:(AdpaterComplete)complete {
+    //获取缓存数据
+    NSArray *orgList = [NSUserDefaultsInfos getValueforKey:kOrganizationGroupDataKey];
+    if (kIsArray(orgList) && orgList.count > 0) {
+        self.organizationArray = [NSArray yy_modelArrayWithClass:[FMOrganizationModel class] json:orgList];
+        if (complete) complete(YES);
+    }
+    
     [[HttpRequest sharedInstance] getRequestWithUrl:api_select_organization parameters:nil complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
         if (isSuccess) {
             NSArray *data = [json safe_objectForKey:@"data"];
+            //缓存数据
+            NSMutableArray *tempArr = [[NSMutableArray alloc] init];
+            for (NSDictionary *dict in data) {
+                [tempArr addObject:[dict mutableDeepCopy]];
+            }
+            [NSUserDefaultsInfos putKey:kOrganizationGroupDataKey andValue:tempArr];
+            
             self.organizationArray = [NSArray yy_modelArrayWithClass:[FMOrganizationModel class] json:data];
             if (complete) complete(YES);
         } else {

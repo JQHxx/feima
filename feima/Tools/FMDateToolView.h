@@ -8,21 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 typedef enum : NSUInteger {
     FMDateToolViewTypeMonth,
     FMDateToolViewTypeDay,
 } FMDateToolViewType;
 
-typedef void(^SelectedBlock)(NSString *value);
+@protocol FMDateToolViewDelegate <NSObject>
+
+- (void)dateToolViewDidSelectedDate:(NSString *)date;
+
+- (void)dateToolViewDidSelectedOrganizationWithOriganizationId:(NSInteger )organizationId;
+
+@end
 
 @interface FMDateToolView : UIView
 
-@property (nonatomic, copy ) SelectedBlock selectedBlock;
+@property (nonatomic, weak ) id<FMDateToolViewDelegate>delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame type:(FMDateToolViewType)type;
 
 @end
 
-NS_ASSUME_NONNULL_END

@@ -13,11 +13,12 @@
     NSString *_minDateStr;
     NSString *_maxDateStr;
     BRDateResultBlock _resultBlock;
-    NSString *_selectValue;
+    
 }
 
 @property (nonatomic, strong) UIPickerView *pickerView;
 @property (nonatomic, strong) NSMutableArray *data;
+@property (nonatomic,  copy ) NSString *selectValue;
 
 @end
 
@@ -35,6 +36,8 @@
         _minDateStr = minDateStr;
         _maxDateStr = maxDateStr;
         _resultBlock = resultBlock;
+        
+        _selectValue = defaultSelValue;
         
         [self loadData];
         [self initUI];
@@ -174,6 +177,13 @@
         newdate = [calendar dateByAddingComponents:lastMonthComps toDate:currentDate options:0];
         dateStr = [formatter stringFromDate:newdate];
     }
+    kSelfWeak;
+    [self.data enumerateObjectsUsingBlock:^(NSString *rowItem, NSUInteger rowIdx, BOOL *stop) {
+        if (!kIsEmptyString(weakSelf.selectValue) && [weakSelf.selectValue isEqualToString:rowItem]) {
+           [weakSelf.pickerView selectRow:rowIdx inComponent:0 animated:NO];
+           *stop = YES;
+       }
+   }];
 }
 
 #pragma mark 选择器

@@ -7,7 +7,6 @@
 //
 
 #import "FMMessageTableViewCell.h"
-#import "NSDate+Extend.h"
 
 @interface FMMessageTableViewCell ()
 

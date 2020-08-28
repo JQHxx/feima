@@ -124,12 +124,7 @@
         [tempGoodsArr addObject:model];
     }
     
-    FMSalesDataModel *salesData = [[FMSalesDataModel alloc] init];
-    salesData.lastSalesSum = 0.34;
-    salesData.thisSalesSum = 0.22;
-    salesData.progress = 0.22/0.34;
     
-    [self.headView displayViewWithGoodsData:tempGoodsArr salesData:salesData];
 }
 
 #pragma mark UI

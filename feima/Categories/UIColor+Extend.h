@@ -76,5 +76,10 @@ typedef NS_ENUM(NSInteger, IHGradientChangeDirection) {
 
 + (UIColor *)textBlackColor;
 
+/**
+ *  随机颜色
+*/
++ (UIColor *)randomColor;
+
 
 @end

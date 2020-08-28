@@ -10,8 +10,6 @@
 #import "Singleton.h"
 #import "FMUserModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface FeimaManager : NSObject
 
 singleton_interface(FeimaManager)
@@ -20,6 +18,8 @@ singleton_interface(FeimaManager)
 @property (nonatomic,assign) BOOL   isAdministrator;
 @property (nonatomic,assign) BOOL   employeeListReload;
 @property (nonatomic,assign) BOOL   distributionListReload;
+
+@property (nonatomic,strong) NSArray *myColors;
 
 /**
  *   时间戳转化为时间
@@ -54,6 +54,14 @@ singleton_interface(FeimaManager)
 */
 - (NSMutableArray *)getYearMonthDataWithMinDate:(NSString *)minDate;
 
+/**
+ * 时间格式转换
+ * @param date  时间
+ * @param formatter  时间格式
+ * @param newFormatter    新的时间格式
+*/
+- (NSString *)convertToDate:(NSString *)date formatter:(NSString *)formatter newFormatter:(NSString *)newFormatter;
+
 
 //退出登录
 - (void)logout;
@@ -70,4 +78,3 @@ singleton_interface(FeimaManager)
 
 @end
 
-NS_ASSUME_NONNULL_END

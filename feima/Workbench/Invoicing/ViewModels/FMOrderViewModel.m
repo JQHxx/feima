@@ -110,7 +110,7 @@
 
 #pragma mark 配货发货 退换货发货
 - (void)deliveryWithType:(NSInteger)type
-            orderGoodsId:(NSInteger)oderGoodsId
+            orderGoodsId:(NSInteger)orderGoodsId
                 complete:(AdpaterComplete)complete {
     NSString *url = nil;
     if (type == 0) { //配货发货
@@ -120,7 +120,7 @@
     } else { //换货发货
         url = api_orderGoods_exchange_delivery;
     }
-    [[HttpRequest sharedInstance] postWithUrl:url parameters:@{@"oderGoodsId":@(oderGoodsId)} complete:^(BOOL isSuccess, id json, NSError *error) {
+    [[HttpRequest sharedInstance] postWithUrl:url parameters:@{@"orderGoodsId":@(orderGoodsId)} complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
         if (isSuccess) {
             if (complete) complete(YES);
@@ -132,7 +132,7 @@
 
 #pragma mark 同意配货  同意退货 同意换货
 - (void)agreeOrderApplyWithType:(NSInteger)type
-                   orderGoodsId:(NSInteger)oderGoodsId
+                   orderGoodsId:(NSInteger)orderGoodsId
            orderGoodsDetailInfo:(NSString *)orderGoodsDetailInfo
                        complete:(AdpaterComplete)complete {
     NSString *url = nil;
@@ -144,7 +144,7 @@
         url = api_orderGoods_exchange_agree;
     }
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"oderGoodsId"] = @(oderGoodsId);
+    parameters[@"orderGoodsId"] = @(orderGoodsId);
     parameters[@"orderGoodsDetailInfo"] = orderGoodsDetailInfo;
     [[HttpRequest sharedInstance] postWithUrl:url parameters:parameters complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
@@ -158,7 +158,7 @@
 
 #pragma mark 拒绝配货  拒绝退货 拒绝换货
 - (void)refuseOrderApplyWithType:(NSInteger)type
-                    orderGoodsId:(NSInteger)oderGoodsId
+                    orderGoodsId:(NSInteger)orderGoodsId
                         complete:(AdpaterComplete)complete {
     NSString *url = nil;
     if (type == 0) { //拒绝配货
@@ -168,7 +168,7 @@
     } else { //拒绝换货
         url = api_orderGoods_exchange_refuse;
     }
-    [[HttpRequest sharedInstance] postWithUrl:url parameters:@{@"oderGoodsId":@(oderGoodsId)} complete:^(BOOL isSuccess, id json, NSError *error) {
+    [[HttpRequest sharedInstance] postWithUrl:url parameters:@{@"orderGoodsId":@(orderGoodsId)} complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
         if (isSuccess) {
             if (complete) complete(YES);
@@ -180,7 +180,7 @@
 
 #pragma mark 配货完成 退货完成
 - (void)confirmReceiptWithType:(NSInteger)type
-                  orderGoodsId:(NSInteger)oderGoodsId
+                  orderGoodsId:(NSInteger)orderGoodsId
                       complete:(AdpaterComplete)complete {
     NSString *url = nil;
     if (type == 0) { //配货完成
@@ -190,7 +190,7 @@
     } else { //换货完成
         url = api_orderGoods_exchange_confirm;
     }
-    [[HttpRequest sharedInstance] postWithUrl:url parameters:@{@"oderGoodsId":@(oderGoodsId)} complete:^(BOOL isSuccess, id json, NSError *error) {
+    [[HttpRequest sharedInstance] postWithUrl:url parameters:@{@"orderGoodsId":@(orderGoodsId)} complete:^(BOOL isSuccess, id json, NSError *error) {
         [self handlerError:error];
         if (isSuccess) {
             if (complete) complete(YES);

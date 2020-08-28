@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,  copy ) NSString   *customerName;
 @property (nonatomic, assign) NSInteger  followUpPeopleId;
 @property (nonatomic,  copy ) NSString   *followUpPeopleName;
-@property (nonatomic, assign) NSInteger  lastSales;
+@property (nonatomic, assign) double     lastSales;
 @property (nonatomic, assign) double     progress;
-@property (nonatomic, assign) NSInteger  thisSales;
+@property (nonatomic, assign) double     thisSales;
 
 @end
 

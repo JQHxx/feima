@@ -95,17 +95,7 @@
     if (tag == 104) { //选择跟进人
         
     } else {
-        NSString *groupStr = @"";
-        if (tag == 100) {
-            groupStr = kIndustryTypeKey;
-        } else if (tag == 101) {
-            groupStr = kCustomerLevelKey;
-        } else if (tag == 103) {
-            groupStr = kFollowUpProgressKey;
-        }
-        [self.publicAdapter loadGroupDataWithGroupStr:groupStr complete:^(BOOL isSuccess) {
-            [self selectedCustomerInfoWithIndex:tag];
-        }];
+        [self selectedCustomerInfoWithIndex:tag];
     }
 }
 
@@ -124,6 +114,25 @@
         weakSelf.customerModel.latitude = addressModel.latitude;
         weakSelf.customerModel.address = addressModel.detailAddress;
     }];
+}
+
+#pragma mark 获取下拉数据
+- (void)loadSelectGroupData {
+    //获取行业类型数据
+    [self.publicAdapter loadGroupDataWithGroupStr:kIndustryTypeKey complete:^(BOOL isSuccess) {
+        
+    }];
+    
+    //获取客户等级数据
+    [self.publicAdapter loadGroupDataWithGroupStr:kCustomerLevelKey complete:^(BOOL isSuccess) {
+        
+    }];
+    
+    //获取跟进进度数据
+    [self.publicAdapter loadGroupDataWithGroupStr:kFollowUpProgressKey complete:^(BOOL isSuccess) {
+        
+    }];
+    
 }
 
 #pragma mark 选择信息

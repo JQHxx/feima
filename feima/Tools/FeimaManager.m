@@ -33,6 +33,11 @@ singleton_implementation(FeimaManager)
     }
 }
 
+#pragma mark 颜色
+- (NSArray *)myColors {
+    return @[[UIColor colorWithHexString:@"#4E98F8"],[UIColor colorWithHexString:@"#EA424F"],[UIColor colorWithHexString:@"#F7C95E"],[UIColor orangeColor],[UIColor greenColor],[UIColor cyanColor],[UIColor blueColor],[UIColor brownColor],[UIColor greenColor],[UIColor grayColor],[UIColor redColor],[UIColor blueColor],[UIColor lightGrayColor],[UIColor purpleColor],[UIColor colorWithHexString:@"#4E98F8"],[UIColor colorWithHexString:@"#EA424F"],[UIColor colorWithHexString:@"#F7C95E"],[UIColor orangeColor],[UIColor greenColor],[UIColor cyanColor],[UIColor blueColor],[UIColor brownColor],[UIColor greenColor],[UIColor grayColor],[UIColor redColor],[UIColor blueColor],[UIColor lightGrayColor],[UIColor purpleColor]];
+}
+
 #pragma mark 时间戳转化为时间
 - (NSString *)timeWithTimeInterval:(NSInteger)timeSp format:(NSString *)format {
     // 格式化时间
@@ -122,6 +127,18 @@ singleton_implementation(FeimaManager)
         dateStr = [formatter stringFromDate:newdate];
     }
     return data;
+}
+
+#pragma mark 时间格式转换
+- (NSString *)convertToDate:(NSString *)date formatter:(NSString *)formatter newFormatter:(NSString *)newFormatter {
+    NSDateFormatter *oldFormatter = [[NSDateFormatter alloc] init];
+    [oldFormatter setDateFormat:formatter];
+    NSDate *currentDate = [oldFormatter dateFromString:date];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:newFormatter];
+    NSString *dateTitle = [dateFormatter stringFromDate:currentDate];
+    return dateTitle;
 }
 
 #pragma mark 退出登录

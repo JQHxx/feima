@@ -1,8 +1,8 @@
 //
-//  FMCustomerSalesViewController.h
+//  FMCompetitorAnalysisViewController.h
 //  feima
 //
-//  Created by fei on 2020/8/10.
+//  Created by fei on 2020/8/27.
 //  Copyright © 2020 hegui. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FMCustomerSalesViewController : BaseViewController
+@interface FMCompetitorAnalysisViewController : BaseViewController
 
 @end
 
