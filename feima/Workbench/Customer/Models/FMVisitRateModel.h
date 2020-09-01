@@ -21,7 +21,7 @@
 @property (nonatomic, assign) NSInteger day;
 @property (nonatomic, assign) NSInteger effectiveTotalNumber;
 @property (nonatomic, assign) NSInteger totalNumber;
-@property (nonatomic, strong) FMRateModel *visitRates;
+@property (nonatomic, strong) NSArray <FMRateModel *> *visitRates;
 
 
 @end

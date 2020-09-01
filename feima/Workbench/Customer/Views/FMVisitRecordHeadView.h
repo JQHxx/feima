@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "FMCustomerModel.h"
+#import "FMOrderSellModel.h"
+#import "FMVisitRateModel.h"
 
 @interface FMVisitRecordHeadView : UIView
 
-@end
+- (instancetype)initWithFrame:(CGRect)frame customer:(FMCustomerModel *)model;
 
-NS_ASSUME_NONNULL_END
+- (void)fillContentDataWithOrderSellInfo:(NSArray <FMOrderSellModel *> *)sellInfo rate:(FMVisitRateModel *)rateModel;
+
+@end

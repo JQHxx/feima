@@ -8,16 +8,14 @@
 
 #import "FMStatisticsViewController.h"
 #import "FMVisitRecordTableViewCell.h"
-#import "FMCustomerHeadView.h"
-#import "FMCustomerChartView.h"
+#import "FMVisitRecordHeadView.h"
 #import "FMVisitViewModel.h"
 
 @interface FMStatisticsViewController ()<UITableViewDelegate,UITableViewDataSource>
 
-@property (nonatomic, strong) UITableView          *myTableView;
-@property (nonatomic, strong) FMCustomerHeadView   *headView;
-@property (nonatomic, strong) FMCustomerChartView  *chartView;
-@property (nonatomic, strong) FMVisitViewModel     *adapter;
+@property (nonatomic, strong) UITableView           *myTableView;
+@property (nonatomic, strong) FMVisitRecordHeadView *headView;
+@property (nonatomic, strong) FMVisitViewModel      *adapter;
 
 @property (nonatomic, assign) NSInteger startTime;
 @property (nonatomic, assign) NSInteger endTime;
@@ -45,6 +43,28 @@
     return [self.adapter numberOfVisitRecordList];
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *aView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 60)];
+    aView.backgroundColor = [UIColor colorWithHexString:@"#F8F8F8"];
+    
+    UIView *rootView = [[UIView alloc] initWithFrame:CGRectMake(0, 10, kScreen_Width, 50)];
+    rootView.backgroundColor = [UIColor whiteColor];
+    [aView addSubview:rootView];
+    
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"今日",@"昨日"]];
+    [segmentedControl setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor colorWithHexString:@"#666666"]} forState:UIControlStateNormal];
+    [segmentedControl setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor systemColor]} forState:UIControlStateSelected];
+    segmentedControl.selectedSegmentIndex = 0;
+    [segmentedControl addTarget:self action:@selector(selectedDateAction:) forControlEvents:UIControlEventValueChanged];
+    segmentedControl.frame = CGRectMake(20, 10, 120, 30);
+    [rootView addSubview:segmentedControl];
+    
+    UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 59, kScreen_Width, 1)];
+    line.backgroundColor = [UIColor lineColor];
+    [aView addSubview:line];
+    return aView;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FMVisitRecordTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMVisitRecordTableViewCell identifier] forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -53,12 +73,22 @@
     return cell;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 60;
+}
+
+#pragma mark 今日昨日
+- (void)selectedDateAction:(UISegmentedControl *)sender {
+    
+}
+
 #pragma mark -- Private methods
 #pragma mark 获取拜访计划
 - (void)loadVisitRecordData {
     kSelfWeak;
     [self.adapter loadVisitRecordDataWithCustomerId:self.customer.customerId sTime:self.startTime eTime:self.endTime complete:^(BOOL isSuccess) {
         if (isSuccess) {
+            [weakSelf.headView fillContentDataWithOrderSellInfo:weakSelf.adapter.orderSellStatistics rate:weakSelf.adapter.visitRate];
             [weakSelf.myTableView reloadData];
         } else {
             [weakSelf.view makeToast:weakSelf.adapter.errorString duration:1.5 position:CSToastPositionCenter];
@@ -78,10 +108,9 @@
 
 #pragma mark -- Getters
 #pragma mark 头部视图
-- (FMCustomerHeadView *)headView {
+- (FMVisitRecordHeadView *)headView {
     if (!_headView) {
-        _headView = [[FMCustomerHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 140)];
-        [_headView displayViewWithData:self.customer];
+        _headView = [[FMVisitRecordHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 320) customer:self.customer];
     }
     return _headView;
 }
@@ -100,14 +129,6 @@
         [_myTableView registerClass:[FMVisitRecordTableViewCell class] forCellReuseIdentifier:[FMVisitRecordTableViewCell identifier]];
     }
     return _myTableView;
-}
-
-#pragma mark 图表
-- (FMCustomerChartView *)chartView {
-    if (!_chartView) {
-        _chartView = [[FMCustomerChartView alloc] init];
-    }
-    return _chartView;
 }
 
 - (FMVisitViewModel *)adapter {
