@@ -119,10 +119,6 @@
             message = @"轨迹服务开启结果未知";
             break;
     }
-    NSDictionary *info = @{@"type":@(YY_SERVICE_OPERATION_TYPE_START_SERVICE),
-                           @"title":title,
-                           @"message":message,
-                           };
     MyLog(@"onStartService,title:%@,message:%@",title,message);
 }
 
@@ -156,10 +152,6 @@
             message = @"轨迹服务停止结果未知";
             break;
     }
-    NSDictionary *info = @{@"type":@(YY_SERVICE_OPERATION_TYPE_STOP_SERVICE),
-                           @"title":title,
-                           @"message":message,
-                           };
     MyLog(@"onStopService,title:%@,message:%@",title,message);
 }
 

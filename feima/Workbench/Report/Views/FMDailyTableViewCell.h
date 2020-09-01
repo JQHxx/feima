@@ -7,11 +7,12 @@
 //
 
 #import "BaseTableViewCell.h"
+#import "FMDailyReportModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
 
 @interface FMDailyTableViewCell : BaseTableViewCell
 
+- (void)fillContentWithData:(FMDailyReportModel *)model index:(NSInteger)index;
+
 @end
 
-NS_ASSUME_NONNULL_END

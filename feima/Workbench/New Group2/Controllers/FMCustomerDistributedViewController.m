@@ -57,7 +57,6 @@
 #pragma mark 地图区域改变完成后会调用此接口
 - (void)mapView:(BMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     MyLog(@"regionDidChangeAnimated");
-    //重新渲染
     [self renderMapWithData];
 }
 
@@ -74,6 +73,10 @@
     [self showPopViewWithModel:customer];
 }
 
+- (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view {
+    MyLog(@"didSelectAnnotationView");
+}
+
 #pragma mark 根据anntation生成对应的View
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id<BMKAnnotation>)annotation {
     if ([annotation isKindOfClass:[BMKPointAnnotation class]]){
@@ -82,7 +85,7 @@
         if (annotationView == nil) {
             annotationView = [[BMKAnnotationView alloc] initWithAnnotation:annotation  reuseIdentifier:reuseIndetifier];
         }
-        annotationView.image = ImageNamed(@"address_theme");
+        annotationView.image = ImageNamed(@"location_annotatio");
         return annotationView;
     }
     return nil;
@@ -100,23 +103,23 @@
 - (void)showCustomerManagerAction:(UITapGestureRecognizer *)sender {
     FMCustomerViewController *customerVC = [[FMCustomerViewController alloc] init];
     customerVC.isShowList = NO;
-    customerVC.customersArray = self.customersData;
     [self.navigationController pushViewController:customerVC animated:YES];
 }
 
 #pragma mark -- Private methods
 #pragma mark 加载数据
 - (void)loadCustomerData {
-    //定位
-    [[FMLocationManager sharedInstance] getAddressDetail:^(FMAddressModel *addressModel) {
-        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(addressModel.latitude, addressModel.longitude) animated:YES];
-    }];
     kSelfWeak;
     FMPageModel *page = [[FMPageModel alloc] init];
     page.pageNum = 1;
     [self.adapter loadCustomerListWithPage:page latitude:0.0 longitude:0.0 contactName:nil visitCode:0 complete:^(BOOL isSuccess) {
         if (isSuccess) {
-            [weakSelf renderMapWithData];
+            NSInteger count = [weakSelf.adapter numberOfCustomerList];
+            if (count > 0) {
+                FMCustomerModel *model = [weakSelf.adapter getCustomerModelWithIndex:count/2];
+                [weakSelf.mapView setCenterCoordinate:CLLocationCoordinate2DMake(model.latitude, model.longitude) animated:YES];
+                [weakSelf renderMapWithData];
+            }
         } else {
             [weakSelf.view makeToast:self.adapter.errorString duration:2.0 position:CSToastPositionCenter];
         }
@@ -177,7 +180,6 @@
     }];
 }
 
-
 #pragma mark 关闭弹框
 - (void)dismissMaskView {
     [UIView animateWithDuration:0.25 animations:^{
@@ -223,6 +225,7 @@
 - (UIButton *)listBtn {
     if (!_listBtn) {
         _listBtn = [[UIButton alloc] init];
+        _listBtn.adjustsImageWhenHighlighted = NO;
         [_listBtn setImage:ImageNamed(@"customer_list") forState:UIControlStateNormal];
         [_listBtn addTarget:self action:@selector(showListAction:) forControlEvents:UIControlEventTouchUpInside];
     }

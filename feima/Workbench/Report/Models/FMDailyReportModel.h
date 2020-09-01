@@ -8,8 +8,6 @@
 
 #import "BaseModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface FMDailyReportModel : BaseModel
 
 @property (nonatomic,  copy ) NSString   *address;
@@ -42,4 +40,3 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END

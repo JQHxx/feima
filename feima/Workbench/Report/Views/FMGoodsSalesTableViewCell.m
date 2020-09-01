@@ -1,15 +1,15 @@
 //
-//  FMProductTableViewCell.m
+//  FMGoodsSalesTableViewCell.m
 //  feima
 //
-//  Created by fei on 2020/8/7.
+//  Created by fei on 2020/8/28.
 //  Copyright © 2020 hegui. All rights reserved.
 //
 
-#import "FMProductTableViewCell.h"
+#import "FMGoodsSalesTableViewCell.h"
 #import "FMProductTableView.h"
 
-@interface FMProductTableViewCell ()
+@interface FMGoodsSalesTableViewCell ()
 
 @property (nonatomic, strong) UILabel            *nameLabel;        //业务员或部门
 @property (nonatomic, strong) UIView             *lineView;
@@ -17,7 +17,7 @@
 
 @end
 
-@implementation FMProductTableViewCell
+@implementation FMGoodsSalesTableViewCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -26,7 +26,7 @@
         [self.nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.mas_equalTo(0);
             make.top.mas_equalTo(10);
-            make.size.mas_equalTo(CGSizeMake(kReportWidth, 24));
+            make.size.mas_equalTo(CGSizeMake(60, 24));
         }];
         
         [self.contentView addSubview:self.lineView];
@@ -40,31 +40,30 @@
         [self.productTableView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.mas_equalTo(self.nameLabel.mas_right);
             make.top.mas_equalTo(0);
-            make.size.mas_equalTo(CGSizeMake(kReportWidth*3, 44));
+            make.size.mas_equalTo(CGSizeMake(kScreen_Width-78, 44));
         }];
     }
     return self;
 }
 
 #pragma mark 填充数据
-- (void)fillContentWithData:(id)obj {
-    FMEmployeeGoodsModel *employeeModel = (FMEmployeeGoodsModel *)obj;
-    self.nameLabel.text = employeeModel.employeeName;
-    self.productTableView.goodsArray = employeeModel.goods;
+- (void)fillContentWithData:(FMGoodsSalesModel *)model type:(NSInteger)type {
+    self.nameLabel.text = type == 0 ? model.employeeName : model.organizationName;
+    self.productTableView.goodsArray = model.goods;
     [self.nameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(employeeModel.goods.count*44);
+        make.height.mas_equalTo(model.goods.count*44);
     }];
     
     [self.lineView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(employeeModel.goods.count*44);
+        make.height.mas_equalTo(model.goods.count*44);
     }];
     
     [self.productTableView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(employeeModel.goods.count*44);
+        make.height.mas_equalTo(model.goods.count*44);
     }];
 }
 
-+ (CGFloat)getCellHeightWithModel:(FMEmployeeGoodsModel *)model {
++ (CGFloat)getCellHeightWithModel:(FMGoodsSalesModel *)model {
     return model.goods.count*44;
 }
 
@@ -75,6 +74,7 @@
         _nameLabel.font = [UIFont mediumFontWithSize:14];
         _nameLabel.textColor = [UIColor colorWithHexString:@"#666666"];
         _nameLabel.textAlignment = NSTextAlignmentCenter;
+        _nameLabel.numberOfLines = 0;
     }
     return _nameLabel;
 }
@@ -94,15 +94,5 @@
     return _productTableView;
 }
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    // Initialization code
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
-}
 
 @end

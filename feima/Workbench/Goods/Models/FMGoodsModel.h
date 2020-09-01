@@ -26,8 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,  copy ) NSString  *unit;
 
 @property (nonatomic, assign) NSInteger quantity;
-
-
+@property (nonatomic, assign) BOOL      isInStock;
+@property (nonatomic, assign) NSInteger displayNum;
+@property (nonatomic, assign) NSInteger purchaseNum;
 
 @end
 

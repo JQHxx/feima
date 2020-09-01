@@ -7,14 +7,14 @@
 //
 
 #import "FMVisitTableViewCell.h"
+#import "FMPhotoCollectionView.h"
 
-@interface FMVisitTableViewCell ()
+@interface FMVisitTableViewCell ()<UITextViewDelegate>
 
 @property (nonatomic,strong) UILabel    *visitTitleLabel;
-@property (nonatomic,strong) UIButton   *photoBtn;
+@property (nonatomic,strong) FMPhotoCollectionView   *photoView;
 @property (nonatomic,strong) UILabel    *summaryTitleLabel;
 @property (nonatomic,strong) UITextView *summaryTextView;
-@property (nonatomic,strong) UIView      *lineView;
 
 @end
 
@@ -28,6 +28,14 @@
     return self;
 }
 
+#pragma mark UITextViewDelegate
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    MyLog(@"text:%@",textView.text);
+    if ([self.cellDelegate respondsToSelector:@selector(visitTableViewCellDidEndEditWithText:)]) {
+        [self.cellDelegate visitTableViewCellDidEndEditWithText:textView.text];
+    }
+}
+
 #pragma mark -- Private methods
 #pragma mark UI
 - (void)setupUI {
@@ -39,17 +47,17 @@
         make.width.mas_greaterThanOrEqualTo(50);
     }];
     
-    [self.contentView addSubview:self.photoBtn];
-    [self.photoBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.contentView addSubview:self.photoView];
+    [self.photoView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(20);
         make.top.mas_equalTo(self.visitTitleLabel.mas_bottom).offset(10);
-        make.size.mas_equalTo(CGSizeMake(60, 60));
+        make.size.mas_equalTo(CGSizeMake(kScreen_Width-40, 68));
     }];
     
     [self.contentView addSubview:self.summaryTitleLabel];
     [self.summaryTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(20);
-        make.top.mas_equalTo(self.photoBtn.mas_bottom).offset(15);
+        make.top.mas_equalTo(self.photoView.mas_bottom).offset(15);
         make.height.mas_equalTo(20);
         make.width.mas_greaterThanOrEqualTo(50);
     }];
@@ -60,13 +68,6 @@
         make.right.mas_equalTo(-20);
         make.top.mas_equalTo(self.summaryTitleLabel.mas_bottom).offset(10);
         make.height.mas_equalTo(150);
-    }];
-    
-    [self.contentView addSubview:self.lineView];
-    [self.lineView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(15);
-        make.top.mas_equalTo(0);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-30, 1));
     }];
 }
 
@@ -83,18 +84,20 @@
 }
 
 #pragma mark 客户图片
-- (UIButton *)photoBtn {
-    if (!_photoBtn) {
-        _photoBtn = [[UIButton alloc] init];
-        [_photoBtn setTitle:@"+" forState:UIControlStateNormal];
-        [_photoBtn setTitleColor:[UIColor colorWithHexString:@"#666666"] forState:UIControlStateNormal];
-        _photoBtn.titleLabel.font = [UIFont mediumFontWithSize:28];
-        _photoBtn.layer.cornerRadius = 5;
-        _photoBtn.layer.borderColor = [UIColor textBlackColor].CGColor;
-        _photoBtn.layer.borderWidth = 1.0;
-        _photoBtn.clipsToBounds = YES;
+- (FMPhotoCollectionView *)photoView {
+    if (!_photoView) {
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        _photoView = [[FMPhotoCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+        _photoView.maxImagesCount = 3;
+        kSelfWeak;
+        _photoView.handleComplete = ^{
+            NSArray *images = [weakSelf.photoView getAllImages];
+            if ([weakSelf.cellDelegate respondsToSelector:@selector(visitTableViewCellDidUploadImages:) ]) {
+                [weakSelf.cellDelegate visitTableViewCellDidUploadImages:images];
+            }
+        };
     }
-    return _photoBtn;
+    return _photoView;
 }
 
 
@@ -117,16 +120,9 @@
         _summaryTextView.layer.borderColor = [UIColor colorWithHexString:@"#666666"].CGColor;
         _summaryTextView.layer.cornerRadius = 4.0;
         _summaryTextView.font = [UIFont regularFontWithSize:16];
+        _summaryTextView.delegate = self;
     }
     return _summaryTextView;
-}
-
-- (UIView *)lineView {
-    if (!_lineView) {
-        _lineView = [[UIView alloc] init];
-        _lineView.backgroundColor = [UIColor lineColor];
-    }
-    return _lineView;
 }
 
 @end

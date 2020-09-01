@@ -8,10 +8,19 @@
 
 #import "BaseTableViewCell.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@protocol FMVisitTableViewCellDelegate <NSObject>
 
-@interface FMVisitTableViewCell : BaseTableViewCell
+//添加图片
+- (void)visitTableViewCellDidUploadImages:(NSArray *)images;
+
+//拜访总结
+- (void)visitTableViewCellDidEndEditWithText:(NSString *)text;
 
 @end
 
-NS_ASSUME_NONNULL_END
+@interface FMVisitTableViewCell : BaseTableViewCell
+
+@property (nonatomic, weak ) id<FMVisitTableViewCellDelegate>cellDelegate;
+
+@end
+

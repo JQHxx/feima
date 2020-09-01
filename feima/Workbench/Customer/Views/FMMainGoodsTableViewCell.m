@@ -7,15 +7,17 @@
 //
 
 #import "FMMainGoodsTableViewCell.h"
-#import "FMGoodsModel.h"
+#import "FMGoodsQuantityView.h"
 
 @interface FMMainGoodsTableViewCell ()
 
-@property (nonatomic, strong) UIImageView *goodsImgView;
-@property (nonatomic, strong) UILabel     *nameLabel;
-@property (nonatomic, strong) UILabel     *stockLabel;
-@property (nonatomic, strong) UILabel     *numLabel;
-@property (nonatomic, strong) UIView      *lineView;
+@property (nonatomic, strong) UIImageView    *goodsImgView;
+@property (nonatomic, strong) UILabel        *nameLabel;
+@property (nonatomic, strong) UILabel        *stockLabel;
+@property (nonatomic, strong) FMGoodsQuantityView *quatityView;
+@property (nonatomic, strong) UIView         *lineView;
+
+@property (nonatomic, strong) FMGoodsModel   *goods;
 
 @end
 
@@ -33,9 +35,16 @@
 #pragma mark 填充数据
 - (void)fillContentWithData:(id)obj {
     FMGoodsModel *model = (FMGoodsModel *)obj;
+    self.goods = model;
+    [self.goodsImgView sd_setImageWithURL:[NSURL URLWithString:model.images] placeholderImage:[UIImage ctPlaceholderImage]];
     self.nameLabel.text = model.name;
-    self.stockLabel.text = [NSString stringWithFormat:@"库存：%ld", model.stock];
-    self.numLabel.text = @"0";
+    if (model.isInStock) {
+        self.stockLabel.text = [NSString stringWithFormat:@"库存：%ld", model.stock];
+        self.stockLabel.hidden = NO;
+    } else {
+        self.stockLabel.hidden = YES;
+    }
+    self.quatityView.quatity = model.quantity;
 }
 
 #pragma mark -- Private methods
@@ -44,7 +53,7 @@
     [self.goodsImgView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.mas_equalTo(18);
         make.top.mas_equalTo(20);
-        make.size.mas_equalTo(CGSizeMake(74, 60));
+        make.size.mas_equalTo(CGSizeMake(44, 60));
     }];
     
     [self.contentView addSubview:self.nameLabel];
@@ -63,25 +72,19 @@
         make.height.mas_equalTo(18);
     }];
     
-    [self.contentView addSubview:self.numLabel];
-    [self.numLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.contentView addSubview:self.quatityView];
+    [self.quatityView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.mas_equalTo(self.contentView.mas_centerY);
         make.right.mas_equalTo(-20);
-        make.width.mas_greaterThanOrEqualTo(20);
-        make.height.mas_equalTo(20);
+        make.size.mas_equalTo(CGSizeMake(120, 40));
     }];
     
     [self.contentView addSubview:self.lineView];
     [self.lineView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(15);
-        make.top.mas_equalTo(0);
+        make.bottom.mas_equalTo(self.contentView.mas_bottom);
         make.size.mas_equalTo(CGSizeMake(kScreen_Width-30, 1));
     }];
-}
-
-- (void)setIsStock:(BOOL)isStock{
-    _isStock = isStock;
-    self.stockLabel.hidden = isStock;
 }
 
 #pragma mark -- Getters
@@ -89,7 +92,6 @@
 - (UIImageView *)goodsImgView {
     if (!_goodsImgView) {
         _goodsImgView = [[UIImageView alloc] init];
-        _goodsImgView.backgroundColor = [UIColor lightGrayColor];
     }
     return _goodsImgView;
 }
@@ -115,13 +117,18 @@
 }
 
 #pragma mark 数量
-- (UILabel *)numLabel {
-    if (!_numLabel) {
-        _numLabel = [[UILabel alloc] init];
-        _numLabel.font = [UIFont regularFontWithSize:16];
-        _numLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+- (FMGoodsQuantityView *)quatityView {
+    if (!_quatityView) {
+        _quatityView = [[FMGoodsQuantityView alloc] init];
+        kSelfWeak;
+        _quatityView.myBlock = ^(NSInteger quantity) {
+            weakSelf.goods.quantity = quantity;
+            if ([weakSelf.cellDelegate respondsToSelector:@selector(mainGoodsTableViewCellDidUpdateQuantityWithGoods:)]) {
+                [weakSelf.cellDelegate mainGoodsTableViewCellDidUpdateQuantityWithGoods:weakSelf.goods];
+            }
+        };
     }
-    return _numLabel;
+    return _quatityView;
 }
 
 - (UIView *)lineView {

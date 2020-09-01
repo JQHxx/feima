@@ -11,6 +11,7 @@
 @interface FMMineTableViewCell ()
 
 @property (nonatomic,strong) UIView      *rootView;
+@property (nonatomic,strong) UILabel     *countLabel;
 @property (nonatomic,strong) UIImageView *arrowImgView;
 
 @end
@@ -26,7 +27,7 @@
         [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.mas_equalTo(8);
             make.top.mas_equalTo(16);
-            make.size.mas_equalTo(CGSizeMake(kScreen_Width-15, 46));
+            make.size.mas_equalTo(CGSizeMake(kScreen_Width-15, 56));
         }];
         
         [self.rootView addSubview:self.iconImgView];
@@ -43,14 +44,35 @@
             make.height.mas_equalTo(24);
         }];
         
-        [self addSubview:self.arrowImgView];
+        [self.rootView addSubview:self.arrowImgView];
         [self.arrowImgView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.centerY.mas_equalTo(self.rootView.mas_centerY);
-            make.right.mas_equalTo(self.rootView.mas_right).offset(-25);
+            make.right.mas_equalTo(self.rootView.mas_right).offset(-10);
             make.size.mas_equalTo(CGSizeMake(16, 16));
         }];
+        
+        [self.rootView addSubview:self.countLabel];
+        [self.countLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(self.arrowImgView.mas_left).offset(-10);
+            make.centerY.mas_equalTo(self.rootView.mas_centerY);
+            make.height.mas_equalTo(24);
+            make.width.mas_equalTo(24);
+        }];
+        self.countLabel.hidden = YES;
+        
     }
     return self;
+}
+
+#pragma mark 消息数
+- (void)setMessagesCount:(NSInteger)messagesCount {
+    _messagesCount = messagesCount;
+    self.countLabel.hidden = messagesCount == 0;
+    self.countLabel.text = [NSString stringWithFormat:@"%ld",messagesCount];
+    CGFloat labW = [self.countLabel.text boundingRectWithSize:CGSizeMake(100, 24) withTextFont:self.countLabel.font].width;
+    [self.countLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(labW+20);
+    }];
 }
 
 #pragma mark -- Getters
@@ -78,6 +100,20 @@
         _titleLabel.textColor = [UIColor textBlackColor];
     }
     return _titleLabel;
+}
+
+#pragma mark 消息数
+- (UILabel *)countLabel {
+    if (!_countLabel) {
+        _countLabel = [[UILabel alloc] init];
+        _countLabel.backgroundColor = [UIColor colorWithHexString:@"#EA424F"];
+        _countLabel.textColor = [UIColor whiteColor];
+        _countLabel.font = [UIFont mediumFontWithSize:14];
+        _countLabel.textAlignment = NSTextAlignmentCenter;
+        _countLabel.layer.cornerRadius = 12;
+        _countLabel.clipsToBounds = YES;
+    }
+    return _countLabel;
 }
 
 #pragma mark 箭头

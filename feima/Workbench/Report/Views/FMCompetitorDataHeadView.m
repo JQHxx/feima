@@ -11,11 +11,12 @@
 #import "XYPieChart.h"
 
 
-@interface FMCompetitorDataHeadView ()<FMDateToolViewDelegate,XYPieChartDelegate,XYPieChartDataSource>
+@interface FMCompetitorDataHeadView ()<FMDateToolViewDelegate,XYPieChartDataSource>
 
-@property (nonatomic, strong) UIView   *rootView;
+@property (nonatomic, strong) UIView         *rootView;
 @property (nonatomic, strong) FMDateToolView *dateView;
-@property (nonatomic, strong) XYPieChart *pieChart;
+@property (nonatomic, strong) XYPieChart     *pieChart;
+@property (nonatomic, strong) UIScrollView   *rootScrollView;
 @property (nonatomic, strong) NSMutableArray *slicesArray;
 @property (nonatomic, strong) NSMutableArray *colorsArray;
 
@@ -67,6 +68,25 @@
     self.slicesArray = datas;
     self.colorsArray = colors;
     [self.pieChart reloadData];
+    
+    for (UIView *aView in self.rootScrollView.subviews) {
+        [aView removeFromSuperview];
+    }
+    
+    for (NSInteger i=0; i<data.count; i++) {
+        FMCompetitorAnalysisModel *model = [data safe_objectAtIndex:i];
+        
+        UIView *blockView = [[UIView alloc] initWithFrame:CGRectMake(0,20*i, 14, 14)];
+        blockView.backgroundColor = [[FeimaManager sharedFeimaManager].myColors safe_objectAtIndex:i];
+        [self.rootScrollView addSubview:blockView];
+        
+        UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(blockView.right+10, blockView.top, 130, 14)];
+        lab.text = model.competeGoodsName;
+        lab.textColor = [UIColor colorWithHexString:@"#666666"];
+        lab.font = [UIFont regularFontWithSize:12];
+        [self.rootScrollView addSubview:lab];
+    }
+    self.rootScrollView.contentSize = CGSizeMake(160, data.count*20);
 }
 
 #pragma mark -- FMDateToolViewDelegate
@@ -92,7 +112,7 @@
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.mas_equalTo(0);
         make.top.mas_equalTo(7);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-16, 242));
+        make.size.mas_equalTo(CGSizeMake(kScreen_Width-16, 202));
     }];
     
     [self.rootView addSubview:self.dateView];
@@ -103,6 +123,14 @@
     }];
     
     [self.rootView addSubview:self.pieChart];
+    
+    [self.rootView addSubview:self.rootScrollView];
+    [self.rootScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(self.rootView.mas_right).offset(-15);
+        make.top.mas_equalTo(self.dateView.mas_bottom).offset(10);
+        make.width.mas_equalTo(160);
+        make.bottom.mas_equalTo(self.rootView.mas_bottom).offset(-10);
+    }];
 }
 
 #pragma mark -- Getters
@@ -126,16 +154,25 @@
     return _dateView;
 }
 
+#pragma mark 饼图
 - (XYPieChart *)pieChart {
     if (!_pieChart) {
-        _pieChart = [[XYPieChart alloc] initWithFrame:CGRectMake(20, 60, 160, 160) Center:CGPointMake(80, 80) Radius:80];
-        _pieChart.delegate = self;
+        _pieChart = [[XYPieChart alloc] initWithFrame:CGRectMake(20, 55, 134, 134) Center:CGPointMake(67, 67) Radius:50];
         _pieChart.dataSource = self;
-        _pieChart.startPieAngle = M_PI_2;
-        _pieChart.labelRadius = 50;
+        _pieChart.startPieAngle = -M_PI_2;
+        _pieChart.labelRadius = 65;
+        _pieChart.labelColor = [UIColor colorWithHexString:@"#666666"];
         _pieChart.labelFont = [UIFont regularFontWithSize:12];
     }
     return _pieChart;
+}
+
+- (UIScrollView *)rootScrollView {
+    if (!_rootScrollView) {
+        _rootScrollView = [[UIScrollView alloc] init];
+        _rootScrollView.showsVerticalScrollIndicator = NO;
+    }
+    return _rootScrollView;
 }
 
 @end

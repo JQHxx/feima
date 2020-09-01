@@ -103,8 +103,8 @@
     self.followLabel.text = [NSString stringWithFormat:@"跟进人：%@",model.employeeName];
     self.addressLabel.text = model.address;
     if (showDistance) {
-        self.stateLabel.text = [NSString stringWithFormat:@"%.1fkm",model.distance];
-        self.stateLabel.textColor = [UIColor colorWithHexString:@"#66666"];
+        self.stateLabel.text = [NSString stringWithFormat:@"%.1fkm",model.distance/1000.0];
+        self.stateLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     } else {
         if (model.visitCode == 2) {
             self.stateLabel.text = @"已拜访";

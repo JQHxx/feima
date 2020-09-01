@@ -55,6 +55,8 @@
 }
 
 #pragma mark -- Private methods
+#pragma mark 定位
+
 #pragma mark 界面初始化
 - (void)setupView {
     [self.view addSubview:self.routeBtn];
@@ -96,7 +98,7 @@
 - (BMKMapView *)mapView {
     if (!_mapView) {
         _mapView = [[BMKMapView alloc] init];
-        [_mapView setZoomLevel:5];//精确到5米
+        [_mapView setZoomLevel:17];
         _mapView.userTrackingMode = BMKUserTrackingModeNone; //设定定位模式为普通模式
     }
     return _mapView;

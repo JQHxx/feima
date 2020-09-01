@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong) UIImageView *iconImgView;
 @property (nonatomic,strong) UILabel     *titleLabel;
 
+@property (nonatomic,assign) NSInteger messagesCount;
+
 @end
 
 NS_ASSUME_NONNULL_END

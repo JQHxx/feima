@@ -54,7 +54,7 @@
 - (void)itemPressed:(UIButton *)button
 {
     NSInteger index = [_items indexOfObject:button];
-    self.currentIndex=index;
+    self.currentIndex = index;
     
     if ([self.delegate respondsToSelector:@selector(slideMenuView:didSelectedWithIndex:)]) {
         [self.delegate slideMenuView:self didSelectedWithIndex:index];

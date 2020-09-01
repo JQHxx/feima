@@ -18,7 +18,6 @@ singleton_implementation(FeimaManager)
 #pragma mark 用户信息
 - (FMUserBeanModel *)userBean {
     NSDictionary *result = [NSUserDefaultsInfos getValueforKey:kUserBeanKey];
-    MyLog(@"userBean:%@",result);
     FMUserBeanModel *model = [FMUserBeanModel yy_modelWithJSON:result];
     return model;
 }
@@ -144,8 +143,8 @@ singleton_implementation(FeimaManager)
 #pragma mark 退出登录
 - (void)logout {
     [NSUserDefaultsInfos putKey:kLoginStateKey andValue:[NSNumber numberWithBool:NO]];
+    [NSUserDefaultsInfos removeObjectForKey:kUserBeanKey];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [kKeyWindow makeToast:@"帐号已在他处登录" duration:1.0 position:CSToastPositionCenter];
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         appDelegate.window.rootViewController = [[FMLoginViewController alloc] init];
     });

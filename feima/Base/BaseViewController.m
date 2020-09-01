@@ -71,6 +71,7 @@
     backBtn=[[UIButton alloc] init];
     [backBtn setImage:ImageNamed(@"return_white") forState:UIControlStateNormal];
     [backBtn setImageEdgeInsets:UIEdgeInsetsMake(0,-10.0, 0, 0)];
+    backBtn.adjustsImageWhenHighlighted = NO;
     [backBtn addTarget:self action:@selector(leftNavigationItemAction) forControlEvents:UIControlEventTouchUpInside];
     [self.navBarView addSubview:backBtn];
     [backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -109,6 +110,21 @@
 -(void)setBaseTitle:(NSString *)baseTitle{
     _baseTitle=baseTitle;
     titleLabel.text=baseTitle;
+}
+
+- (UIWindow *)keyWindow {
+    UIWindow* window = nil;
+    if (@available(iOS 13.0, *)) {
+        for (UIWindowScene* windowScene in [UIApplication sharedApplication].connectedScenes) {
+            if (windowScene.activationState == UISceneActivationStateForegroundActive) {
+                window = windowScene.windows.firstObject;
+                break;
+            }
+        }
+    } else {
+        window = [UIApplication sharedApplication].keyWindow;
+    }
+    return window;
 }
 
 

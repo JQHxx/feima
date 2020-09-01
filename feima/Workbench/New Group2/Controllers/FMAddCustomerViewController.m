@@ -60,6 +60,7 @@
     }
     [self setupUI];
     [self setFollower];
+    [self loadSelectGroupData];
 }
 
 #pragma mark -- Event response

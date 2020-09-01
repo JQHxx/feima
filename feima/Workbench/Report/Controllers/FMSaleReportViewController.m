@@ -114,6 +114,8 @@
             } else {
                 [weakSelf.headView displayViewWithTimeData:weakSelf.adapter.timeDataModel salesData:weakSelf.adapter.salesDataModel];
             }
+        } else {
+            [weakSelf.view makeToast:weakSelf.adapter.errorString duration:1.5 position:CSToastPositionCenter];
         }
     }];
 }
@@ -133,7 +135,7 @@
 #pragma mark 头部视图
 - (FMReportHeadView *)headView {
     if (!_headView) {
-        _headView = [[FMReportHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-16, 200)];
+        _headView = [[FMReportHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-16, 210)];
         _headView.delegate = self;
     }
     return _headView;

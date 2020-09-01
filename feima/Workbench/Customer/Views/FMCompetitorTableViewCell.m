@@ -7,13 +7,13 @@
 //
 
 #import "FMCompetitorTableViewCell.h"
+#import "FMPhotoCollectionView.h"
+#import "FMGoodsQuantityView.h"
 
-@interface FMCompetitorTableViewCell ()<UITableViewDelegate,UITableViewDataSource>{
+@interface FMCompetitorTableViewCell ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate>{
     NSArray *titlesArr;
-    NSArray *goodsArr;
 }
 
-@property (nonatomic,strong) UIView      *lineView;
 @property (nonatomic,strong) UIView      *bottomView;
 @property (nonatomic,strong) UITableView *myTableView;
 
@@ -22,7 +22,7 @@
 @property (nonatomic,strong) UITextView  *descTextView; //说明
 @property (nonatomic,strong) UIView      *line2;
 @property (nonatomic,strong) UILabel     *photoTitleLabel;
-@property (nonatomic,strong) UIButton    *photoBtn;  //图片
+@property (nonatomic,strong) FMPhotoCollectionView    *photoView;  //图片
 
 @end
 
@@ -31,18 +31,16 @@
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        goodsArr = @[@"20张新发",@"15张新发"];
         titlesArr = @[@"陈列数量",@"进货数量"];
         
         [self setupUI];
-        
     }
     return self;
 }
 
 #pragma mark -- UITableViewDataSource and UITableViewDelegate
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return goodsArr.count;
+    return self.goodsArray.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -56,7 +54,8 @@
     UILabel *titleLab = [[UILabel alloc] initWithFrame:CGRectMake(25, 5, 150, 30)];
     titleLab.font = [UIFont mediumFontWithSize:14];
     titleLab.textColor = [UIColor textBlackColor];
-    titleLab.text = goodsArr[section];
+    FMGoodsModel *model = [self.goodsArray safe_objectAtIndex:section];
+    titleLab.text = model.name;
     [headerView addSubview:titleLab];
     
     return headerView;
@@ -70,12 +69,27 @@
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    UILabel *titleLab = [[UILabel alloc] initWithFrame:CGRectMake(35, 5, 150, 30)];
+    UILabel *titleLab = [[UILabel alloc] initWithFrame:CGRectMake(35, 10, 150, 30)];
     titleLab.font = [UIFont regularFontWithSize:14];
     titleLab.textColor = [UIColor colorWithHexString:@"#666666"];
     titleLab.text = titlesArr[indexPath.row];
     [cell.contentView addSubview:titleLab];
     
+    FMGoodsQuantityView *quantityView = [[FMGoodsQuantityView alloc] initWithFrame:CGRectMake(kScreen_Width-140, 5, 120, 40)];
+    FMGoodsModel *model = [self.goodsArray safe_objectAtIndex:indexPath.section];
+    quantityView.quatity = indexPath.row == 0 ? model.displayNum : model.purchaseNum;
+    kSelfWeak;
+    quantityView.myBlock = ^(NSInteger quantity) {
+        if (indexPath.row == 0) {
+            model.displayNum = quantity;
+        } else {
+            model.purchaseNum = quantity;
+        }
+        if ([weakSelf.cellDelegate respondsToSelector:@selector(competitorTableViewCellDidUpdateGoods:)]) {
+            [weakSelf.cellDelegate competitorTableViewCellDidUpdateGoods:model];
+        }
+    };
+    [cell.contentView addSubview:quantityView];
     return cell;
 }
 
@@ -84,11 +98,18 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 40;
+    return 50;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     return 0.01;
+}
+
+#pragma mark UITextViewDelegate
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    if ([self.cellDelegate respondsToSelector:@selector(competitorTableViewCellDidEndEditWithText:)]) {
+        [self.cellDelegate competitorTableViewCellDidEndEditWithText:textView.text];
+    }
 }
 
 #pragma mark -- Private methods
@@ -97,13 +118,6 @@
     [self.contentView addSubview:self.myTableView];
     [self.myTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.contentView);
-    }];
-    
-    [self.contentView addSubview:self.lineView];
-    [self.lineView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(15);
-        make.top.mas_equalTo(5);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-30, 1));
     }];
     
     [self.bottomView addSubview:self.line1];
@@ -141,12 +155,18 @@
         make.size.mas_equalTo(CGSizeMake(60, 20));
     }];
     
-    [self.bottomView addSubview:self.photoBtn];
-    [self.photoBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.bottomView addSubview:self.photoView];
+    [self.photoView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.descTitleLabel.mas_left);
         make.top.mas_equalTo(self.photoTitleLabel.mas_bottom).offset(10);
-        make.size.mas_equalTo(CGSizeMake(60, 60));
+        make.size.mas_equalTo(CGSizeMake(kScreen_Width-50, 68));
     }];
+}
+
+#pragma mark -- Setters
+- (void)setGoodsArray:(NSArray<FMGoodsModel *> *)goodsArray {
+    _goodsArray = goodsArray;
+    [self.myTableView reloadData];
 }
 
 #pragma mark -- Getters
@@ -174,6 +194,7 @@
     if (!_descTextView) {
         _descTextView = [[UITextView alloc] init];
         _descTextView.font = [UIFont regularFontWithSize:14];
+        _descTextView.delegate = self;
     }
     return _descTextView;
 }
@@ -197,19 +218,21 @@
     return _photoTitleLabel;
 }
 
-#pragma mark 客户图片
-- (UIButton *)photoBtn {
-    if (!_photoBtn) {
-        _photoBtn = [[UIButton alloc] init];
-        [_photoBtn setTitle:@"+" forState:UIControlStateNormal];
-        [_photoBtn setTitleColor:[UIColor colorWithHexString:@"#666666"] forState:UIControlStateNormal];
-        _photoBtn.titleLabel.font = [UIFont mediumFontWithSize:28];
-        _photoBtn.layer.cornerRadius = 5;
-        _photoBtn.layer.borderColor = [UIColor textBlackColor].CGColor;
-        _photoBtn.layer.borderWidth = 1.0;
-        _photoBtn.clipsToBounds = YES;
+#pragma mark 添加照片
+- (FMPhotoCollectionView *)photoView {
+    if (!_photoView) {
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        _photoView = [[FMPhotoCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+        _photoView.maxImagesCount = 3;
+        kSelfWeak;
+        _photoView.handleComplete = ^{
+            NSArray *images = [weakSelf.photoView getAllImages];
+            if ([weakSelf.cellDelegate respondsToSelector:@selector(competitorTableViewCellDidUploadImages:) ]) {
+                [weakSelf.cellDelegate competitorTableViewCellDidUploadImages:images];
+            }
+        };
     }
-    return _photoBtn;
+    return _photoView;
 }
 
 #pragma mark 说明
@@ -232,14 +255,6 @@
         _myTableView.tableFooterView = self.bottomView;
     }
     return _myTableView;
-}
-
-- (UIView *)lineView {
-    if (!_lineView) {
-        _lineView = [[UIView alloc] init];
-        _lineView.backgroundColor = [UIColor lineColor];
-    }
-    return _lineView;
 }
 
 

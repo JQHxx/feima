@@ -101,7 +101,7 @@
 #pragma mark 头部视图
 - (FMCustomerSalesHeadView *)headView {
     if (!_headView) {
-        _headView = [[FMCustomerSalesHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-16, 260)];
+        _headView = [[FMCustomerSalesHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-16, 230)];
         kSelfWeak;
         _headView.selDateBlock = ^(NSInteger time) {
             weakSelf.selTime = time;

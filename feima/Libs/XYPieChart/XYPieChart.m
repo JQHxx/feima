@@ -634,6 +634,8 @@ static CGPathRef CGPathCreateArc(CGPoint center, CGFloat radius, CGFloat startAn
     [textLayer setAlignmentMode:kCAAlignmentCenter];
     [textLayer setBackgroundColor:[UIColor clearColor].CGColor];
     [textLayer setForegroundColor:self.labelColor.CGColor];
+    textLayer.contentsScale = 2.0f;
+    textLayer.wrapped = YES;
     if (self.labelShadowColor) {
         [textLayer setShadowColor:self.labelShadowColor.CGColor];
         [textLayer setShadowOffset:CGSizeZero];

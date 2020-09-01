@@ -7,13 +7,17 @@
 //
 
 #import "BaseTableViewCell.h"
+#import "FMGoodsModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@protocol FMMainGoodsTableViewCellDelegate <NSObject>
 
-@interface FMMainGoodsTableViewCell : BaseTableViewCell
-
-@property (nonatomic,assign) BOOL isStock;
+- (void)mainGoodsTableViewCellDidUpdateQuantityWithGoods:(FMGoodsModel *)model;
 
 @end
 
-NS_ASSUME_NONNULL_END
+@interface FMMainGoodsTableViewCell : BaseTableViewCell
+
+@property (nonatomic, weak ) id<FMMainGoodsTableViewCellDelegate>cellDelegate;
+
+@end
+

@@ -8,14 +8,22 @@
 
 #import "FMGoodsSalesModel.h"
 
-@implementation FMGoodsSalesModel
+@implementation FMReportGoodsModel
 
 @end
 
-@implementation FMEmployeeGoodsModel
+@implementation FMGoodsSalesModel
 
 + (NSDictionary *)modelContainerPropertyGenericClass {
-    return @{@"goods": [FMGoodsSalesModel class]};
+    return @{@"goods": [FMReportGoodsModel class]};
 }
+
+@end
+
+
+
+
+@implementation FMGoodsSalesDataModel
+
 
 @end

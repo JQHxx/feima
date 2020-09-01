@@ -11,9 +11,11 @@
 #import "FMVisitTableViewCell.h"
 #import "FMMainGoodsTableViewCell.h"
 #import "FMCompetitorTableViewCell.h"
+#import "FMVisitViewModel.h"
+#import "FMLocationManager.h"
 #import "FMGoodsModel.h"
 
-@interface FMHomepageViewController ()<UITableViewDelegate,UITableViewDataSource>{
+@interface FMHomepageViewController ()<UITableViewDelegate,UITableViewDataSource,FMMainGoodsTableViewCellDelegate,FMCompetitorTableViewCellDelegate,FMVisitTableViewCellDelegate>{
     NSArray *titlesArr;
 }
 
@@ -23,8 +25,15 @@
 @property (nonatomic, strong) UIView             *leaveView; //离店
 
 @property (nonatomic, strong) NSMutableArray  *expandArray;//记录section是否展开
-@property (nonatomic, strong) NSMutableArray  *goodsArray;  //商品
-@property (nonatomic, strong) NSMutableArray  *stockArray; //库存
+@property (nonatomic, strong) FMVisitViewModel  *adapter;
+
+@property (nonatomic, assign) NSInteger      enterTime;
+@property (nonatomic, strong) FMAddressModel *myAddress;
+@property (nonatomic, copy ) NSString  *visitImages; //拜访图片
+@property (nonatomic, copy ) NSString  *visitSummary; //拜访总结
+@property (nonatomic, copy ) NSString  *competitorDesc; //竞品上报说明
+@property (nonatomic, copy ) NSString  *competitorImages; //竞品上报图片
+
 
 @end
 
@@ -39,8 +48,12 @@
         [self.expandArray addObject:@"0"];
     }
     
+    NSString *currentDate = [NSDate currentDateTimeWithFormat:@"yyyy-MM-dd HH:mm:ss"];
+    self.enterTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:currentDate format:@"yyyy-MM-dd HH:mm:ss"];
+    
     [self setupUI];
     [self loadMainData];
+    [self refreshLocation];
 }
 
 
@@ -52,9 +65,9 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if ([self.expandArray[section] isEqualToString:@"1"]) {
         if (section == 1) {
-            return self.goodsArray.count;
+            return [self.adapter numberOfGoodsList];
         } else if (section == 2) {
-            return self.stockArray.count;
+            return [self.adapter numberOfStockGoodsList];
         } else {
             return 1;
         }
@@ -94,22 +107,24 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
         FMVisitTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMVisitTableViewCell identifier] forIndexPath:indexPath];
+        cell.cellDelegate = self;
         return cell;
     } else if (indexPath.section == 1 || indexPath.section == 2) {
         FMMainGoodsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMMainGoodsTableViewCell identifier] forIndexPath:indexPath];
+        cell.cellDelegate = self;
         FMGoodsModel *model;
         if (indexPath.section == 1) {
-            cell.isStock = NO;
-            model = self.goodsArray[indexPath.row];
+            model = [self.adapter getGoodsModelWithIndex:indexPath.row];
         } else {
-            cell.isStock = YES;
-            model = self.stockArray[indexPath.row];
+            model = [self.adapter getStockGoodsModelWithIndex:indexPath.row];
         }
         [cell fillContentWithData:model];
         return cell;
     } else {
         FMCompetitorTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[FMCompetitorTableViewCell identifier] forIndexPath:indexPath];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.cellDelegate = self;
+        cell.goodsArray = [self.adapter getAllCompeteGoodsList];
         return cell;
     }
 }
@@ -118,7 +133,8 @@
     if (indexPath.section == 0) {
         return 300;
     } else if (indexPath.section == 3) {
-        return 440;
+        NSArray *arr = [self.adapter getAllCompeteGoodsList];
+        return 200 + arr.count *140;
     } else {
         return 100;
     }
@@ -131,6 +147,45 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     return 0.01;
 }
+
+#pragma mark -- Delegate
+#pragma mark FMVisitTableViewCellDelegate
+#pragma mark 添加拜访图片
+- (void)visitTableViewCellDidUploadImages:(NSArray *)images {
+    if (images.count > 0) {
+        self.visitImages = [images componentsJoinedByString:@","];
+    }
+}
+
+#pragma mark 拜访总结
+- (void)visitTableViewCellDidEndEditWithText:(NSString *)text {
+    self.visitSummary = text;
+}
+
+#pragma mark FMMainGoodsTableViewCellDelegate
+#pragma mark 设置商品数量
+- (void)mainGoodsTableViewCellDidUpdateQuantityWithGoods:(FMGoodsModel *)model {
+    [self.adapter replaceGoodsModelWithNewGoods:model];
+}
+
+#pragma mark FMCompetitorTableViewCellDelegate
+#pragma mark 设置竞品数量
+- (void)competitorTableViewCellDidUpdateGoods:(FMGoodsModel *)model {
+    [self.adapter replaceCompetitorGoodsModelWithNewGoods:model];
+}
+
+#pragma mark 竞品上报说明
+- (void)competitorTableViewCellDidEndEditWithText:(NSString *)text {
+    self.competitorDesc = text;
+}
+
+#pragma mark 竞品上报图片
+- (void)competitorTableViewCellDidUploadImages:(NSArray *)images {
+    if (images.count > 0) {
+        self.competitorImages = [images componentsJoinedByString:@","];
+    }
+}
+
 
 #pragma mark -- Events response
 #pragma mark 展开折叠
@@ -147,22 +202,69 @@
 
 #pragma mark 离店
 - (void)leaveAction:(UIButton *)sener {
+    //拜访记录信息
+    NSMutableDictionary *visitRecordInfo = [NSMutableDictionary dictionary];
+    [visitRecordInfo safe_setValue:self.visitImages forKey:@"images"];
+    [visitRecordInfo safe_setValue:self.visitSummary forKey:@"summary"];
+    [visitRecordInfo safe_setValue:self.myAddress.detailAddress forKey:@"address"];
+    [visitRecordInfo safe_setValue:@(self.myAddress.latitude) forKey:@"latitude"];
+    [visitRecordInfo safe_setValue:@(self.myAddress.longitude) forKey:@"longitude"];
+    [visitRecordInfo safe_setValue:@(self.customer.customerId) forKey:@"customerId"];
+    [visitRecordInfo safe_setValue:@(self.enterTime) forKey:@"enterTime"];
+    NSString *outTimeStr = [NSDate currentDateTimeWithFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSInteger outTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:outTimeStr format:@"yyyy-MM-dd HH:mm:ss"];
+    [visitRecordInfo safe_setValue:@(outTime) forKey:@"outTime"];
     
+    //商品信息
+    NSMutableDictionary *goodSellInfo = [NSMutableDictionary dictionary];
+    NSInteger goodsCount = [self.adapter numberOfGoodsList];
+    for (NSInteger i=0; i<goodsCount; i++) {
+        FMGoodsModel *model = [self.adapter getGoodsModelWithIndex:i];
+        if (model.quantity > 0) {
+            [goodSellInfo safe_setValue:@(model.quantity) forKey:[NSString stringWithFormat:@"%ld",model.goodsId]];
+        }
+    }
+    MyLog(@"goodSellInfo:%@",goodSellInfo);
+    
+    //库存信息
+    NSMutableArray *goodStockInfo = [[NSMutableArray alloc] init];
+    
+    
+    
+    //
+    
+    MyLog(@"visitRecordInfo:%@",visitRecordInfo);
 }
 
 #pragma mark -- Private methods
 #pragma mark 加载数据
 - (void)loadMainData {
-    NSMutableArray *tempArr = [[NSMutableArray alloc] init];
-    NSArray *arr = @[@"口味王槟榔",@"口味王-和成天下",@"口味王槟榔",];
-    for (NSInteger i=0; i<arr.count; i++) {
-        FMGoodsModel *model = [[FMGoodsModel alloc] init];
-        model.name = arr[i];
-        model.stock = 2000;
-        [tempArr addObject:model];
-    }
-    self.goodsArray = self.stockArray = tempArr;
-    [self.mainTableView reloadData];
+    kSelfWeak;
+    [self.adapter loadEmployeeGoodsListWithComplete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            [weakSelf.mainTableView reloadData];
+        }
+    }];
+    
+    [self.adapter loadSalesGoodsListWithComplete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            [weakSelf.mainTableView reloadData];
+        }
+    }];
+    
+    [self.adapter loadCompeteGoodsListWithComplete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            [weakSelf.mainTableView reloadData];
+        }
+    }];
+}
+
+#pragma mark 定位
+- (void)refreshLocation {
+    kSelfWeak;
+    [[FMLocationManager sharedInstance] getAddressDetail:^(FMAddressModel *addressModel) {
+        weakSelf.myAddress = addressModel;
+    }];
 }
 
 #pragma mark 界面初始化
@@ -221,7 +323,6 @@
         _mainTableView.dataSource = self;
         _mainTableView.delegate = self;
         _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//        _mainTableView.backgroundColor = [UIColor whiteColor];
         _mainTableView.tableHeaderView = self.headerView;
         _mainTableView.tableFooterView = self.leaveView;
        NSArray* _tableCardsClsName = @[@"FMVisitTableViewCell",
@@ -243,18 +344,11 @@
     return _expandArray;
 }
 
-- (NSMutableArray *)goodsArray {
-    if (!_goodsArray) {
-        _goodsArray = [[NSMutableArray alloc] init];
+- (FMVisitViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMVisitViewModel alloc] init];
     }
-    return _goodsArray;
-}
-
-- (NSMutableArray *)stockArray {
-    if (!_stockArray) {
-        _stockArray = [[NSMutableArray alloc] init];
-    }
-    return _stockArray;
+    return _adapter;
 }
 
 @end

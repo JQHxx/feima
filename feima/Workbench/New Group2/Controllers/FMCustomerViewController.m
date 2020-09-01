@@ -10,6 +10,7 @@
 #import "FMAddCustomerViewController.h"
 #import "FMCustomerDetailsViewController.h"
 #import "FMStatisticsViewController.h"
+#import "FMHomepageViewController.h"
 #import "FMSearchViewController.h"
 #import "FMCustomerTableViewCell.h"
 #import "FMCustomerModel.h"
@@ -31,6 +32,7 @@
 @property (nonatomic,  copy ) NSString       *contactName;
 @property (nonatomic, assign) double  longitude;
 @property (nonatomic, assign) double  latitude;
+@property (nonatomic, copy ) NSString *selType;
 
 @end
 
@@ -39,6 +41,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.baseTitle = self.isShowList ? @"客户分布" : @"客户管理";
+    
+    self.selType = @"全部";
+    self.visitCode = 0;
     
     [self setupUI];
     [self loadData];
@@ -60,9 +65,16 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     FMCustomerModel *model = [self.adapter getCustomerModelWithIndex:indexPath.row];
     if (self.isShowList) {
-        FMStatisticsViewController *statisticsVC = [[FMStatisticsViewController alloc] init];
-        statisticsVC.customer = model;
-        [self.navigationController pushViewController:statisticsVC animated:YES];
+        NSInteger postId = [FeimaManager sharedFeimaManager].userBean.users.postId;
+        if (postId == 5 ) {
+            FMHomepageViewController *homeVC = [[FMHomepageViewController alloc] init];
+            homeVC.customer = model;
+            [self.navigationController pushViewController:homeVC animated:YES];
+        } else {
+            FMStatisticsViewController *statisticsVC = [[FMStatisticsViewController alloc] init];
+            statisticsVC.customer = model;
+            [self.navigationController pushViewController:statisticsVC animated:YES];
+        }
     } else {
         FMCustomerDetailsViewController *customerVC = [[FMCustomerDetailsViewController alloc] init];
         customerVC.customer = model;
@@ -79,16 +91,12 @@
 
 #pragma mark 筛选
 - (void)filterAction:(UIButton *)sender {
-    NSArray *titles = @[@"未拜访",@"已拜访"];
+    NSArray *titles = @[@"全部",@"未拜访",@"已拜访"];
     kSelfWeak;
-    [BRStringPickerView showStringPickerWithTitle:@"筛选" dataSource:titles defaultSelValue:nil isAutoSelect:NO resultBlock:^(id selectValue) {
-        weakSelf.visitCode = [titles indexOfObject:selectValue] + 1;
-        if (weakSelf.customersArray.count > 0) {
-            [weakSelf.adapter filterCustomersWithVisitCode:weakSelf.visitCode];
-            [weakSelf.customerTableView reloadData];
-        } else {
-            [weakSelf loadNewCustomersData];
-        }
+    [BRStringPickerView showStringPickerWithTitle:@"筛选" dataSource:titles defaultSelValue:self.selType isAutoSelect:NO resultBlock:^(id selectValue) {
+        weakSelf.selType = selectValue;
+        weakSelf.visitCode = [titles indexOfObject:selectValue];
+        [weakSelf loadNewCustomersData];
     }];
 }
 
@@ -98,12 +106,7 @@
     kSelfWeak;
     searchVC.didClickSearch = ^(NSString *keyword) {
         weakSelf.contactName = keyword;
-        if (weakSelf.customersArray.count > 0) {
-            [weakSelf.adapter seachCustomersWithKeyword:keyword];
-            [weakSelf.customerTableView reloadData];
-        } else {
-            [weakSelf loadNewCustomersData];
-        }
+        [weakSelf loadNewCustomersData];
     };
     [self.navigationController pushViewController:searchVC animated:YES];
 }
@@ -114,12 +117,7 @@
     if (self.isShowList) {
         [self refreshLcation];
     } else {
-        if (self.customersArray.count > 0) {
-            [self.adapter insertCustomersList:self.customersArray];
-            [self.customerTableView reloadData];
-        } else {
-            [self.customerTableView.mj_header beginRefreshing];
-        }
+        [self.customerTableView.mj_header beginRefreshing];
     }
 }
 

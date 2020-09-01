@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,assign) BOOL        isHiddenNavBar;       //隐藏导航栏
 @property (nonatomic , copy ) NSString    *baseTitle;           //标题
 
+
 @end
 
 NS_ASSUME_NONNULL_END

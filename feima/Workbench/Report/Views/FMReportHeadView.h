@@ -22,9 +22,14 @@
 
 @property (nonatomic, weak ) id<FMReportHeadViewDelegate>delegate;
 
+//个人销售报表
 - (void)displayViewWithTimeData:(FMTimeDataModel *)timeData;
 
+//部门销售报表
 - (void)displayViewWithTimeData:(FMTimeDataModel *)timeData salesData:(FMSalesDataModel *)salesData;
+
+//产品销售报表
+- (void)goodsSalesViewFillGoodsSalesData:(NSArray <FMGoodsSalesDataModel *> *)goodsSalesData salesData:(FMSalesDataModel *)salesData;
 
 @end
 

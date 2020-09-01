@@ -191,6 +191,7 @@
         [_toWorkBtn setTitleColor:[UIColor systemColor] forState:UIControlStateNormal];
         _toWorkBtn.titleLabel.font = [UIFont mediumFontWithSize:16];
         _toWorkBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+        _toWorkBtn.adjustsImageWhenHighlighted = NO;
         [_toWorkBtn setCircleCorner:UIRectCornerTopLeft | UIRectCornerBottomLeft radius:25];
         [_toWorkBtn addTarget:self action:@selector(clockInAction:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -207,6 +208,7 @@
         [_offWorkBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         _offWorkBtn.titleLabel.font = [UIFont mediumFontWithSize:16];
         _offWorkBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+        _offWorkBtn.adjustsImageWhenHighlighted = NO;
         [_offWorkBtn setCircleCorner:UIRectCornerTopRight | UIRectCornerBottomRight radius:25];
         [_offWorkBtn addTarget:self action:@selector(clockInAction:) forControlEvents:UIControlEventTouchUpInside];
     }

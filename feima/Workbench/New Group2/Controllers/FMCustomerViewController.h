@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FMCustomerViewController : BaseViewController
 
 @property (nonatomic,assign) BOOL  isShowList;
-@property (nonatomic,strong) NSMutableArray *customersArray;
 
 @end
 

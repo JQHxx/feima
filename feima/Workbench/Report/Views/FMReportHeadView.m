@@ -9,16 +9,20 @@
 #import "FMReportHeadView.h"
 #import "FMTimeProgressView.h"
 #import "FMSalesProgressView.h"
-#import "FMCompetitorDataView.h"
 #import "CustomDatePickerView.h"
+#import "XYPieChart.h"
 
-@interface FMReportHeadView ()
+@interface FMReportHeadView ()<XYPieChartDataSource>
 
 @property (nonatomic, strong) UIView     *rootView;
 @property (nonatomic, strong) UILabel    *timeTitleLab;
 @property (nonatomic, strong) UILabel    *timeLab;
+@property (nonatomic, strong) XYPieChart *pieChart;
 
-@property (nonatomic, copy ) NSString    *defaultMonth;
+@property (nonatomic,  copy ) NSArray  <FMGoodsSalesDataModel *> *goodsSalesData;
+@property (nonatomic, strong) NSMutableArray *slicesArray;
+@property (nonatomic, strong) NSMutableArray *colorsArray;
+@property (nonatomic,  copy ) NSString    *defaultMonth;
 
 @end
 
@@ -55,7 +59,7 @@
         }
     }
     
-    FMTimeProgressView *timeProgressView = [[FMTimeProgressView alloc] initWithFrame:CGRectMake((kScreen_Width-154)/2.0, 45, 154, 140)];
+    FMTimeProgressView *timeProgressView = [[FMTimeProgressView alloc] initWithFrame:CGRectMake((kScreen_Width-154)/2.0, 45, 154, 160)];
     timeProgressView.progress = timeData.progress;
     timeProgressView.valueStr = [NSString stringWithFormat:@"%ld天",timeData.day];
     [self.rootView addSubview:timeProgressView];
@@ -73,18 +77,68 @@
         }
     }
     
-    FMTimeProgressView *timeProgressView = [[FMTimeProgressView alloc] initWithFrame:CGRectMake(36, 45, 154, 140)];
+    FMTimeProgressView *timeProgressView = [[FMTimeProgressView alloc] initWithFrame:CGRectMake(36, 45, 154, 160)];
     timeProgressView.progress = timeData.progress;
     timeProgressView.valueStr = [NSString stringWithFormat:@"%ld天",timeData.day];
     [self.rootView addSubview:timeProgressView];
     [timeProgressView startRendering];
     
-    FMSalesProgressView *saleProgressView = [[FMSalesProgressView alloc] initWithFrame:CGRectMake(kScreen_Width/2.0+26, 45, 154, 140)];
+    FMSalesProgressView *saleProgressView = [[FMSalesProgressView alloc] initWithFrame:CGRectMake(kScreen_Width/2.0+26, 45, 154, 160)];
     saleProgressView.progress = (double)(salesData.thisSalesSum/(salesData.thisSalesSum+salesData.lastSalesSum));
     saleProgressView.progressStr = [NSString stringWithFormat:@"%.2f%%",salesData.progress];
     saleProgressView.valueStr = [NSString stringWithFormat:@"%.2f万包",salesData.thisSalesSum];
     [self.rootView addSubview:saleProgressView];
     [saleProgressView startRendering];
+}
+
+#pragma mark 产品销售报表
+- (void)goodsSalesViewFillGoodsSalesData:(NSArray<FMGoodsSalesDataModel *> *)goodsSalesData salesData:(FMSalesDataModel *)salesData {
+    for (UIView *aView in self.rootView.subviews) {
+        if ([aView isKindOfClass:[FMSalesProgressView class]]) {
+            [aView removeFromSuperview];
+        }
+    }
+    self.goodsSalesData = goodsSalesData;
+    NSMutableArray *datas = [[NSMutableArray alloc] init];
+    NSMutableArray *colors = [[NSMutableArray alloc] init];
+    for (NSInteger i=0; i<goodsSalesData.count; i++) {
+        FMGoodsSalesDataModel *model = [goodsSalesData safe_objectAtIndex:i];
+        NSNumber *num = [NSNumber numberWithDouble:model.progress];
+        [datas addObject:num];
+        
+        UIColor *getColor = [[FeimaManager sharedFeimaManager].myColors safe_objectAtIndex:i];
+        [colors addObject:getColor];
+    }
+    self.slicesArray = datas;
+    self.colorsArray = colors;
+    [self.pieChart reloadData];
+    
+    
+    FMSalesProgressView *saleProgressView = [[FMSalesProgressView alloc] initWithFrame:CGRectMake(kScreen_Width/2.0+26, 45, 154, 160)];
+    saleProgressView.progress = (double)(salesData.thisSalesSum/(salesData.thisSalesSum+salesData.lastSalesSum));
+    saleProgressView.progressStr = [NSString stringWithFormat:@"%.2f%%",salesData.progress];
+    saleProgressView.valueStr = [NSString stringWithFormat:@"%.2f万包",salesData.thisSalesSum];
+    [self.rootView addSubview:saleProgressView];
+    [saleProgressView startRendering];
+}
+
+#pragma mark -- XYPieChartDataSource
+- (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart {
+    return self.slicesArray.count;
+}
+
+- (CGFloat)pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index {
+    return [[self.slicesArray safe_objectAtIndex:index] doubleValue];
+}
+
+- (UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index {
+    return [self.colorsArray safe_objectAtIndex:index];
+}
+
+- (NSString *)pieChart:(XYPieChart *)pieChart textForSliceAtIndex:(NSUInteger)index {
+    FMGoodsSalesDataModel *model = [self.goodsSalesData safe_objectAtIndex:index];
+    NSString *text = [NSString stringWithFormat:@"%@\n%.1f%%",model.goodsName,[[self.slicesArray safe_objectAtIndex:index] doubleValue]];
+    return text;
 }
 
 #pragma mark -- Private methods
@@ -124,7 +178,7 @@
     [self.rootView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.mas_equalTo(0);
         make.top.mas_equalTo(7);
-        make.size.mas_equalTo(CGSizeMake(kScreen_Width-16, 182));
+        make.size.mas_equalTo(CGSizeMake(kScreen_Width-16, 192));
     }];
     
     [self.rootView addSubview:self.timeTitleLab];
@@ -142,6 +196,8 @@
         make.height.mas_equalTo(22);
         make.width.mas_equalTo(labW+20);
     }];
+    
+    [self.rootView addSubview:self.pieChart];
 }
 
 #pragma mark -- Getters
@@ -182,6 +238,20 @@
         [_timeLab addTapPressed:@selector(chooseTimeAction) target:self];
     }
     return _timeLab;
+}
+
+#pragma mark 饼图
+- (XYPieChart *)pieChart {
+    if (!_pieChart) {
+        _pieChart = [[XYPieChart alloc] initWithFrame:CGRectMake(20, 45, 140, 140) Center:CGPointMake(70, 60) Radius:45];
+        _pieChart.dataSource = self;
+        _pieChart.startPieAngle = -M_PI_2;
+        _pieChart.labelRadius = 65;
+        _pieChart.showPercentage = NO;
+        _pieChart.labelColor = [UIColor colorWithHexString:@"#666666"];
+        _pieChart.labelFont = [UIFont regularFontWithSize:10];
+    }
+    return _pieChart;
 }
 
 @end

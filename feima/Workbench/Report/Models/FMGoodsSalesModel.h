@@ -8,33 +8,37 @@
 
 #import "BaseModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface FMGoodsSalesModel : BaseModel
+@interface FMReportGoodsModel : BaseModel
 
 @property (nonatomic, assign) NSInteger  goodsId;
 @property (nonatomic,  copy ) NSString   *goodsName;
-@property (nonatomic, assign) NSInteger  sales;
-@property (nonatomic, assign) double     progress;
-@property (nonatomic, assign) NSInteger  salesSum;
-
-@property (nonatomic, assign) double  lastSales;
-@property (nonatomic, assign) double  lastSalesSum;
-@property (nonatomic, assign) double  lastSalesSumProgress;
-@property (nonatomic, assign) double  thisSales;
-@property (nonatomic, assign) double  thisSalesSum;
-@property (nonatomic, assign) double  thisSalesSumProgress;
-
+@property (nonatomic, assign) double     lastSales;
+@property (nonatomic, assign) double     lastSalesSum;
+@property (nonatomic, assign) double     lastSalesSumProgress;
+@property (nonatomic, assign) double     thisSales;
+@property (nonatomic, assign) double     thisSalesSum;
+@property (nonatomic, assign) double     thisSalesSumProgress;
 
 @end
 
-@interface FMEmployeeGoodsModel : BaseModel
+@interface FMGoodsSalesModel : BaseModel
 
 @property (nonatomic, assign) NSInteger  employeeId;
 @property (nonatomic,  copy ) NSString   *employeeName;
-@property (nonatomic, strong) NSArray <FMGoodsSalesModel *>  *goods;
+@property (nonatomic, assign) NSInteger  organizationId;
+@property (nonatomic,  copy ) NSString   *organizationName;
+@property (nonatomic, strong) NSArray    <FMReportGoodsModel *>  *goods;
+
 
 @end
 
+@interface FMGoodsSalesDataModel : BaseModel
 
-NS_ASSUME_NONNULL_END
+@property (nonatomic, assign) NSInteger  goodsId;
+@property (nonatomic,  copy ) NSString   *goodsName;
+@property (nonatomic, assign) double     sales;
+@property (nonatomic, assign) double     progress;
+@property (nonatomic, assign) double     salesSum;
+
+@end
+

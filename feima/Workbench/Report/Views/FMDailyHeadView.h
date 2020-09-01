@@ -9,12 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "FMDailyReportModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+typedef void(^SelectedDateBlock)(NSInteger time);
+typedef void(^SelectedOrganizationBlock)(NSInteger organizationId);
 
 @interface FMDailyHeadView : UIView
+
+@property (nonatomic, copy ) SelectedDateBlock selDateBlock;
+@property (nonatomic, copy ) SelectedOrganizationBlock selOrganiztionBlock;
 
 - (void)fillDataWithFigure:(FMDailyFigureModel *)figureModel statusModel:(FMDailyStatusModel *)statusModel;
 
 @end
 
-NS_ASSUME_NONNULL_END

@@ -25,14 +25,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.baseTitle = @"设置";
-    titlesArr = @[@"修改密码",@"更改手机号"];
+    titlesArr = @[@"修改密码",@"更改手机号",@"版本号"];
     self.adapter = [[FMLoginViewModel alloc] init];
     
     [self.view addSubview:self.setTableView];
     [self.setTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(0);
         make.top.mas_equalTo(kNavBar_Height);
-        make.height.mas_equalTo(106);
+        make.height.mas_equalTo(159);
     }];
     
     [self.view addSubview:self.logoutBtn];
@@ -53,6 +53,13 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.textLabel.text = titlesArr[indexPath.row];
+    if (indexPath.row == 1) {
+        cell.detailTextLabel.text = [FeimaManager sharedFeimaManager].userBean.users.telephone;
+    } else if (indexPath.row == 2) {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+        cell.detailTextLabel.text = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
+    }
     return cell;
 }
 

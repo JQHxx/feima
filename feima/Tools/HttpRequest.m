@@ -138,9 +138,9 @@ static id _instance = nil;
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         MyLog(@"postWithUrl:%@,error:%@",urlStr,error);
-        if (error.code == -1011) {
-            [[FeimaManager sharedFeimaManager] logout];
-        }
+//        if (error.code == -1011) {
+//            [[FeimaManager sharedFeimaManager] logout];
+//        }
         complete(NO,nil,error);
     }];
 }
@@ -187,10 +187,10 @@ static id _instance = nil;
             }
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        MyLog(@"postWithUrl:%@,error:%@",urlStr,error);
-        if (error.code == -1011) {
-            [[FeimaManager sharedFeimaManager] logout];
-        }
+        MyLog(@"getWithUrl:%@,error:%@",urlStr,error);
+//        if (error.code == -1011) {
+//            [[FeimaManager sharedFeimaManager] logout];
+//        }
         complete(NO,nil,error);
     }];
 }

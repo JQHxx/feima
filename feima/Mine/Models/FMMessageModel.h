@@ -9,8 +9,6 @@
 #import "BaseModel.h"
 #import "FMEmployeeModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface FMMessageModel : BaseModel
 
 @property (nonatomic,  copy ) NSString  *message;
@@ -18,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger messageType;
 @property (nonatomic,  copy ) NSString  *organizationName;
 @property (nonatomic,  copy ) NSString  *statusName;
+@property (nonatomic, assign) NSInteger status;
 @property (nonatomic,  copy ) NSString  *typeName;
 @property (nonatomic, assign) NSInteger toEmployeeId;
 @property (nonatomic, strong) FMEmployeeModel  *employee;
@@ -25,4 +24,3 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END

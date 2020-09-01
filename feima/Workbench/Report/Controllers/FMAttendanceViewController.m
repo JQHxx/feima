@@ -7,15 +7,16 @@
 //
 
 #import "FMAttendanceViewController.h"
-#import "FMDailyViewController.h"
-#import "FMMonthyViewController.h"
 #import "FMDailyDetailsViewController.h"
+#import "FMDailyReportTableView.h"
+#import "FMMonthyReportTableView.h"
 
-@interface FMAttendanceViewController ()<FMDailyViewControllerDelegate>
+@interface FMAttendanceViewController ()<FMDailyReportTableViewDelegate>
 
-@property (nonatomic, strong) UISegmentedControl *segmentedControl;
-@property (nonatomic, strong) FMDailyViewController  *dailyVC;
-@property (nonatomic, strong) FMMonthyViewController *monthVC;
+@property (nonatomic, strong) UISegmentedControl      *segmentedControl;
+@property (nonatomic, strong) UIScrollView            *rootScrollView;
+@property (nonatomic, strong) FMDailyReportTableView  *dailyTableView;
+@property (nonatomic, strong) FMMonthyReportTableView *monthyTableView;
 
 @end
 
@@ -31,26 +32,20 @@
 #pragma mark --
 - (void)selectedSegementAction:(UISegmentedControl *)control {
     if (control.selectedSegmentIndex == 1) {
-        if (self.dailyVC) {
-            [self.dailyVC.view removeFromSuperview];
-            self.dailyVC = nil;
+        if (!self.monthyTableView) {
+            self.monthyTableView = [[FMMonthyReportTableView alloc] initWithFrame:CGRectMake(kScreen_Width+10, 0, kScreen_Width-20, kScreen_Height-kNavBar_Height)];
+            [self.rootScrollView addSubview:self.monthyTableView];
         }
-        [self.view addSubview:self.monthVC.view];
-    } else {
-        if (self.monthVC) {
-            [self.monthVC.view removeFromSuperview];
-            self.monthVC = nil;
-        }
-        [self.view addSubview:self.dailyVC.view];
     }
+    [self.rootScrollView setContentOffset:CGPointMake(kScreen_Width*control.selectedSegmentIndex, 0)];
 }
 
 #pragma mark -- Delegate
-#pragma mark FMDailyViewControllerDelegate
+#pragma mark FMDailyReportTableViewDelegate
 #pragma mark 查看打卡详情
-- (void)dailyViewControllerDidSelectedRowWithModel:(FMDailyReportModel *)model {
+- (void)dailyReportTableViewDidSelectedRowWithModel:(FMDailyReportModel *)dailyModel {
     FMDailyDetailsViewController *dailyDetailsVC = [[FMDailyDetailsViewController alloc] init];
-    dailyDetailsVC.reportModel = model;
+    dailyDetailsVC.reportModel = dailyModel;
     [self.navigationController pushViewController:dailyDetailsVC animated:YES];
 }
 
@@ -64,7 +59,21 @@
         make.size.mas_equalTo(CGSizeMake(150, 40));
     }];
     
-    [self.view addSubview:self.dailyVC.view];
+    [self.view addSubview:self.rootScrollView];
+    [self.rootScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(kNavBar_Height);
+        make.left.right.mas_equalTo(0);
+        make.height.mas_equalTo(kScreen_Height-kNavBar_Height);
+    }];
+    
+    [self.rootScrollView addSubview:self.dailyTableView];
+    [self.dailyTableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(0);
+        make.left.mas_equalTo(10);
+        make.height.mas_equalTo(self.rootScrollView.mas_height);
+        make.width.mas_equalTo(kScreen_Width-20);
+    }];
+    
 }
 
 #pragma mark -- Getters
@@ -80,21 +89,25 @@
     return _segmentedControl;
 }
 
-- (FMDailyViewController *)dailyVC {
-    if (!_dailyVC) {
-        _dailyVC = [[FMDailyViewController alloc] init];
-        _dailyVC.view.frame = CGRectMake(0, kNavBar_Height, kScreen_Width, kScreen_Height-kNavBar_Height);
-        _dailyVC.controlerDelegate = self;
+#pragma mark
+- (UIScrollView *)rootScrollView {
+    if (!_rootScrollView) {
+        _rootScrollView = [[UIScrollView alloc] init];
+        _rootScrollView.showsHorizontalScrollIndicator = NO;
+        _rootScrollView.scrollEnabled = NO;
+        [_rootScrollView setContentSize:CGSizeMake(kScreen_Width*2, kScreen_Height-kNavBar_Height)];
     }
-    return _dailyVC;
+    return _rootScrollView;
 }
 
-- (FMMonthyViewController *)monthVC {
-    if (!_monthVC) {
-        _monthVC = [[FMMonthyViewController alloc] init];
-        _monthVC.view.frame = CGRectMake(0, kNavBar_Height, kScreen_Width, kScreen_Height-kNavBar_Height);
+#pragma mark 日报表
+- (FMDailyReportTableView *)dailyTableView {
+    if (!_dailyTableView) {
+        _dailyTableView = [[FMDailyReportTableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        _dailyTableView.viewDelegate = self;
     }
-    return _monthVC;
+    return _dailyTableView;
 }
+
 
 @end

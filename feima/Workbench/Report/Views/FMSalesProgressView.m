@@ -8,7 +8,7 @@
 
 #import "FMSalesProgressView.h"
 
-#define kCirleRadius 84
+#define kCirleRadius 94
 
 @interface FMSalesProgressView ()
 

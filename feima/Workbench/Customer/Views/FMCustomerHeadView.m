@@ -17,6 +17,8 @@
 @property (nonatomic,strong) UILabel  *contactLabel;
 @property (nonatomic,strong) UIButton *phoneBtn;
 
+@property (nonatomic,strong) FMCustomerModel *model;
+
 @end
 
 @implementation FMCustomerHeadView
@@ -32,6 +34,7 @@
 #pragma mark -- Public methods
 #pragma mark 填充数据
 - (void)displayViewWithData:(FMCustomerModel *)model {
+    self.model = model;
     self.nameLabel.text = model.businessName;
     self.addressLabel.text = model.address;
     self.contactLabel.text = model.contactName;
@@ -39,6 +42,11 @@
     [self.contactLabel mas_updateConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(labW+20);
     }];
+}
+
+#pragma mark -- Event
+- (void)callAction:(UIButton *)sender {
+    [[FeimaManager sharedFeimaManager] callPhoneWithNumber:self.model.telephone];
 }
 
 #pragma mark -- Private methods
@@ -153,6 +161,7 @@
         [_phoneBtn setImage:[UIImage drawImageWithName:@"contact_phone" size:CGSizeMake(20, 20)] forState:UIControlStateNormal];
         _phoneBtn.layer.cornerRadius = 13;
         _phoneBtn.clipsToBounds = YES;
+        [_phoneBtn addTarget:self action:@selector(callAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _phoneBtn;
 }

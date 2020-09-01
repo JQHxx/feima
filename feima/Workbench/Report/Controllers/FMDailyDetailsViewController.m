@@ -7,6 +7,7 @@
 //
 
 #import "FMDailyDetailsViewController.h"
+#import "FMImageCollectionView.h"
 
 @interface FMDailyDetailsViewController ()<UITableViewDataSource,UITableViewDelegate>
 
@@ -48,9 +49,12 @@
     if (indexPath.row == 4) {
         cell.textLabel.text = @"照片：";
         
-        UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(75, 15, 72, 84)];
-        imgView.backgroundColor = [UIColor lineColor];
-        [cell.contentView addSubview:imgView];
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        FMImageCollectionView *photoView = [[FMImageCollectionView alloc] initWithFrame:CGRectMake(75, 10, kScreen_Width-85, 74) collectionViewLayout:layout];
+        [cell.contentView addSubview:photoView];
+        if (!kIsEmptyString(self.reportModel.images)) {
+            photoView.images = [self.reportModel.images componentsSeparatedByString:@","];
+        }
     } else {
         NSArray *texts = @[[NSString stringWithFormat:@"部门：%@",self.reportModel.organizationName],[NSString stringWithFormat:@"类型：%@",self.reportModel.punchTypeName],[NSString stringWithFormat:@"时间：%@",self.reportModel.punchSecondTimeStr],[NSString stringWithFormat:@"地点：%@",self.reportModel.address]];
         cell.textLabel.text = texts[indexPath.row];
@@ -60,9 +64,11 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 4) {
-        return 114;
+        return 94;
+    } else if (indexPath.row == 3) {
+        return 80;
     } else {
-        return 50;
+        return 60;
     }
 }
 
@@ -74,7 +80,7 @@
 #pragma mark 打卡详情
 - (UITableView *)myTableView {
     if (!_myTableView) {
-        _myTableView = [[UITableView alloc] initWithFrame:CGRectMake(8,kNavBar_Height+8, kScreen_Width-16, 364) style:UITableViewStylePlain];
+        _myTableView = [[UITableView alloc] initWithFrame:CGRectMake(8,kNavBar_Height+8, kScreen_Width-16, 384) style:UITableViewStylePlain];
         _myTableView.showsVerticalScrollIndicator = NO;
         _myTableView.dataSource = self;
         _myTableView.delegate = self;

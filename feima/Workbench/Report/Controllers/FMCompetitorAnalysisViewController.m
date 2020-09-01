@@ -100,7 +100,7 @@
 #pragma mark 头部视图
 - (FMCompetitorDataHeadView *)headView {
     if (!_headView) {
-        _headView = [[FMCompetitorDataHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-16, 260)];
+        _headView = [[FMCompetitorDataHeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-16, 220)];
         kSelfWeak;
         _headView.selDateBlock = ^(NSInteger time) {
             weakSelf.selTime = time;

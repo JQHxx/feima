@@ -8,6 +8,7 @@
 
 #import "FMMineViewController.h"
 #import "FMUserInfoViewController.h"
+#import "FMMessageViewModel.h"
 #import "FMHeadView.h"
 #import "FMMineTableViewCell.h"
 
@@ -19,6 +20,7 @@
 
 @property (nonatomic,strong) FMHeadView  *headView;
 @property (nonatomic,strong) UITableView *mineTableView;
+@property (nonatomic,strong) FMMessageViewModel *adapter;
 
 @end
 
@@ -35,6 +37,11 @@
     [self.view addSubview:self.mineTableView];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self loadUnreadMessagesCount];
+}
+
 #pragma mark UITableViewDelegate and UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return titlesArr.count;
@@ -45,6 +52,9 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.iconImgView.image = ImageNamed(imagesArr[indexPath.row]);
     cell.titleLabel.text = titlesArr[indexPath.row];
+    if (indexPath.row == 0) {
+        cell.messagesCount = self.adapter.messagesCount;
+    }
     return cell;
 }
 
@@ -56,7 +66,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 68;
+    return 78;
 }
 
 #pragma mark -- Event response
@@ -64,6 +74,15 @@
 - (void)userInfoAction:(UITapGestureRecognizer *)sender {
     FMUserInfoViewController *userInfoVC = [[FMUserInfoViewController alloc] init];
     [self.navigationController pushViewController:userInfoVC animated:YES];
+}
+
+#pragma mark 获取未读消息数
+- (void)loadUnreadMessagesCount  {
+    [self.adapter loadMessagesUnreadCountComplete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            [self.mineTableView reloadData];
+        }
+    }];
 }
 
 #pragma mark -- Getters
@@ -97,5 +116,11 @@
     return _mineTableView;
 }
 
+- (FMMessageViewModel *)adapter {
+    if (!_adapter) {
+        _adapter = [[FMMessageViewModel alloc] init];
+    }
+    return _adapter;
+}
 
 @end

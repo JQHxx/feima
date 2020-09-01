@@ -7,12 +7,28 @@
 //
 
 #import "BaseTableViewCell.h"
+#import "FMGoodsModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@protocol FMCompetitorTableViewCellDelegate <NSObject>
+
+//跟新商品
+- (void)competitorTableViewCellDidUpdateGoods:(FMGoodsModel *)model;
+
+//上传图片
+- (void)competitorTableViewCellDidUploadImages:(NSArray *)images;
+
+//说明
+- (void)competitorTableViewCellDidEndEditWithText:(NSString *)text;
+
+@end
+
 
 @interface FMCompetitorTableViewCell : BaseTableViewCell
+
+@property (nonatomic, weak ) id<FMCompetitorTableViewCellDelegate>cellDelegate;
+@property (nonatomic, copy ) NSArray <FMGoodsModel *> *goodsArray;
+
 
 
 @end
 
-NS_ASSUME_NONNULL_END

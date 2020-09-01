@@ -35,6 +35,7 @@
 - (instancetype)initWithFrame:(CGRect)frame type:(FMDateToolViewType)type {
     self = [super initWithFrame:frame];
     if (self) {
+        self.backgroundColor = [UIColor whiteColor];
         self.type = type;
         
         self.selDate = [NSDate currentDateTimeWithFormat:self.type == FMDateToolViewTypeMonth ? @"yyyy-MM":@"yyyy.MM.dd"];
@@ -72,13 +73,14 @@
     NSDate *newDate = [calendar dateByAddingComponents:lastMonthComps toDate:currentDate options:0];
     self.selDate = [formatter stringFromDate:newDate];
     
+    MyLog(@"selectValue:%@",self.selDate);
+    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:self.type == FMDateToolViewTypeMonth ? @"yyyy.MM" : @"yyyy.MM.dd"];
     NSString *dateTitle = [dateFormatter stringFromDate:newDate];
     [self.valueBtn setTitle:dateTitle forState:UIControlStateNormal];
     
     self.rightBtn.enabled = ![dateTitle isEqualToString:self.currentDate];
-    
     
     if ([self.delegate respondsToSelector:@selector(dateToolViewDidSelectedDate:)]) {
         [self.delegate dateToolViewDidSelectedDate:dateTitle];
@@ -100,6 +102,7 @@
         }];
     } else {
         [BRDatePickerView showDatePickerWithTitle:@"选择时间" dateType:UIDatePickerModeDate defaultSelValue:self.selDate minDateStr:@"2019.08.01" maxDateStr:nil isAutoSelect:NO resultBlock:^(NSString *selectValue) {
+            MyLog(@"selectValue:%@",selectValue);
             weakSelf.selDate = selectValue;
             [weakSelf.valueBtn setTitle:selectValue forState:UIControlStateNormal];
             weakSelf.rightBtn.enabled = ![selectValue isEqualToString:weakSelf.currentDate];

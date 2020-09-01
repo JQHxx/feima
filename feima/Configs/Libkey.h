@@ -32,4 +32,7 @@ static NSString * const kProgressGroupDataKey = @"com.hegui.feima.group.progress
 //部门
 static NSString * const kOrganizationGroupDataKey = @"com.hegui.feima.group.organization.key";
 
+//通知中心
+static NSString * const kUpdatePasswordSuccessNotification = @"com.hegui.feima.notication.update.password";
+
 #endif /* Libkey_h */

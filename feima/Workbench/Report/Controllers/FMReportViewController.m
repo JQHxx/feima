@@ -61,7 +61,7 @@
             FMProductReportViewController *productVC = [[FMProductReportViewController alloc] init];
             productVC.type = 0;
             [self.navigationController pushViewController:productVC animated:YES];
-        } else if (indexPath.row == 3) {
+        } else if (indexPath.row == 1) {
             FMCustomerSalesViewController *salesVC = [[FMCustomerSalesViewController alloc] init];
             [self.navigationController pushViewController:salesVC animated:YES];
         } else {
