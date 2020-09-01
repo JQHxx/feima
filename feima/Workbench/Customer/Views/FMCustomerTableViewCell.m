@@ -97,7 +97,8 @@
 
 #pragma mark 填充数据
 - (void)fillContentWithData:(FMCustomerModel *)model showDistance:(BOOL)showDistance {
-    [self.myImgView sd_setImageWithURL:[NSURL URLWithString:model.doorPhoto] placeholderImage:[UIImage ctPlaceholderImage]];
+    NSArray *images = [model.doorPhoto componentsSeparatedByString:@","];
+    [self.myImgView sd_setImageWithURL:[NSURL URLWithString:images[0]] placeholderImage:[UIImage ctPlaceholderImage]];
     self.nameLabel.text = model.businessName;
     self.contactsLabel.text = [NSString stringWithFormat:@"%@：%@",model.contactName,model.telephone];
     self.followLabel.text = [NSString stringWithFormat:@"跟进人：%@",model.employeeName];

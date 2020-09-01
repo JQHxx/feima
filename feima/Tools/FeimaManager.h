@@ -50,6 +50,14 @@ singleton_interface(FeimaManager)
 - (NSArray *)getMonthFirstAndLastDayWithDate:(NSString *)dateStr format:(NSString *)format;
 
 /**
+ * 获取某天0点和下一天0点时间
+ * @param dateStr  某日
+ * @param format    时间格式
+ */
+- (NSArray *)getDayFirstAndLastWithDate:(NSString *)dateStr format:(NSString *)format;
+
+
+/**
  * 获取年月数据
 */
 - (NSMutableArray *)getYearMonthDataWithMinDate:(NSString *)minDate;

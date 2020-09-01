@@ -66,7 +66,7 @@
 #pragma mark -- Event response
 #pragma mark 保存
 - (void)submitCustomerAction:(UIButton *)sender {
-    NSInteger type = self.customerModel ? 1 : 0;
+    NSInteger type = self.customerModel.customerId > 0 ? 1 : 0;
     NSArray *images = [self.photoView getAllImages];
     kSelfWeak;
     [self.adapter addOrUpdateCustomerWithType:type customerId:self.customerModel.customerId businessName:self.nameTextField.text nickName:self.shortNameTextField.text contactName:self.contactTextField.text telephone:self.phoneTextField.text address:self.addressLabel.text latitude:self.customerModel.latitude longitude:self.customerModel.longitude doorPhoto:images industryType:self.customerModel.industryType grade:self.customerModel.grade displayArea:self.areaTextField.text progress:self.customerModel.progress employeeId:self.customerModel.employeeId complete:^(BOOL isSuccess) {

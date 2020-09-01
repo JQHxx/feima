@@ -7,6 +7,7 @@
 //
 
 #import "FMHomepageViewController.h"
+#import "FMStatisticsViewController.h"
 #import "FMCustomerHeadView.h"
 #import "FMVisitTableViewCell.h"
 #import "FMMainGoodsTableViewCell.h"
@@ -200,6 +201,13 @@
     [self.mainTableView reloadSections:set withRowAnimation:UITableViewRowAnimationFade];
 }
 
+#pragma mark 统计
+- (void)statisticsAction:(UIButton *)sender {
+    FMStatisticsViewController *statisticsVC = [[FMStatisticsViewController alloc] init];
+    statisticsVC.customer = self.customer;
+    [self.navigationController pushViewController:statisticsVC animated:YES];
+}
+
 #pragma mark 离店
 - (void)leaveAction:(UIButton *)sener {
     //拜访记录信息
@@ -214,6 +222,8 @@
     NSString *outTimeStr = [NSDate currentDateTimeWithFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSInteger outTime = [[FeimaManager sharedFeimaManager] timeSwitchTimestamp:outTimeStr format:@"yyyy-MM-dd HH:mm:ss"];
     [visitRecordInfo safe_setValue:@(outTime) forKey:@"outTime"];
+    NSString *visitInfoJson = [[FeimaManager sharedFeimaManager] objectToJSONString:visitRecordInfo];
+    MyLog(@"visitRecordInfo:%@",visitRecordInfo);
     
     //商品信息
     NSMutableDictionary *goodSellInfo = [NSMutableDictionary dictionary];
@@ -224,16 +234,62 @@
             [goodSellInfo safe_setValue:@(model.quantity) forKey:[NSString stringWithFormat:@"%ld",model.goodsId]];
         }
     }
+    BOOL goodsInfoFilled = goodSellInfo.count == goodsCount;
+    NSString *sellInfoJson = [[FeimaManager sharedFeimaManager] objectToJSONString:goodSellInfo];
     MyLog(@"goodSellInfo:%@",goodSellInfo);
     
     //库存信息
     NSMutableArray *goodStockInfo = [[NSMutableArray alloc] init];
+    NSInteger stockCount = [self.adapter numberOfStockGoodsList];
+    for (NSInteger i=0; i<stockCount; i++) {
+        FMGoodsModel *model = [self.adapter getStockGoodsModelWithIndex:i];
+        if (model.quantity > 0) {
+            NSMutableDictionary *stockInfo = [NSMutableDictionary dictionary];
+            stockInfo[@"customerId"] = @(self.customer.customerId);
+            stockInfo[@"goodsId"] = @(model.goodsId);
+            stockInfo[@"num"] = @(model.quantity);
+            [goodStockInfo addObject:stockInfo];
+        }
+    }
+    BOOL goodsStockFilled = goodStockInfo.count == stockCount;
+    NSString *stockInfoJson = [[FeimaManager sharedFeimaManager] objectToJSONString:goodStockInfo];
+    MyLog(@"goodStockInfo:%@",goodStockInfo);
     
+    //竞品上报信息
+    NSMutableArray *competeGoodsInfo = [[NSMutableArray alloc] init];
+    NSArray *competeGoodsArr = [self.adapter getAllCompeteGoodsList];
+    for (FMGoodsModel *model in competeGoodsArr) {
+        NSMutableDictionary *competeInfo = [NSMutableDictionary dictionary];
+        competeInfo[@"customerId"] = @(self.customer.customerId);
+        competeInfo[@"goodsId"] = @(model.goodsId);
+        competeInfo[@"quantity"] = @(model.displayNum);
+        competeInfo[@"stock"] = @(model.purchaseNum);
+        if (!kIsEmptyString(self.competitorDesc)) {
+            competeInfo[@"description"] = self.competitorDesc;
+        }
+        if (!kIsEmptyString(self.competitorImages)) {
+            competeInfo[@"images"] = self.competitorImages;
+        }
+        [competeGoodsInfo addObject:competeInfo];
+    }
+    NSString *competeInfoJson = [[FeimaManager sharedFeimaManager] objectToJSONString:competeGoodsInfo];
+    MyLog(@"competeGoodsInfo:%@",competeGoodsInfo);
     
-    
-    //
-    
-    MyLog(@"visitRecordInfo:%@",visitRecordInfo);
+    BOOL unfilled = kIsEmptyString(self.visitImages) || kIsEmptyString(self.visitSummary) || !goodsInfoFilled || !goodsStockFilled || kIsEmptyString(self.competitorImages) || kIsEmptyString(self.competitorDesc);
+    if (unfilled) {
+        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil message:@"你还有未填写的内容，一旦离店，将不能补填，确定离店吗？" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *alertT = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self addVisitRecordWithVisitRecordInfo:visitInfoJson goodSellInfo:sellInfoJson goodStockInfo:stockInfoJson competeGoodsInfo:competeInfoJson];
+        }];
+        UIAlertAction *alertF = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                NSLog(@"点击了取消");
+        }];
+        [actionSheet addAction:alertT];
+        [actionSheet addAction:alertF];
+        [self presentViewController:actionSheet animated:YES completion:nil];
+    } else {
+        [self addVisitRecordWithVisitRecordInfo:visitInfoJson goodSellInfo:sellInfoJson goodStockInfo:stockInfoJson competeGoodsInfo:competeInfoJson];
+    }
 }
 
 #pragma mark -- Private methods
@@ -255,6 +311,27 @@
     [self.adapter loadCompeteGoodsListWithComplete:^(BOOL isSuccess) {
         if (isSuccess) {
             [weakSelf.mainTableView reloadData];
+        }
+    }];
+}
+
+#pragma mark 添加拜访记录
+- (void)addVisitRecordWithVisitRecordInfo:(NSString *)visitRecordInfo goodSellInfo:(NSString *)goodSellInfo goodStockInfo:(NSString *)goodStockInfo competeGoodsInfo:(NSString *)competeGoodsInfo {
+    CLLocation *curLocation = [[CLLocation alloc] initWithLatitude:self.myAddress.latitude longitude:self.myAddress.longitude];
+    CLLocation *otherLocation = [[CLLocation alloc] initWithLatitude:self.customer.latitude longitude:self.customer.longitude];
+    double  distance  = [curLocation distanceFromLocation:otherLocation];
+    if (distance > 1000.0) {
+        [self.view makeToast:@"不在拜访店铺范围内" duration:1.5 position:CSToastPositionCenter];
+        return;
+    }
+    
+    kSelfWeak;
+    [self.adapter addVisitRecordWithCustomerId:self.customer.customerId visitRecordInfo:visitRecordInfo goodSellInfo:goodSellInfo goodStockInfo:goodStockInfo competeGoodsInfo:competeGoodsInfo complete:^(BOOL isSuccess) {
+        if (isSuccess) {
+            [weakSelf.view makeToast:@"新增计划成功" duration:1.5 position:CSToastPositionCenter];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            });
         }
     }];
 }
@@ -292,6 +369,7 @@
         [_statisticsBtn setTitle:@"统计" forState:UIControlStateNormal];
         [_statisticsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         _statisticsBtn.titleLabel.font = [UIFont mediumFontWithSize:14];
+        [_statisticsBtn addTarget:self action:@selector(statisticsAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _statisticsBtn;
 }

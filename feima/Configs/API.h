@@ -113,7 +113,9 @@ static NSString * const api_report_compete_analysis = @"/rest/report/compete/ana
 
 //********************拜访计划相关*************************/
 static NSString * const api_visit_add = @"/rest/visitrecord/add"; //离店，添加拜访记录
-static NSString * const api_visit_get = @"/rest/visitrecord/get"; //获取拜访记录
+static NSString * const api_visit_list = @"/rest/visitrecord/managementlist"; //获取拜访记录
+static NSString * const api_visit_get = @"/rest/visitrecord/get";
+
 
 //********************消息相关*************************/
 static NSString * const api_messages_list = @"/rest/messagelist/list"; //消息列表

@@ -10,7 +10,7 @@
 #import <AFNetworking/AFNetworking.h>
 #import "NSUserDefaultsInfos.h"
 
-#define isTrueEnvironment 1
+#define isTrueEnvironment 0
 
 #if isTrueEnvironment
 //正式环境

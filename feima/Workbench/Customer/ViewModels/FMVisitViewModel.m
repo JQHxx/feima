@@ -15,6 +15,9 @@
 @property (nonatomic,strong) NSMutableArray<FMGoodsModel *> *stockGoodsList; //库存
 @property (nonatomic,strong) NSMutableArray<FMGoodsModel *> *competeGoodsList; //竞品
 
+@property (nonatomic, copy ) NSArray <FMCustomerVisitModel *> *visitRecordsList;
+
+
 @end
 
 @implementation FMVisitViewModel
@@ -147,6 +150,74 @@
     if (index > -1) {
         [self.competeGoodsList replaceObjectAtIndex:index withObject:model];
     }
+}
+
+#pragma mark  离店，添加拜访记录
+- (void)addVisitRecordWithCustomerId:(NSInteger)customerId
+                     visitRecordInfo:(NSString *)visitRecordInfo
+                        goodSellInfo:(NSString *)goodSellInfo
+                       goodStockInfo:(NSString *)goodStockInfo
+                    competeGoodsInfo:(NSString *)competeGoodsInfo
+                            complete:(AdpaterComplete)complete {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"customerId"] = @(customerId);
+    parameters[@"visitRecordInfo"] = visitRecordInfo;
+    parameters[@"goodSellInfo"] = goodSellInfo;
+    parameters[@"goodStockInfo"] = goodStockInfo;
+    parameters[@"competeGoodsInfo"] = competeGoodsInfo;
+    [[HttpRequest sharedInstance] postWithUrl:api_visit_add parameters:parameters complete:^(BOOL isSuccess, id json, NSError *error) {
+        [self handlerError:error];
+        if (isSuccess) {
+            if (complete) complete(YES);
+        } else {
+            if (complete) complete(NO);
+        }
+    }];
+}
+
+#pragma mark 获取拜访记录
+- (void)loadVisitRecordDataWithCustomerId:(NSInteger)customerId
+                                    sTime:(NSInteger)sTime
+                                    eTime:(NSInteger)eTime
+                                 complete:(AdpaterComplete)complete {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"customerId"] = @(customerId);
+    parameters[@"sTime"] = @(sTime);
+    parameters[@"eTime"] = @(eTime);
+    [[HttpRequest sharedInstance] getRequestWithUrl:api_visit_list parameters:parameters complete:^(BOOL isSuccess, id json, NSError *error) {
+        [self handlerError:error];
+        if (isSuccess) {
+            NSDictionary *data = [json safe_objectForKey:@"data"];
+            self.importantSum = [data safe_integerForKey:@"importantSum"];
+            //销量
+            NSArray *sellArr = [data safe_objectForKey:@"orderSellStatistics"];
+            self.orderSellStatistics = [NSArray yy_modelArrayWithClass:[FMOrderSellModel class] json:sellArr];
+            
+            //拜访率
+            NSDictionary *rateDict = [data safe_objectForKey:@"visitRateIng"];
+            self.visitRate = [FMVisitRateModel yy_modelWithJSON:rateDict];
+            
+            //记录列表
+            NSArray *recordList = [data safe_objectForKey:@"visitRecordBeans"];
+            self.visitRecordsList = [NSArray yy_modelArrayWithClass:[FMCustomerVisitModel class] json:recordList];
+            
+            if (complete) complete(YES);
+        } else {
+            if (complete) complete(NO);
+        }
+    }];
+}
+
+#pragma mark 拜访记录数
+- (NSInteger)numberOfVisitRecordList {
+    return self.visitRecordsList.count;
+}
+
+
+#pragma mark 返回拜访记录对象
+- (FMCustomerVisitModel *)getVisitRecordModelWithIndex:(NSInteger)index {
+    FMCustomerVisitModel *model = [self.visitRecordsList safe_objectAtIndex:index];
+    return model;
 }
 
 @end

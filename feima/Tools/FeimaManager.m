@@ -102,6 +102,25 @@ singleton_implementation(FeimaManager)
     return @[firstString, lastString];
 }
 
+#pragma mark 获取某天0点和下一天0点时间
+- (NSArray *)getDayFirstAndLastWithDate:(NSString *)dateStr format:(NSString *)format {
+    NSDateFormatter *formatter=[[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    NSDate *newDate=[formatter dateFromString:dateStr];
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:newDate];
+    NSDate *startDate = [calendar dateFromComponents:components];
+    NSDate *endDate = [calendar dateByAddingUnit:NSCalendarUnitDay value:1 toDate:startDate options:0];
+    NSDateFormatter *myDateFormatter = [[NSDateFormatter alloc] init];
+    [myDateFormatter setDateFormat:format];
+    
+    NSString *firstString = [myDateFormatter stringFromDate:startDate];
+    NSString *lastString = [myDateFormatter stringFromDate:endDate];
+    MyLog(@"firstDate:%@,lastDate:%@",firstString,lastString);
+    return @[firstString,lastString];
+}
+
 #pragma mark 获取年月数据
 - (NSMutableArray *)getYearMonthDataWithMinDate:(NSString *)minDate {
     NSMutableArray *data = [[NSMutableArray alloc] init];

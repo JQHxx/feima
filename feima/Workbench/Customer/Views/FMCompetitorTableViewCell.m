@@ -106,10 +106,25 @@
 }
 
 #pragma mark UITextViewDelegate
+#pragma mark 结束编辑回调
 - (void)textViewDidEndEditing:(UITextView *)textView {
     if ([self.cellDelegate respondsToSelector:@selector(competitorTableViewCellDidEndEditWithText:)]) {
         [self.cellDelegate competitorTableViewCellDidEndEditWithText:textView.text];
     }
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(nonnull NSString *)text {
+    if([text isEqualToString:@" "] && textView.text.length <= 0){
+        //首字不可以是空格
+        return NO;
+    }
+    
+    if(textView == self.descTextView){
+        if(textView.text.length > 45){
+            return NO;
+        }
+    }
+    return YES;
 }
 
 #pragma mark -- Private methods
